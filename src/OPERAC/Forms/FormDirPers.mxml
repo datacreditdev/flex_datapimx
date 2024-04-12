@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="370" creationPolicy="all" xmlns:control="CONTROL.*">
+	<mx:Metadata>
+		[Event(name="enviarDatosPersona", type="Data.EventPersona")]
+	</mx:Metadata>
+	
+	<mx:Validator id="calleV" source="{txtCalle}" property="text" 
+	invalid="{txtCalle.setFocus()}" triggerEvent="" requiredFieldError="Nombre de Calle Requerido"/>
+	
+	<mx:Validator id="codPostalV" source="{txtCodPostal}" property="text" 
+	invalid="{txtCodPostal.setFocus()}" triggerEvent="" requiredFieldError="Código Postal Requerido"/>
+	
+	<mx:Validator id="entFedV" source="{comEntGrid.txtDato}" property="text" 
+	invalid="{comEntGrid.txtDato.setFocus()}" triggerEvent="" requiredFieldError="Nombre de Entidad Federativa Requerido"/>
+	
+	<mx:Validator id="municipioV" source="{comMunGrid.txtDato}" property="text" 
+	invalid="{comMunGrid.txtDato.setFocus()}" triggerEvent="" requiredFieldError="Nombre de Municipio Requerido"/>
+	
+	<mx:Validator id="localidadV" source="{comLocGrid.txtDato}" property="text" 
+	invalid="{comLocGrid.txtDato.setFocus()}" triggerEvent="" requiredFieldError="Nombre de Localidad Requerido"/>
+	
+	<mx:Validator id="coloniaV" source="{comColGrid.txtDato}" property="text" 
+	invalid="{comColGrid.txtDato.setFocus()}" triggerEvent="" requiredFieldError="Nombre de Colonia Requerido"/>
+
+	<mx:Script>
+		<![CDATA[
+			import Data.EventPersona;
+			import Data.DatosPersona;
+			import Data.Utils;
+			import Data.Globales;
+			import mx.validators.Validator;
+			import mx.collections.ArrayCollection;
+			import mx.core.Application;
+			import mx.containers.TitleWindow;			
+			import mx.managers.PopUpManager;
+			import mx.controls.Alert;
+			import mx.effects.easing.Elastic;
+			import mx.rpc.soap.WebService;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.utils.StringUtil;
+			
+			private var _xmlDir:XML = new XML();
+			private var _xmlPais:XML = new XML();
+			private var _xmlColonia:XML = new XML();
+			private var _xmlEntidad:XML = new XML();
+			private var _xmlMunicipio:XML = new XML();
+			private var _xmlLocalidad:XML = new XML();
+			
+			private var _xmlFiltro:XMLList;
+			
+			public var coord:Array = new Array();
+			
+			public var datos:DatosPersona = new DatosPersona();
+			
+			private var du:Utils;
+			private var global:Globales;
+			public var texto:String;
+			
+			//Realiza la busqueda de direccion del acreditado utilizando el codigo postal
+			public function buscaCodPostal():void{ 
+				txtCodPostal.text = StringUtil.trim(txtCodPostal.text);
+				if (txtCodPostal.text != "" && txtCodPostal.length == 5){
+					var wsCat:WebService = new WebService;
+					var params:Array = new Array;
+					
+					du.initWsCat(wsCat);
+					du.sCursor();
+					
+					_xmlDir = null;
+				
+					du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
+						_xmlDir = new XML(evt.result.toString());
+					
+						limpiaDatosDir();
+						
+						du.rCursor();
+						du.closeWs(wsCat);
+						wsCat = null;
+						
+						if(_xmlDir.elements().length() > 0){
+							comEntGrid.asignarTexto(_xmlDir.Table[0].ENTFED);
+							comMunGrid.asignarTexto(_xmlDir.Table[0].MUNIC);
+							comLocGrid.asignarTexto(_xmlDir.Table[0].LOC);
+							comColGrid.asignarTexto(_xmlDir.Table[0].COL);
+							
+							datos.cdgEntFed = _xmlDir.Table[0].CDGEF;		
+							datos.cdgMun = _xmlDir.Table[0].CDGMU;
+							datos.cdgLoc = _xmlDir.Table[0].CDGLO;
+							datos.cdgCol = _xmlDir.Table[0].CDGCOL;	
+							
+							obtieneMunicipio();
+							obtieneLocalidad();
+							obtieneColonia();
+						}
+					});
+					params[0] = txtCodPostal.text;
+					wsCat.getCatalogoGral.send(6, params);
+				}
+				else{
+					txtCodPostal.text = "";
+					obtieneMunicipio();
+					obtieneLocalidad();
+					obtieneColonia();
+				}
+			}
+			
+			public function copiarDatos():Object{
+				var oItem:Object;
+				
+				oItem = new Object();
+				oItem.calle = StringUtil.trim(txtCalle.text);
+				oItem.noExt = StringUtil.trim(txtNoExt.text);
+				oItem.noInt = StringUtil.trim(txtNoInt.text);
+				oItem.entreCalles = StringUtil.trim(txtEntreCalles.text);
+				oItem.cdgPais = datos.cdgPais;
+				oItem.pais = comPaisGrid.obtenerDato();
+				oItem.codPostal = txtCodPostal.text;
+				oItem.cdgEntFed = datos.cdgEntFed;
+				oItem.entFed = comEntGrid.obtenerDato();
+				oItem.cdgMun = datos.cdgMun;
+				oItem.munic = comMunGrid.obtenerDato();
+				oItem.cdgLoc = datos.cdgLoc;
+				oItem.localidad = comLocGrid.obtenerDato();
+				oItem.cdgCol = datos.cdgCol;
+				oItem.colonia = comColGrid.obtenerDato();
+				
+				return oItem;
+			}
+			
+			public function enviarDatosPersona(formData:DatosPersona):void{
+				var invalidArray:Array = Validator.validateAll([calleV, entFedV, municipioV, localidadV, coloniaV]);
+				if(invalidArray.length == 0){	
+					formData.calle = StringUtil.trim(txtCalle.text);
+					formData.entreCalles = StringUtil.trim(txtEntreCalles.text);
+					formData.noExt = StringUtil.trim(txtNoExt.text);
+					formData.noInt = StringUtil.trim(txtNoInt.text);
+					formData.cdgPais = datos.cdgPais;
+					formData.codPostal = txtCodPostal.text;
+					formData.cdgEntFed = datos.cdgEntFed;
+					formData.cdgMun = datos.cdgMun;
+					formData.cdgLoc = datos.cdgLoc;
+					formData.cdgCol = datos.cdgCol;
+					formData.guardaDir = true;
+				}
+				else{
+					formData.guardaDir = false;
+				}
+				var event:EventPersona = new EventPersona("enviarDatosPersona", formData);
+				dispatchEvent(event);
+			}
+			
+			public function init(info:DatosPersona):void{
+				var wsCat:WebService = new WebService;
+				var params:Array = new Array;
+				
+				global = new Globales();
+				du = new Utils();
+								
+				du.initWsCat(wsCat);
+				du.sCursor();
+				
+				_xmlPais = null;
+				
+				du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
+					_xmlPais = new XML(evt.result.toString());
+					
+					if(_xmlPais.elements().length() > 0){
+						comPaisGrid.init(_xmlPais, 130);
+						comPaisGrid.addEventListener("seleccionar",selecPais);
+						comPaisGrid.addEventListener("verificar",verifPais);
+					}
+					
+					_xmlEntidad = null;
+					
+					du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
+						_xmlEntidad = new XML(evt.result.toString());
+						
+						if(_xmlEntidad.elements().length() > 0){
+							comEntGrid.init(_xmlEntidad, 130);
+							comEntGrid.addEventListener("seleccionar",selecEntFed);
+							comEntGrid.addEventListener("verificar",verifEntFed);
+						}
+						
+						du.rCursor();
+						du.closeWs(wsCat);
+						wsCat = null;
+						
+						if (info != null){
+							txtCalle.text = info.calle;
+							txtEntreCalles.text = info.entreCalles;
+							txtNoExt.text = info.noExt;
+							txtNoInt.text = info.noInt;
+							txtCodPostal.text = info.codPostal;
+							
+							comPaisGrid.asignarTexto(info.pais);
+							comEntGrid.asignarTexto(info.entFed);
+							comMunGrid.asignarTexto(info.municipio);
+							comLocGrid.asignarTexto(info.localidad);
+							comColGrid.asignarTexto(info.colonia);
+							
+							datos.cdgPais = info.cdgPais;
+							datos.cdgEntFed = info.cdgEntFed;		
+							datos.cdgMun = info.cdgMun;
+							datos.cdgLoc = info.cdgLoc;
+							datos.cdgCol = info.cdgCol;	
+							
+							obtieneMunicipio();
+							obtieneLocalidad();
+							obtieneColonia();
+						}	
+					});
+					wsCat.getCatalogoGral.send(2);
+				});
+				wsCat.getCatalogoGral.send(1);
+			}
+			
+			public function limpiaDatosDir():void{
+				comEntGrid.limpiar();
+				comMunGrid.limpiar();
+				comLocGrid.limpiar();
+				comColGrid.limpiar();	
+				
+				datos.cdgEntFed = "";		
+				datos.cdgMun = "";
+				datos.cdgLoc = "";
+				datos.cdgCol = "";	
+			}
+			
+			private function obtieneColonia():void{
+				var wsCat:WebService = new WebService;
+				var params:Array = new Array;
+				
+				du.initWsCat(wsCat);
+				du.sCursor();
+					
+				du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
+					_xmlColonia = new XML(evt.result.toString());
+					
+					comColGrid.init(_xmlColonia, 90);
+					if(_xmlColonia.elements().length() > 0){
+						comColGrid.addEventListener("seleccionar",selecColonia);
+					}
+					du.rCursor();
+					du.closeWs(wsCat);
+					wsCat = null;	
+				});
+				params[0] = datos.cdgEntFed;
+				params[1] = datos.cdgMun;
+				params[2] = datos.cdgLoc;
+				params[3] = txtCodPostal.text;
+				wsCat.getCatalogoGral.send(5, params);
+			}
+			
+			private function obtieneLocalidad():void{
+				var wsCat:WebService = new WebService;
+				var params:Array = new Array;
+				
+				du.initWsCat(wsCat);
+				du.sCursor();
+				
+				du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
+					_xmlLocalidad = new XML(evt.result.toString());
+					
+					comLocGrid.init(_xmlLocalidad, 90);
+					if(_xmlLocalidad.elements().length() > 0){
+						comLocGrid.addEventListener("seleccionar",selecLocalidad);
+						comLocGrid.addEventListener("verificar",verifLocalidad);
+					}
+					du.rCursor();
+					du.closeWs(wsCat);
+					wsCat = null;
+				});
+				params[0] = datos.cdgEntFed;
+				params[1] = datos.cdgMun;
+				params[2] = txtCodPostal.text;
+				wsCat.getCatalogoGral.send(4, params);
+			}
+			
+			private function obtieneMunicipio():void{
+				var wsCat:WebService = new WebService;
+				var params:Array = new Array;
+				
+				du.initWsCat(wsCat);
+				du.sCursor();
+					
+				du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
+					_xmlMunicipio = new XML(evt.result.toString());
+					
+					comMunGrid.init(_xmlMunicipio, 130);
+					if(_xmlMunicipio.elements().length() > 0){
+						comMunGrid.addEventListener("seleccionar",selecMunic);
+						comMunGrid.addEventListener("verificar",verifMunic);
+					}
+					du.rCursor();
+					du.closeWs(wsCat);
+					wsCat = null;
+				});
+				params[0] = datos.cdgEntFed;
+				params[1] = txtCodPostal.text;
+				wsCat.getCatalogoGral.send(3, params);
+			}
+			
+			private function selecColonia(event:Event):void{
+				datos.cdgCol = event.currentTarget.codigo;
+				_xmlFiltro = _xmlColonia.Table.(CODIGO.toString() == datos.cdgCol)
+				if(txtCodPostal.text != _xmlFiltro.CDGPOSTAL.toString())
+					txtCodPostal.text = _xmlFiltro.CDGPOSTAL.toString();
+				comColGrid.setFocus();
+			}
+			
+			private function selecEntFed(event:Event):void{
+				if(datos.cdgEntFed != event.currentTarget.codigo){
+					comMunGrid.limpiar();
+					comLocGrid.limpiar();
+					comColGrid.limpiar();
+					txtCodPostal.text = "";
+					datos.cdgEntFed = event.currentTarget.codigo;
+					datos.cdgMun = "";
+					datos.cdgLoc = "";
+					datos.cdgCol = "";
+					obtieneMunicipio();
+				}
+				comEntGrid.setFocus();
+			}
+				
+			private function selecLocalidad(event:Event):void{
+				if(datos.cdgLoc != event.currentTarget.codigo){
+					comColGrid.limpiar();
+					txtCodPostal.text = "";
+					datos.cdgLoc = event.currentTarget.codigo;
+					datos.cdgCol = "";
+					obtieneColonia();
+				}
+				comLocGrid.setFocus();
+			}
+			
+			private function selecMunic(event:Event):void{
+				if(datos.cdgMun != event.currentTarget.codigo){	
+					comLocGrid.limpiar();
+					comColGrid.limpiar();
+					txtCodPostal.text = "";
+					datos.cdgMun = event.currentTarget.codigo;
+					datos.cdgLoc = "";
+					datos.cdgCol = "";
+					obtieneLocalidad();
+				}
+				comMunGrid.setFocus();
+			}
+			
+			private function selecPais(event:Event):void{
+				if(datos.cdgPais != event.currentTarget.codigo){
+					datos.cdgPais = event.currentTarget.codigo;
+				}
+				comPaisGrid.setFocus();
+			}
+			
+			private function verifEntFed(event:Event):void{
+				if(comEntGrid.codigo == ""){	
+					comMunGrid.limpiar();
+					comLocGrid.limpiar();
+					comColGrid.limpiar();
+					datos.cdgMun = "";
+					datos.cdgLoc = "";
+					datos.cdgCol = ""; 
+				}
+			}
+			
+			private function verifLocalidad(event:Event):void{
+				if(comColGrid.codigo == "")
+					comColGrid.limpiar();
+					datos.cdgCol = ""; 
+			}
+			
+			private function verifMunic(event:Event):void{
+				if(comMunGrid.codigo == ""){
+					comLocGrid.limpiar();
+					comColGrid.limpiar();
+					datos.cdgLoc = "";
+					datos.cdgCol = ""; 
+				}
+			}
+			
+			private function verifPais(event:Event):void{
+				datos.cdgPais = comPaisGrid.obtenerCodigo();
+			}
+	]]>
+	</mx:Script>
+	<mx:Label id="lblCalle" text="Calle:" x="111.5" y="37"/>
+	<mx:Label id="lblNoExt" text="Número Exterior:" x="57.5" y="68"/>
+	<mx:Label id="lblNoInt" text="Número Interior:" x="61.5" y="100"/>
+	<mx:Label id="lblCodPostal" text="Código Postal:" x="69.5" y="162"/>
+	<mx:Label id="lblEntFed" text="Entidad Federativa:" x="45.5" y="193"/>
+	<mx:Label id="lblMunic" text="Municipio:" x="90.5" y="224"/>
+	<mx:Label id="lblLoc" text="Localidad:" x="88.5" y="256"/>
+	<mx:Label id="lblCol" text="Colonia:" x="99.5" y="288"/>
+	<mx:Label id="lblPais" text="País:" x="114.5" y="131"/>
+	<mx:Label id="lblEntre" text="Entre las calles:" x="61.5" y="320"/>
+	<mx:TextInput id="txtCalle" maxChars="80" restrict="A-Z;a-z;Ñ;ñ;0-9; " width="170" x="150.5" y="35"/>
+	<mx:TextInput id="txtNoExt" maxChars="20" width="170" x="150.5" y="67"/>
+	<mx:TextInput id="txtNoInt" maxChars="20" x="150.5" y="99"/>
+	<control:TextGrid id="comPaisGrid" height="24" x="150.5" y="129"/>
+	<mx:TextInput id="txtCodPostal" enter="buscaCodPostal()" focusOut="buscaCodPostal()" width="95" maxChars="5" restrict="0-9" x="150.5" y="161"/>
+	<control:TextGrid id="comEntGrid" x="150.5" height="24" y="191"/>
+	<control:TextGrid id="comMunGrid" x="150.5" height="24" y="223"/>
+	<control:TextGrid id="comLocGrid" x="150.5" height="24" y="255"/>
+	<control:TextGrid id="comColGrid" x="150.5" height="24" y="287"/>
+	<mx:TextInput id="txtEntreCalles" maxChars="50" restrict="A-Z;a-z;Ñ;ñ;0-9; " width="170" x="150.5" y="319"/>
+</mx:Canvas>

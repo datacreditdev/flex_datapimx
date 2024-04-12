@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" width="871" height="113" layout="absolute" 
+	showCloseButton="true" close="cerrar()" creationPolicy="all" xmlns:CONTROL="CONTROL.*"  
+ 	move="mueveVentana()">
+	<mx:states>
+		<mx:State name="vista">
+			<mx:RemoveChild target="{cnvRepo}"/>
+			<mx:AddChild>
+				<mx:Canvas id="cnvContenedor" width="100%" height="100%" visible="true"/>	
+			</mx:AddChild>
+		</mx:State>
+	</mx:states>
+	
+	<mx:Metadata>
+		[Event(name="enviar", type="enviar")]
+	</mx:Metadata>
+    
+	<!--Componente que permite mostrar los documentos de un acreditado-->
+	<mx:Script>
+		<![CDATA[
+			import Data.Globales;
+			import Data.ImageCreator;
+			import Data.Utils;
+			import flash.display.*;
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.controls.Button;
+			import mx.controls.Image;
+			import mx.core.Application;
+			import mx.core.IFlexDisplayObject;
+			import mx.effects.easing.Elastic;
+			import mx.events.CollectionEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.soap.WebService;
+
+			private var _xmlRepo:XML = new XML();
+			private var repoObj:ArrayCollection;
+
+			private var du:Utils;
+			private var global:Globales;
+			private var codigo:String;
+			private var titulo:String;
+			private var comVisorDet:CtrlVisorDocDet;
+			
+			private function cerrar():void{
+				if(comVisorDet)
+					comVisorDet.cerrar();
+				PopUpManager.removePopUp(this);
+			}
+			
+			private function formateaRepo():void{
+				var cont:int = _xmlRepo.elements().length();
+				var oItem:Object;
+				var item:Array = new Array;
+				
+				oItem = new Object();
+				oItem.id = "0";
+				oItem.descripcion = "--Seleccionar--";
+				item.push(oItem);
+				
+				for (var i:int = 0; i < cont; i++){
+					oItem = new Object();
+					oItem.id = _xmlRepo.Table[i].REPO;
+					oItem.descripcion = _xmlRepo.Table[i].REPO;	
+					item.push(oItem);
+				}
+				
+				repoObj = new ArrayCollection(item);
+			}
+			
+			public function init(codigo:String, _xmlRepo:XML):void{				
+				global = new Globales();
+				du = new Utils();
+				
+				this.title = "Expediente";
+				this.codigo = codigo;
+				this._xmlRepo = _xmlRepo;
+				
+				this.height = Application.application.height - 25;
+				
+				if(_xmlRepo.elements().length() > 0){
+					formateaRepo();
+					cboRepo.dataProvider = repoObj;
+				}
+				else
+					Alert.show("No se encontraron expedientes relacionados con el acreditado.",titulo,4,null,null,global.iAlert);
+			}
+			
+			private function muestraDocumentos():void{
+				if(cboRepo.selectedIndex > 0){
+					var repo:String = cboRepo.selectedItem.id;
+					this.currentState = "vista";
+					comVisorDet = new CtrlVisorDocDet();
+					comVisorDet.init(codigo, repo);
+					cnvContenedor.addChild(comVisorDet);
+				}
+			}
+			
+			private function mueveVentana():void{
+				comVisorDet.mueveVentana();
+			}
+		]]>
+	</mx:Script>
+	<mx:Canvas id="cnvRepo" x="283.5" y="10" width="300" height="50" styleName="canvasMod">
+		<mx:Label id="lblRepo" text="Expediente:" x="34.5" y="14"/>
+		<mx:ComboBox id="cboRepo" labelField="descripcion" x="103.5" y="11" change="muestraDocumentos()"/>	
+	</mx:Canvas>
+</mx:TitleWindow>

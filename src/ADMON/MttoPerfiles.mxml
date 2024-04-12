@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" 
+	width="368" height="260" title="Agregar/Editar Perfil" showCloseButton="true" 
+	close="cerrar()" creationPolicy="all" creationComplete="init()">
+	
+	<mx:Script>
+		<![CDATA[
+		import Data.DatosPerfil;
+		import Data.Globales;
+		import Data.Utils;
+		import mx.controls.Alert;
+		import mx.core.Application;
+		import mx.events.CloseEvent;
+		import mx.managers.PopUpManager;
+		import mx.rpc.events.ResultEvent;
+		import mx.rpc.mxml.Concurrency;
+		import mx.rpc.soap.WebService;
+		
+		public var tipoAccion:int;
+		public var titulo:String;
+		
+		private var du:Utils;
+		private var global:Globales;
+		private var info:DatosPerfil;
+		
+		public function cargaInfoPerfil(codigo:String, nombre:String):void{
+			tipoAccion = 2;
+			txtCodigo.text = codigo;
+			txtCodigo.editable = false;
+			txtNombre.text = nombre;
+			txtNombre.setFocus();
+		}
+		
+		public function keyListener(event:KeyboardEvent):void{
+			if (event.keyCode == 13)					
+				guardar();										
+		}				
+		
+		private function guardar():void{
+			var wsAdmin:WebService = new WebService;
+			
+			if(!valida())
+				return;
+			
+			info = new DatosPerfil();							
+			
+			info.codigo = txtCodigo.text;
+			info.nombre	= txtNombre.text;				
+			
+			du.initWsAdmin(wsAdmin);
+			du.sCursor();
+			
+			du.ejecutaWsMethod(wsAdmin,function(evt:ResultEvent):void{
+				var res:String = evt.result.toString();
+				
+				du.closeWs(wsAdmin);
+				du.rCursor();
+				
+				if(res.substr(0,1) == "1"){
+					Alert.show("Proceso finalizado exitosamente",titulo,4,null,null,global.iInfo);		
+					cerrar();	
+				}
+				else
+					Alert.show(res.substr(2,res.length - 1),titulo,4,null,null,global.iAlert);		
+			});
+			if(tipoAccion == 1)
+				wsAdmin.setAltaPerfil.send(info.codigo, info.nombre);
+			else if(tipoAccion == 2)
+				wsAdmin.setCambioPerfil.send(info.codigo, info.nombre);					
+		}
+		
+		private function init():void{
+			global = new Globales();
+			du = new Utils();
+			titulo = "Mantenimiento de Perfil";
+		}
+		
+		public function registraInfoPerfil():void{
+			tipoAccion = 1;
+			txtCodigo.setFocus();
+		} 
+		
+		private function valida():Boolean{
+			if(txtCodigo.text == ""){
+				Alert.show("Debe capturar el código del perfil",titulo,4,null,null,global.iAlert);
+				return false;
+			}
+			if(txtNombre.text == ''){
+				Alert.show("Debe capturar el nombre del perfil",titulo,4,null,null,global.iAlert);
+				return false;
+			}
+			return true;
+		}
+		
+		private function cerrar():void{		
+			var event:CloseEvent = new CloseEvent('CloseEvent',true);
+			dispatchEvent(event);						
+		}
+		
+		]]>
+	</mx:Script>
+	<mx:Label x="26.5" y="10" text="Código de perfil:" fontWeight="bold"/>
+	<mx:Label x="26.5" y="70" text="Nombre:" fontWeight="bold"/>
+	<mx:TextInput x="26.5" y="38" width="315" id="txtCodigo" enter="guardar()" maxChars="5" restrict="A-Z;a-z;Ñ;ñ;"/>
+	<mx:TextInput x="26.5" y="98" width="315" height="66" id="txtNombre" enter="guardar()" maxChars="35" restrict="A-Z;a-z;Ñ;ñ; "/>
+	<mx:Button x="221.5" y="182" label="Guardar" width="120" click="guardar()"/>
+	<mx:Label x="318" y="23" id="lblIdPerfil" text="0" visible="false"/>
+</mx:TitleWindow>

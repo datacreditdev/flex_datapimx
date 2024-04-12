@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300" xmlns:control="CONTROL.*">
+	<mx:states>
+		<mx:State name="moral">
+			<mx:SetProperty target="{lblPromotor}" name="text" value="Socio Comercial:"/>
+			<mx:SetProperty target="{lblPromotor}" name="x" value="28"/>
+			<!--<mx:SetProperty target="{txtPromotor}" name="width" value="280"/>-->
+			<mx:SetProperty name="width" value="450"/>
+			<mx:RemoveChild target="{lblRecuperador}"/>
+			<mx:RemoveChild target="{comRecGrid}"/>
+			<mx:AddChild position="lastChild">
+				<mx:FormItem label="Contacto 1" id="contacto1" x="50.5" y="40">
+				</mx:FormItem>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:FormItem label="Nombre contacto:" id="nomCon1" width="396.5" x="16.5" y="68">
+					<mx:TextInput id="txtNomCon1" width="280" restrict="A-Z;a-z;Ñ;ñ; "/>
+				</mx:FormItem>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:FormItem label="Correo:" id="emailCon1" visible="true" width="346.5" x="66.5" y="98">
+					<mx:TextInput id="txtEmailCon1" width="280"/>
+				</mx:FormItem>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:FormItem label="Teléfono:" id="telCon1" visible="true" x="57.5" y="128" width="240">
+					<mx:TextInput id="txtTelCon1"/>
+				</mx:FormItem>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:FormItem label="Contacto 2" id="contacto2" x="50.5" y="160">
+				</mx:FormItem>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:FormItem label="Nombre contacto:" id="nomCon2" width="396.5" x="16.5" y="188">
+					<mx:TextInput id="txtNomCon2" width="280" restrict="A-Z;a-z;Ñ;ñ; "/>
+				</mx:FormItem>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:FormItem label="Correo:" id="emailCon2" visible="true" width="346.5" x="66.5" y="218">
+					<mx:TextInput id="txtEmailCon2" width="280"/>
+				</mx:FormItem>
+			</mx:AddChild>
+			<mx:AddChild position="lastChild">
+				<mx:FormItem label="Teléfono:" id="telCon2" visible="true" x="57.5" y="248" width="240">
+					<mx:TextInput id="txtTelCon2"/>
+				</mx:FormItem>
+			</mx:AddChild>
+			<mx:SetProperty target="{comPromGrid}" name="x" value="121"/>
+		</mx:State>
+		<mx:State name="fideicomiso" basedOn="moral"/>
+	</mx:states>
+	
+	<mx:Metadata>
+		[Event(name="enviarOficialAcred", type="Data.EventAcred")]
+	</mx:Metadata>
+	
+	<mx:Script>
+		<![CDATA[
+			import Data.DatosAcred;
+			import Data.EventAcred;
+			import Data.Globales;
+			import Data.Utils;
+			import mx.collections.ArrayCollection;
+			import mx.containers.TitleWindow;
+			import mx.controls.Alert;
+			import mx.core.Application;
+			import mx.effects.easing.Elastic;			
+			import mx.events.*;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.soap.WebService;
+			import mx.validators.Validator;
+			
+			[Bindable]
+			private var _xmlPersonal:XML =  new XML();
+			
+			public var persObj:ArrayCollection = new ArrayCollection();
+			public var datos:DatosAcred = new DatosAcred();
+			public var wsMS:WebService;
+			public var texto:String;
+			public var tipoAccion:int;
+			private var suc:String;
+			private var du:Utils;
+			private var global:Globales;
+				
+			public function asignaEstatus(tipoPersona:String):void{
+				if(tipoPersona == "F")
+					currentState = "";
+				else if(tipoPersona == "M" || tipoPersona == "I")
+					currentState = "moral";
+			}	
+					
+			public function asignaSucursal(suc:String):void{
+				if(this.suc != suc){
+					this.suc = suc;
+					limpiar();
+				}
+			}		
+						
+			public function cargaPersonal():void{
+				var wsCat:WebService = new WebService;
+				var params:Array = new Array;
+				
+				du.initWsCat(wsCat);
+				du.sCursor();
+								
+				du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
+					_xmlPersonal = new XML(evt.result.toString());
+					
+					if (_xmlPersonal.elements().length() > 0){
+						comPromGrid.init(_xmlPersonal, 130);
+						comPromGrid.addEventListener("seleccionar",selecPromotor);
+						comPromGrid.addEventListener("verificar",verificaPromotor);
+						comRecGrid.init(_xmlPersonal, 130);
+						comRecGrid.addEventListener("seleccionar",selecRecuperador);
+						comRecGrid.addEventListener("verificar",verificaRecuperador);
+					}		
+					du.rCursor();
+					du.closeWs(wsCat);
+				});
+				params[0] = this.suc;
+				wsCat.getCatalogoGral.send(8, params);
+			}			
+						
+			public function enviarOficialAcred(formData:DatosAcred):void{
+				if(formData.cdgco != null && formData.cdgco.toString() != ""){
+					var promotorV:Boolean = true;
+					var recuperadorV:Boolean = true;
+					
+					if(currentState == ""){
+						promotorV = comPromGrid.validarDato();
+						recuperadorV = comRecGrid.validarDato();	
+					}
+					else if(currentState == "moral")
+						promotorV = comPromGrid.validarDato();
+						
+					if(promotorV && recuperadorV){	
+						formData.cdgPr = datos.cdgPr;
+						//formData.promotor = txtPromotor.text;
+						if(currentState == ""){
+							formData.cdgRec = datos.cdgRec;
+							//formData.recuperador = txtRecuperador.text;
+						}
+						else if(currentState == "moral"){
+							formData.contacto1 = txtNomCon1.text;
+							formData.telCon1 = txtTelCon1.text;
+							formData.emailCon1 = txtEmailCon1.text;
+							formData.contacto2 = txtNomCon2.text;
+							formData.telCon2 = txtTelCon2.text;
+							formData.emailCon2 = txtEmailCon2.text;
+						}
+						formData.guardaOficial = true;
+					}
+					else
+						formData.guardaOficial = false;
+				}
+				else
+					formData.guardaOficial = true;
+				var event:EventAcred = new EventAcred("enviarOficialAcred", formData);
+				dispatchEvent(event);
+			}
+			
+			public function init(info:DatosAcred, estatus:String):void{
+				global = new Globales();
+				du = new Utils();
+				
+				currentState = estatus;
+				
+				if (info != null){
+					datos.cdgPr = info.cdgPr;
+					comPromGrid.asignarTexto(info.promotor);
+					
+					if(currentState == ""){
+						datos.cdgRec = info.cdgRec;
+						comRecGrid.asignarTexto(info.recuperador);
+					}
+					else if(currentState == "moral"){
+						txtNomCon1.text = info.contacto1;
+						txtTelCon1.text = info.telCon1;
+						txtEmailCon1.text = info.emailCon1;
+						txtNomCon2.text = info.contacto2;
+						txtTelCon2.text = info.telCon2;
+						txtEmailCon2.text = info.emailCon2;
+					}
+					
+					this.suc = info.cdgco;
+					if(this.suc != null)
+						cargaPersonal();				
+				}
+			}
+			
+			public function initConexion():void{				
+				wsMS = new WebService();			
+				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
+				wsMS.loadWSDL();
+			}	
+
+			private function limpiar():void{
+				comPromGrid.limpiar();
+				comRecGrid.limpiar();
+				
+				datos.cdgPr = "";
+				datos.cdgRec = "";
+			}
+			
+			private function selecPromotor(event:Event):void{
+				datos.cdgPr = event.currentTarget.codigo;
+			}
+			
+			private function selecRecuperador(event:Event):void{
+				datos.cdgRec = event.currentTarget.codigo;
+			}
+			
+			private function verificaPromotor():void{
+				if(comPromGrid.obtenerCodigo() == ""){
+					comPromGrid.limpiar();
+					datos.cdgPr = "";
+				} 
+			}
+			
+			private function verificaRecuperador():void{
+				if(comRecGrid.obtenerCodigo() == ""){
+					comRecGrid.limpiar();
+					datos.cdgRec = "";
+				} 
+			}
+	]]>
+	</mx:Script>
+	
+	<mx:Label id="lblPromotor" text="Asesor:" x="77" y="12"/>
+	<control:TextGrid id="comPromGrid" x="129" height="24" y="10" width="235"/>
+	<mx:Label id="lblRecuperador" text="Recuperador:" x="50" y="44"/>
+	<control:TextGrid id="comRecGrid" x="129" height="24" y="42" width="235"/>
+</mx:Canvas>
