@@ -6,31 +6,29 @@
 	<!--Componente de mantenimiento de Prestamos-->
 	<mx:Script>
 		<![CDATA[
+			import Data.Globales;
 			import Data.Permisos;
 			import Data.Utils;
+			import mx.collections.ArrayCollection;
+			import mx.containers.TitleWindow;
+			import mx.controls.Alert;
+			import mx.controls.ComboBox;
 			import mx.controls.DataGrid;
 			import mx.controls.dataGridClasses.DataGridItemRenderer;  
-			import mx.events.*;  
-			import Data.Globales;
-			import mx.controls.ComboBox;
-			import mx.events.FlexEvent;
-			import mx.formatters.SwitchSymbolFormatter;
-			import mx.formatters.NumberFormatter;
-			import mx.rpc.Fault;
-			import mx.rpc.soap.WebService;
-			import mx.rpc.events.ResultEvent;
-			import mx.rpc.events.FaultEvent;
+			import mx.core.Application;
+			import mx.effects.easing.Elastic;
 			import mx.events.DataGridEvent;				
 			import mx.events.CloseEvent;	
-			import mx.events.ListEvent;	
-			import mx.core.Application;
-			import mx.containers.TitleWindow;
+			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
+			import mx.formatters.NumberFormatter;
+			import mx.formatters.SwitchSymbolFormatter;
 			import mx.managers.PopUpManager;
-			import mx.controls.Alert;
-			import mx.collections.ArrayCollection;
-			import mx.effects.easing.Elastic;
-			import mx.events.ValidationResultEvent;            
-
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.Fault;
+			import mx.rpc.soap.WebService;
+			
 			[Bindable]
 			public var _xmlGrupos:XML = new XML();
 			[Bindable]
@@ -40,8 +38,9 @@
 			[Bindable]
 			public var dPermisos:XML = new XML();	
 			
-			public var wsMS:WebService = new WebService();	
-			public var du:Utils;
+			public var wsMS:WebService;
+			public var titulo:String;	
+			private var du:Utils;
 			private var global:Globales;
 			private var permiso:Permisos;
 			
@@ -82,31 +81,29 @@
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
 				
-				if (txtCodGrupo.text != "" || txtGrupo.text != ""){
-					btnBuscar.setFocus();
-					dgGrupos.dataProvider = null;
+				btnBuscar.setFocus();
+				dgGrupos.dataProvider = null;
+				
+				du.initWsCat(wsCat);
+				du.sCursor();
+				global.bloquear();
+				
+				du.ejecutaWsMethod(wsCat, function(event:ResultEvent):void{
+					this._xmlGrupos = new XML(event.result);
 					
-					du.initWsCat(wsCat);
-					du.sCursor();
-					global.bloquear();
+					du.closeWs(wsCat);
+					du.rCursor();
+					global.desbloquear();
 					
-					du.ejecutaWsMethod(wsCat, function(event:ResultEvent):void{
-						this._xmlGrupos = new XML(event.result);
-						
-						du.closeWs(wsCat);
-						du.rCursor();
-						global.desbloquear();
-						
-						if (this._xmlGrupos.elements().length() > 0){
-							dgGrupos.dataProvider = _xmlGrupos.Table;
-						}
-						seleccionaGrupo();
-					});
-					params[0] = global.obtenerUsuario();
-					params[1] = txtCodGrupo.text;
-					params[2] = txtGrupo.text;
-					wsCat.getListado.send(11, params);
-				}	
+					if (this._xmlGrupos.elements().length() > 0){
+						dgGrupos.dataProvider = _xmlGrupos.Table;
+					}
+					seleccionaGrupo();
+				});
+				params[0] = global.obtenerUsuario();
+				params[1] = txtCodGrupo.text;
+				params[2] = txtGrupo.text;
+				wsCat.getListado.send(11, params);
 			}
 			
 			public function buscarListaAcredPrn(tipo:int):void{
@@ -175,12 +172,14 @@
 			
 			public function iniVar():void{
 				this.indPrn = -1;
-				this.vScroll = -1;
+				this.vScroll = undefined;
 			}
 			
 			public function initApp():void{
+				du = new Utils();
 				global = new Globales();
 				permiso = new Permisos();
+				titulo = "Mantenimiento de Crédito";
 				alta = false;
 				borrado = false;
 				consulta = false;
@@ -227,23 +226,21 @@
 								comMttoPrn.cargaInfoPrn(grupo, nomGrupo, ciclo, munic, coord, promotor);
 							}
 							else
-								Alert.show("Debe seleccionar el registro de Préstamo","Mantenimiento de Préstamo",4,null,null,global.iAlert); 
+								Alert.show("Debe seleccionar el registro de Crédito", titulo, 4, null, null, global.iAlert); 
 							break;
 					}
 				}
 			}
 			
 			public function permisos():void{
-				var mod_id:String = Application.application._Current_Mod_Id;
-				var perfil_id:String = Application.application.cadPerfil;
+				var mod_id:String = global.obtenerModulo();
+				var perfil_id:String = global.obtenerCadPerfil();
 				var Params:Array;
 				var cont:int;
 				
-				du = new Utils();
 				wsMS = du.initWs(wsMS);
 				du.sCursor();
-				//bloquear();
-					
+				
 				du.ejecutaWsMethod(wsMS,function(evt:ResultEvent):void {											
 					dPermisos = new XML(evt.result.toString());
 						
@@ -253,7 +250,7 @@
 						switch(dPermisos.Table[i].OPCION.toString()){
 							case "C":
 								consulta = true;
-								if (permiso.permisosEvSolic(Application.application.PERFIL_ID)){
+								if (permiso.permisosEvSolic(global.obtenerArrayPerfil())){
 									borrado = true;
 									alta = true;
 									edicion = true;
@@ -270,7 +267,6 @@
 								break;*/
 						}
 					}
-					//desbloquear();
 					du.rCursor();
 					du.closeWs(wsMS);					
 				});
@@ -324,7 +320,6 @@
 					<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO" width="70"/>
 					<mx:DataGridColumn headerText="GRUPO" dataField="GRUPO" width="200"/>
 					<mx:DataGridColumn headerText="MUNICIPIO" dataField="MUNIC" width="200"/>
-					<mx:DataGridColumn headerText="CODIGO" dataField="CDGPRPE" width="70"/>
 					<mx:DataGridColumn headerText="OFICIAL DE CREDITO" dataField="PROMOTOR" width="200"/>
 				</Data:columns>
 			</Data:RowColorDataGrid>

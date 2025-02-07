@@ -50,11 +50,10 @@
 			
 			public var datos:DatosSolic = new DatosSolic();
 			
-			public var wsMS:WebService;
-			public var du:Utils;
 			public var tipoAccion:int;
 			public var estatus:String;
 			public var texto:String;
+			private var du:Utils;
 			private var global:Globales;
 			
 			public function activaControles(_xmlControl:XML):void{
@@ -187,12 +186,6 @@
 					}
 				}	
 			}
-			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}	
 			
 			private function modificaEstado():void{
 				if(entrega.selectedValue == "I")

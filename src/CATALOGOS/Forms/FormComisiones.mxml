@@ -28,9 +28,8 @@
 			
 			public var datos:DatosProd = new DatosProd();
 			
-			public var wsMS:WebService;   					
-			public var du:Utils;
 			private var titulo:String;
+			private var du:Utils;
 			private var global:Globales;
 			private var tipoAccion:int;
 			
@@ -59,7 +58,6 @@
 			}
 			
 			public function enviarDatosProd(formData:DatosProd):void{
-				var i:int;
 				var listaCom:ArrayCollection;
 				
 				listaCom = dgComision.dataProvider as ArrayCollection;
@@ -70,9 +68,9 @@
 				formData.opcional = new Array;
 				
 				if(listaCom != null && listaCom.length > 0){	
-					for(i = 0; i < listaCom.length; i++){
+					for(var i:int = 0; i < listaCom.length; i++){
 						formData.tipoMov[i] = listaCom[i].tipoMov;
-						formData.montoCom[i] = listaCom[i].monto;
+						formData.montoCom[i] = global.formatearNumerico(listaCom[i].monto);
 						formData.porcCom[i] = listaCom[i].porc;
 						formData.tipoCargo[i] = listaCom[i].formaAfec;
 						formData.opcional[i] = listaCom[i].opcional;
@@ -92,7 +90,6 @@
 			}
 			
 			private function formateaComision():void{
-				var i:int;
 				var cont:int = _xmlCom.elements().length();
 				var oItem:Object;
 				var item:Array = new Array;
@@ -100,7 +97,7 @@
 				comObj.removeAll();
 				comObj.refresh();
 				
-				for(i = 0; i < cont; i++){
+				for(var i:int = 0; i < cont; i++){
 					oItem = new Object;
 					oItem.sec = _xmlCom.Table[i].SECUENCIA;
 					oItem.tipoMov = _xmlCom.Table[i].CDGTM;
@@ -114,6 +111,12 @@
 					item.push(oItem);
 				}
 				comObj = new ArrayCollection(item);
+			}
+			
+			private function formatearMontoGrid(item:Object, column:DataGridColumn):String{
+				var result:String;
+                result = global.formatearMoneda(item[column.dataField]);
+                return result;
 			}
 			
 			public function init(info:DatosProd, tipoAccion:int):void{
@@ -147,15 +150,9 @@
 				}	
 			}	
 			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}	
-			
 			private function iniVar():void{
 				this.indCom = -1;
-				this.vScroll = -1;
+				this.vScroll = undefined;
 			}
 			
 			private function mostrarFormComision(tipo:int):void{
@@ -206,7 +203,7 @@
 			itemDoubleClick="mostrarFormComision(2)" itemClick="selecComision()">
 			<mx:columns>
 				<mx:DataGridColumn headerText="MOVIMIENTO" dataField="nomMov"/>
-				<mx:DataGridColumn headerText="MONTO" dataField="monto"/>
+				<mx:DataGridColumn headerText="MONTO" dataField="monto" labelFunction="formatearMontoGrid"/>
 				<mx:DataGridColumn headerText="OPCIONAL" dataField="descOpc"/>
 				<mx:DataGridColumn headerText="PORCENTAJE" dataField="porc"/>
 				<mx:DataGridColumn headerText="FORMA AFECTACION" dataField="descForma"/>
@@ -218,5 +215,5 @@
 		<mx:Button id="btnEliminar" x="102" y="3" icon="@Embed(source='assets/delete-icon.png')" click="eliminarComision()" enabled="false" toolTip="Eliminar Comisión" width="40"/>
 		<mx:Button id="btnEditar" x="6" y="3" icon="@Embed(source='assets/edit.png')" enabled="false" click="mostrarFormComision(2)" toolTip="Editar Comisión" width="40"/>
 	</mx:Canvas>
-	<mx:Label x="10" y="6" text="Comisiones"/>
+	<mx:Label id="lblComision" x="10" y="6" text="Comisiones"/>
 </mx:Canvas>

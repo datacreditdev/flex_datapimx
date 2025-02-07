@@ -19,7 +19,7 @@
 			<mx:AddChild position="lastChild">
 				<mx:Button x="65" y="204" label="Aceptar" click="ejecuta()" id="btnAceptar"/>
 			</mx:AddChild>
-			<mx:AddChild position="last|																									1Child">
+			<mx:AddChild position="lastChild">
 				<mx:Button x="144" y="204" label="Limpiar" width="71" height="24" click="limpiar()" id="btnLimpiar"/>
 			</mx:AddChild>
 		</mx:State>
@@ -64,16 +64,16 @@
 			import mx.core.Application;
 			import mx.effects.easing.Elastic;	
 			import mx.managers.PopUpManager;
-			import mx.rpc.events.ResultEvent;
 			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
 			import mx.rpc.soap.WebService;
 			import mx.utils.ObjectUtil;
 			
-			private var global:Globales;
-			private var permiso:Permisos;
 			public var wsMS:WebService;
 			public var titulo:String;
 			private var du:Utils;
+			private var global:Globales;
+			private var permiso:Permisos;
 			
 			private var tipoMovObj:ArrayCollection = new ArrayCollection();
 			
@@ -115,7 +115,7 @@
 			}
 			
 			public function formateaTipoMov():void{
-				var perfil:String = Application.application.cadPerfil;
+				var perfil:String = global.obtenerCadPerfil();
 				var oItem:Object;
 				var item:Array = new Array;
 				
@@ -125,7 +125,7 @@
 				oItem.nombre = "--Seleccionar--";
 				item.push(oItem);
 				
-				if(permiso.permisosDesautoriza(Application.application.PERFIL_ID)){
+				if(permiso.permisosDesautoriza(global.obtenerArrayPerfil())){
 					oItem = new Object();
 					oItem.tipo = 1;
 					oItem.id = "desautoriza";	
@@ -133,7 +133,7 @@
 					item.push(oItem);
 				}
 				
-				if(permiso.permisosModFecDes(Application.application.PERFIL_ID)){
+				if(permiso.permisosModFecDes(global.obtenerArrayPerfil())){
 					oItem = new Object();
 					oItem.tipo = 2;
 					oItem.id = "desembolso";	
@@ -192,8 +192,7 @@
 	</mx:Script>
 	<mx:Label id="lblTitulo" x="16.5" y="10" width="247" fontSize="12" fontWeight="bold" fontStyle="italic"/>
 	<mx:Canvas x="16.5" y="57" width="247.5" height="41" id="cnvTipoMov" styleName="canvasMod">
-		<mx:ComboBox id="cboTipoMov" x="10" y="7" width="227.5" labelField="nombre" change="modificaEstado()">	
-		</mx:ComboBox>
+		<mx:ComboBox id="cboTipoMov" x="10" y="7" width="227.5" labelField="nombre" change="modificaEstado()"/>
 	</mx:Canvas>
 	<mx:Label x="16.5" y="39" text="Tipo de Movimiento" width="124.25"/>
 </mx:Canvas>

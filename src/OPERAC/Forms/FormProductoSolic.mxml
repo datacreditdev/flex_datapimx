@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="450" height="130" creationPolicy="all">
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="550" height="130" creationPolicy="all">
 	<mx:states>
 		<mx:State name="revolvente">
 			<mx:SetProperty name="height" value="200"/>
@@ -42,9 +42,7 @@
 			import mx.rpc.events.ResultEvent;
 			import mx.rpc.events.FaultEvent;
 			
-			[Bindable]
 			private var _xmlTipoProd:XML =  new XML();
-			[Bindable]
 			private var _xmlProdCred:XML =  new XML();
 
 			public var tipoProdObj:ArrayCollection = new ArrayCollection();
@@ -52,7 +50,6 @@
 			
 			public var datos:DatosSolic = new DatosSolic();
 			
-			public var wsMS:WebService;	
 			public var tipoAccion:int;
 			public var coord:String;
 			private var du:Utils;
@@ -113,8 +110,8 @@
 			
 			public function filtraProdCred(item:Object):Boolean{
 				var isMatch:Boolean = false
-				var d:Date = DateField.stringToDate(item.fecVal.toString(),"DD/MM/YYYY")
-				if(d >= global.obtenerFechaSistema())
+				var fec:Date = DateField.stringToDate(item.fecVal.toString(),"DD/MM/YYYY")
+				if(fec >= global.obtenerFechaSistema())
 					isMatch = true 
 				return isMatch; 
 			}
@@ -199,28 +196,22 @@
 				wsCat.getCatalogoGral.send(11);
 			}
 			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}	
-			
-			public function obtieneProdCred():String{
+			public function obtenerProdCred():String{
 				return cboProdCred.selectedItem.id;
 			}
 			
-			public function obtieneTipoProd():String{
+			public function obtenerTipoProd():String{
 				return cboTipoProd.selectedItem.id;
 			}
 			
 	]]>
 	</mx:Script>
-	<mx:Canvas id="cnvProdSolic" x="10" y="10" width="430" height="110" styleName="canvasMod">
+	<mx:Canvas id="cnvProdSolic" x="10" y="10" width="530" height="110" styleName="canvasMod">
 		<mx:FormItem label="Tipo de Producto:" id="tipoProd" visible="true" x="59.5" y="19">
-			<mx:ComboBox id="cboTipoProd" labelField="nombre" change="cargaProdCred()"/>
+			<mx:ComboBox id="cboTipoProd" labelField="nombre" width="300" change="cargaProdCred()"/>
 		</mx:FormItem>
-		<mx:FormItem label="Producto de Crédito:" id="prodCred" visible="true" x="45.5" y="63" width="350">
-			<mx:ComboBox id="cboProdCred" labelField="nombre" width="230"/>
+		<mx:FormItem label="Producto de Crédito:" id="prodCred" visible="true" x="45.5" y="63">
+			<mx:ComboBox id="cboProdCred" labelField="nombre" width="340"/>
 		</mx:FormItem>
 	</mx:Canvas>
 </mx:Canvas>

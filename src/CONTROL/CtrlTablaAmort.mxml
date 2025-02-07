@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"  width="600" height="479" layout="absolute" 
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml"  width="720" height="479" layout="absolute" 
 	showCloseButton="true" close="cerrar()">
 	
 	<mx:Metadata>
@@ -9,6 +9,7 @@
 	<!--Componente que permite mostrar la informacion de la tabla de amortizacion-->
 	<mx:Script>
 		<![CDATA[
+			import Data.ExcelExportXls;
 			import Data.Globales;
 			import Data.Utils;
 			import mx.collections.ArrayCollection;
@@ -28,6 +29,7 @@
 			private var global:Globales;
 			private var du:Utils;
 			private var titulo:String;
+			private var tipo:int;
 			private var codigo:String;
 			private var nombre:String;
 			private var ciclo:String;
@@ -45,7 +47,7 @@
 				for(var i:int = 0; i < cont; i++){
 					total += Number(pagos[i].cantidad);
 				}
-				lblTotal.text = global.formatoMoneda(total.toString());
+				lblTotal.text = global.formatearMoneda(total.toString());
 			}
 			
 			private function cargaTablaAmort():void{
@@ -69,9 +71,10 @@
 						calculaTotal();
 					}
 				});
-				params[0] = codigo;
-				params[1] = ciclo;
-				params[2] = tipoCred;
+				params[0] = tipo;
+				params[1] = codigo;
+				params[2] = ciclo;
+				params[3] = tipoCred;
 				//Obtiene el listado de registros de la tabla de Amortización
  				wsCat.getListado.send(45, params);
 			}
@@ -85,6 +88,17 @@
 				cerrar();
 			}
 			
+			private function exportar():void{
+				var dgE:ExcelExportXls = new ExcelExportXls();
+				dgE.loadDGInExcel(dgTablaAmort, null, titulo + " - " + codigo + " " + nombre);			
+			}
+			
+			private function formatearMontoGrid(item:Object, column:DataGridColumn):String{
+				var result:String;
+                result = global.formatearMoneda(item[column.dataField]);
+                return result;
+			}
+			
 			private function formateaTablaAmort():void{
 				var cont:int = _xmlTabla.elements().length();
 				var oItem:Object;
@@ -93,6 +107,8 @@
 				for(var i:int = 0; i < cont; i++){
 					oItem = new Object;
 					oItem.numero = _xmlTabla.Table[i].NOPAGO;
+					oItem.fecIni = _xmlTabla.Table[i].FECINI;
+					oItem.fecFin = _xmlTabla.Table[i].FECFIN;
 					oItem.fecha = _xmlTabla.Table[i].FECHA;
 					oItem.cantidad = Number(_xmlTabla.Table[i].CANTIDAD);
 					oItem.capital = Number(_xmlTabla.Table[i].CAPITAL);
@@ -104,11 +120,12 @@
 				pagos.addEventListener(CollectionEvent.COLLECTION_CHANGE,actualizaTotal);
 			}
 			
-			public function init(codigo:String, nombre:String, ciclo:String, tipoCred:String, editable:Boolean = false):void{
+			public function init(tipo:int, codigo:String, nombre:String, ciclo:String, tipoCred:String, editable:Boolean = false):void{
 				global = new Globales();
 				du = new Utils();
 				titulo = "Tabla de Amortización";
 				this.title = titulo;
+				this.tipo = tipo;
 				this.codigo = codigo;
 				this.nombre = nombre;
 				this.ciclo = ciclo;
@@ -123,7 +140,7 @@
 			}			
 		]]>
 	</mx:Script>
-	<mx:Canvas width="573.25" height="100" styleName="canvasMod" x="12.75" y="10">
+	<mx:Canvas width="600" height="100" styleName="canvasMod" x="58" y="10">
 		<mx:Label x="28" y="10" text="Código:"/>
 		<mx:Label x="24" y="38" text="Nombre:"/>
 		<mx:Label x="38" y="66" text="Ciclo:"/>
@@ -134,19 +151,22 @@
 		<mx:RadioButton x="182" y="64" label="Automática" visible="false"/>
 		<mx:RadioButton x="269" y="64" label="Manual" visible="false"/>
 	</mx:Canvas>
-	<mx:DataGrid id="dgTablaAmort" editable="false" width="573.25" height="230" alpha="1.0" sortableColumns="false" x="12.75" y="118">
+	<mx:DataGrid id="dgTablaAmort" editable="false" width="690" height="230" alpha="1.0" sortableColumns="false" x="12.75" y="118">
 		<mx:columns>
 			<mx:DataGridColumn headerText="NO." dataField="numero" width="35"/>
+			<mx:DataGridColumn headerText="INICIO" dataField="fecIni" width="110"/>
+			<mx:DataGridColumn headerText="FIN" dataField="fecFin" width="110"/>
 			<mx:DataGridColumn headerText="FECHA PAGO" dataField="fecha" width="110"/>
 			<mx:DataGridColumn headerText="MONEDA" dataField="moneda" width="80"/>
-			<mx:DataGridColumn headerText="CAPITAL" dataField="capital" width="100"/>
-			<mx:DataGridColumn headerText="INTERES" dataField="interes" width="100"/>
-			<mx:DataGridColumn headerText="AMORTIZACION" dataField="cantidad" width="110"/>
+			<mx:DataGridColumn headerText="CAPITAL" dataField="capital" width="100" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="INTERES" dataField="interes" width="100" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="AMORTIZACION" dataField="cantidad" width="110" labelFunction="formatearMontoGrid"/>
 		</mx:columns>
 	</mx:DataGrid>
-	<mx:Canvas styleName="canvasMod" x="466" y="356" width="120" height="37.65">
-		<mx:Label id="lblTotal" x="10" y="8.6" textAlign="right" width="100"/>
+	<mx:Canvas styleName="canvasMod" x="562.75" y="356" width="140" height="37.65">
+		<mx:Label id="lblTotal" x="10" y="8.6" textAlign="right" width="118"/>
 	</mx:Canvas>
-	<mx:Button id="btnCancelar" x="525" y="401.65" label="Cerrar" click="cerrar()"/>
-	<mx:Label x="411" y="363" text="Total:" fontSize="14" fontStyle="italic" fontWeight="bold"/>
+	<mx:Button id="btnCancelar" x="641.75" y="401.65" label="Cerrar" click="cerrar()"/>
+	<mx:Label x="504" y="363" text="Total:" fontSize="14" fontStyle="italic" fontWeight="bold"/>
+	<mx:Button id="btnExportar" x="562.75" y="401.65" label="Exportar" click="exportar()"/>
 </mx:TitleWindow>

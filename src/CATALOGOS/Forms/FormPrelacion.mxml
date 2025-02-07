@@ -30,9 +30,8 @@
 			
 			public var datos:DatosProd = new DatosProd();
 			
-			public var wsMS:WebService;   					
-			public var du:Utils;
 			private var titulo:String;
+			private var du:Utils;
 			private var global:Globales;
 			private var tipoAccion:int;
 			
@@ -152,15 +151,9 @@
 				}	
 			}	
 			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}	
-			
 			private function iniVar():void{
 				this.indPre = -1;
-				this.vScroll = -1;
+				this.vScroll = undefined;
 			}
 			
 			private function mostrarFormArtefacto(tipo:int):void{

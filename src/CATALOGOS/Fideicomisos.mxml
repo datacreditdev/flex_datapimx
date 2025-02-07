@@ -279,8 +279,8 @@
 			}
 			
 			private function permisos():void{
-				var mod_id:String = Application.application._Current_Mod_Id;
-				var perfil_id:String = Application.application.cadPerfil;
+				var mod_id:String = global.obtenerModulo();
+				var perfil_id:String = global.obtenerCadPerfil();
 				var ws:WebService = new WebService;
 				var Params:Array = new Array;
 				var cont:int;
@@ -399,7 +399,7 @@
 				itemDoubleClick="mostrarFormSup(2)"> 
 				<Data:columns>
 					<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO" width="60"/>
-					<mx:DataGridColumn headerText="CLAVE" dataField="CLAVE" width="100"/>
+					<mx:DataGridColumn headerText="CLAVE" dataField="CLAVE" width="130"/>
 					<mx:DataGridColumn headerText="FECHA" dataField="FECSUP" width="80"/>
 					<mx:DataGridColumn headerText="ALIAS" dataField="ALIAS" width="130"/>
 				</Data:columns>

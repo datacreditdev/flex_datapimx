@@ -32,7 +32,6 @@
 			
 			public var datos:DatosSolic = new DatosSolic();
 			
-			public var wsMS:WebService;	
 			public var tipoAccion:int;
 			public var cdgAcred:String;
 			public var acred:String;
@@ -150,12 +149,6 @@
 				wsCat.getInfoAcred.send(5, params);
 			}
 			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}	
-			
 			public function mostrarFormProy():void{
 				var fecha:String;
 				var oItem:Object;
@@ -172,7 +165,7 @@
 				comMttoProy.currentState = "individual";
 				comMttoProy.addEventListener(Event.REMOVED_FROM_STAGE, actualizaProy);
 				PopUpManager.centerPopUp(comMttoProy);
-				fecha = global.formatoFecha(global.obtenerFechaSistema());
+				fecha = global.formatearFecha(global.obtenerFechaSistema());
 				comMttoProy.init("", "", cdgAcred, acred, fecha, proyObj);		
 			}
 	]]>

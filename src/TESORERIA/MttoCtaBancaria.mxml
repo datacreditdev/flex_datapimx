@@ -355,19 +355,8 @@
 				Alert.show("Debe capturar los datos requeridos",titulo,4,null,null,global.iAlert);
 		}
 		
-		public function validaMonto(event:Event):void{
-			numVal.source = TextInput(event.currentTarget);
-			vResult = numVal.validate();
-
-			if (vResult.type!=ValidationResultEvent.VALID)
-               	TextInput(event.currentTarget).text = "";
-		}
-		
 		]]>
 	</mx:Script>
-	
-	<mx:NumberValidator id="numVal" property="text" precision="2" required="false"
-        allowNegative="true" domain="real" decimalSeparator="." thousandsSeparator=","/>
 	<mx:Canvas x="20.5" y="9" width="459.5" height="70" styleName="canvasMod">
 		<mx:Label id="lblIB" x="14.5" y="9" text="Institución Bancaria:"/>
 		<mx:Label id="lblSB" x="19.5" y="39" text="Sucursal Bancaria:"/>
@@ -388,7 +377,7 @@
 		<mx:TextInput id="txtAlias" x="123" y="132" width="280" maxChars="150"/>
 		<mx:TextInput id="txtTitular" x="123.5" y="194" width="279.5" maxChars="150"/>
 		<mx:TextInput id="txtFavor" x="123.5" y="224" width="279.5"/>
-		<mx:TextInput id="txtSaldo" x="123.5" y="254" width="110.25" maxChars="13" restrict="0-9;." change="validaMonto(event)"/>
+		<mx:TextInput id="txtSaldo" x="123.5" y="254" width="90" maxChars="18" restrict="0-9;.;," focusOut="{global.formatearMonto(event)}"/>
 		<mx:Label id="lblMoneda" x="69.5" y="287" text="Moneda:" textAlign="right"/>
 		<Data:CustomComboBox id="cboMoneda" x="123.5" y="284" width="230" labelField="nombre"/>
 		<Data:CustomComboBox id="cboTipoCta" x="123" y="162" width="230" labelField="nombre" change="modificarTipoCta()"/>

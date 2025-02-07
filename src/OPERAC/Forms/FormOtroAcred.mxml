@@ -186,10 +186,10 @@
 			}
 			
 			public function permisos():void{
-				var perfil_id:String = Application.application.cadPerfil;
+				var perfil_id:String = global.obtenerCadPerfil();
 				var cont:int;
 				
-				if (permiso.permisosMarcaAcred(Application.application.PERFIL_ID)){
+				if (permiso.permisosMarcaAcred(global.obtenerArrayPerfil())){
 					marca.visible = true;
 					enano.visible = true;
 					cantEnano.visible = true;	

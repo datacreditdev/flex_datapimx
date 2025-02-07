@@ -37,11 +37,11 @@
 			
 			public var objMtto:Sprite = new Sprite();
 			
+			public var wsMS:WebService;	
+			public var titulo:String;
 			private var du:Utils;
 			private var global:Globales;
 			private var permiso:Permisos;
-			public var wsMS:WebService;	
-			public var titulo:String;
 			
 			//variables que especifican el indice del elemento 
 			//seleccionado al realizar la modificacion del registro
@@ -134,7 +134,7 @@
 							dgCredRev.validateNow();
 							dgCredRev.verticalScrollPosition = vScroll;
 							dgCredRev.selectedIndex = indCredRev;
-							this.accionCredRev = 0;
+							accionCredRev = 0;
 						}
 						activarContGarantia(true);
 					}
@@ -152,9 +152,15 @@
 				Alert.show("¿Desea eliminar el Crédito seleccionado?",titulo, Alert.YES|Alert.NO,null, manejadorEliminarCredRev,global.iQuest);
 			}
 			
+			private function formatearMontoGrid(item:Object, column:DataGridColumn):String{
+				var result:String;
+                result = global.formatearMoneda(item[column.dataField]);
+                return result;
+			}
+			
 			public function iniVar():void{
 				this.indCredRev = -1;
-				this.vScroll = -1;
+				this.vScroll = undefined;
 			}
 			
 			public function initApp():void{
@@ -176,14 +182,14 @@
 			}			
 			
 			public function manejadorEliminarCredRev(e:CloseEvent):void{
-				if(e.detail==Alert.YES){    	
+				if(e.detail == Alert.YES){    	
 					var acred:String = dgAcred.selectedItem.CODIGO;
 					var autorizado:String = dgCredRev.selectedItem.FAUTORIZADO; 
 					initConexion();
 					du.sCursor();
 					global.bloquear();
 					wsMS.addEventListener(ResultEvent.RESULT, setAccionCredRevolvente);
-					wsMS.setAccionCredRevolvente.send(3, acred, autorizado, "", "", 0, "", "");
+					wsMS.setAccionCredRevolvente.send(3, acred, autorizado, "", "", 0, "", "", "", "");
 			    } 
 			}
 			
@@ -233,8 +239,8 @@
 			}
 			
 			public function permisos():void{
-				var mod_id:String = Application.application._Current_Mod_Id;
-				var perfil_id:String = Application.application.cadPerfil;
+				var mod_id:String = global.obtenerModulo();
+				var perfil_id:String = global.obtenerCadPerfil();
 				var Params:Array;
 				var cont:int;
 				
@@ -253,7 +259,7 @@
 						switch(dPermisos.Table[i].OPCION.toString()){
 							case "C":
 								consulta = true;
-								if (permiso.permisosModSolic(Application.application.PERFIL_ID)){
+								if (permiso.permisosModSolic(global.obtenerArrayPerfil())){
 									borrado = true;
 									alta = true;
 									edicion = true;
@@ -322,13 +328,9 @@
 				<Data:columns>
 					<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO" width="70"/>
 					<mx:DataGridColumn headerText="ACREDITADO" dataField="NOMBRE_CL" width="250"/>
-					<mx:DataGridColumn headerText="SUCURSAL" dataField="COORD" width="80"/>
-					<mx:DataGridColumn headerText="NOMBRE SUCURSAL" dataField="NOMCO" width="170"/>
-					<mx:DataGridColumn headerText="CODIGO" dataField="CDGPRPE" width="70"/>
-					<mx:DataGridColumn headerText="OFICIAL DE CREDITO" dataField="PROMOTOR" width="200"/>
-					<mx:DataGridColumn headerText="MUNICIPIO" dataField="MUNIC" width="150"/>
-					<mx:DataGridColumn headerText="LOCALIDAD" dataField="LOCALIDAD" width="200"/>
-					<mx:DataGridColumn headerText="COLONIA" dataField="COLONIA" width="200"/>
+					<mx:DataGridColumn headerText="OFICINA" dataField="COORD" width="80"/>
+					<mx:DataGridColumn headerText="NOMBRE OFICINA" dataField="NOMCO" width="170"/>
+					<mx:DataGridColumn headerText="NOMBRE EJECUTIVO" dataField="NOMASESOR" width="200"/>
 				</Data:columns>
 			</Data:RowColorDataGrid>
 		</mx:Canvas>
@@ -342,7 +344,7 @@
 				horizontalScrollPolicy="auto"> 
 				<Data:columns>
 					<mx:DataGridColumn headerText="AUTORIZADO" dataField="FAUTORIZADO" width="120"/>
-					<mx:DataGridColumn headerText="MONTO" dataField="MONTO" width="120"/>
+					<mx:DataGridColumn headerText="MONTO" dataField="MONTO" width="120" labelFunction="formatearMontoGrid"/>
 					<mx:DataGridColumn headerText="INICIO" dataField="FINICIO" width="120"/>
 					<mx:DataGridColumn headerText="FIN" dataField="FFIN" width="120"/>
 					<mx:DataGridColumn headerText="FIN CREDITO REVOLVENTE" dataField="FFINPRC" width="140"/>

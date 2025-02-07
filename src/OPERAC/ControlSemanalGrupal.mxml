@@ -278,7 +278,7 @@
 					pagoTeo = Number(acred[i].pagoTeo);
 					pagoReal = Number(acred[i].pagoReal);
 					dif = pagoTeo - pagoReal;
-					acredObj[i].diferencia = global.formatoDecimalSinSep(dif.toString());
+					acredObj[i].diferencia = global.formatearDecimalSinSep(dif.toString());
 				}
 				dgAcred.validateNow();
 				dgAcred.selectedItem = indAcred;
@@ -298,7 +298,7 @@
 			public function calculaMora():void{
 				var mora:Number = 0;
 				mora = Number(txtPagoTeo.text) - Number(txtPagoReal.text) - Number(txtAport.text);
-				txtMora.text = global.formatoDecimalSinSep(mora.toString());	
+				txtMora.text = global.formatearDecimalSinSep(mora.toString());	
 			}
 			
 			public function calculaPagoReal():void{
@@ -319,7 +319,7 @@
 				for(var i:int = 0; i < acred.length; i++){
 					pagoTeo += Number(acred[i].pagoTeo);
 				}
-				txtPagoTeo.text = global.formatoDecimalSinSep(pagoTeo.toString());
+				txtPagoTeo.text = global.formatearDecimalSinSep(pagoTeo.toString());
 			}
 			
 			public function calculaAhorro():void{

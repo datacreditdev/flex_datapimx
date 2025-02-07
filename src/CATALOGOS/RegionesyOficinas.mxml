@@ -50,6 +50,8 @@
 			public var indReg:int;
 			public var indCoord:int;
 			public var vScroll:Number;
+			public var tituloReg:String;
+			public var tituloCoord:String;
 			
 			//variables que indican los permisos disponibles para el usuario
 			public var alta:Boolean = new Boolean();
@@ -175,11 +177,11 @@
 			}
 
 			public function eliminarCoord():void{
-				Alert.show("¿Desea eliminar la Coordinación seleccionada?", "Mantenimiento de Coordinaciones", Alert.YES|Alert.NO,null, manejadorEliminarCoord,global.iQuest);
+				Alert.show("¿Desea eliminar la Coordinación seleccionada?", tituloCoord, Alert.YES|Alert.NO,null, manejadorEliminarCoord,global.iQuest);
 			}
 			
 			public function eliminarReg():void{
-				Alert.show("¿Desea eliminar la Gerencia Regional seleccionada?", "Mantenimiento de Gerencias Regionales", Alert.YES|Alert.NO,null, manejadorEliminarReg,global.iQuest);
+				Alert.show("¿Desea eliminar la Gerencia Regional seleccionada?", tituloReg, Alert.YES|Alert.NO,null, manejadorEliminarReg,global.iQuest);
 			}
 			
 			public function iniVar():void{
@@ -192,6 +194,9 @@
 				du = new Utils();
 				global = new Globales();
 				permiso = new Permisos();
+				tituloReg = "Mantenimiento de Gerencia Regional";
+				tituloCoord = "Mantenimiento de Oficina";
+								
 				alta = false;
 				borrado = false;
 				consulta = false;
@@ -264,7 +269,7 @@
 								comMttoCoord.init(tipo, codReg, regional, codCoord, coord, codPers);
 							}
 							else
-								Alert.show("Debe seleccionar el registro de Acreditado","Mantenimiento de Acreditado",4,null,null,global.iAlert);
+								Alert.show("Debe seleccionar el registro de Oficina", tituloCoord, 4, null, null, global.iAlert);
 						break;
 					}
 				}
@@ -297,15 +302,15 @@
 								PopUpManager.centerPopUp(comMttoReg);
 							}
 							else
-								Alert.show("Debe seleccionar el registro de la Gerencia Regional","Mantenimiento de Gerencias Regionales",4,null,null,global.iAlert); 
+								Alert.show("Debe seleccionar el registro de la Gerencia Regional", tituloReg, 4, null, null, global.iAlert); 
 							break;
 					}
 				}
 			}
 			
 			public function permisos():void{
-				var mod_id:String = Application.application._Current_Mod_Id;
-				var perfil_id:String = Application.application.cadPerfil;
+				var mod_id:String = global.obtenerModulo();
+				var perfil_id:String = global.obtenerCadPerfil();
 				var Params:Array;
 				var cont:int;
 				
@@ -321,7 +326,7 @@
 						switch(dPermisos.Table[i].OPCION.toString()){
 							case "C":
 								consulta = true;
-								if (permiso.permisosRegionales(Application.application.PERFIL_ID)){
+								if (permiso.permisosRegionales(global.obtenerArrayPerfil())){
 									borrado = true;
 									alta = true;
 									edicion = true;
@@ -380,7 +385,7 @@
 				if (res.substr(0,1) == "1")
 					buscarListaCoord(1);
 				else
-					Alert.show(res.substr(2,res.length-1), "Mantenimiento de Coordinaciones",4,null,null,global.iAlert);
+					Alert.show(res.substr(2,res.length-1), tituloCoord, 4, null, null, global.iAlert);
 			}
 
 			private function setAccionReg(event:ResultEvent):void{
@@ -392,7 +397,7 @@
 				if (res.substr(0,1) == "1")
 					buscarReg(1);
 				else
-					Alert.show("Error en el proceso: " + res, "Mantenimiento de Gerencias Regionales",4,null,null,global.iAlert);
+					Alert.show("Error en el proceso: " + res, tituloReg, 4, null, null, global.iAlert);
 			}
 			
 		]]>

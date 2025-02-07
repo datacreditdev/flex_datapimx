@@ -37,8 +37,10 @@
 			import mx.core.Application;
 			import mx.effects.*;
 			import mx.events.EffectEvent;
+			import mx.events.ValidationResultEvent;
 			import mx.rpc.events.ResultEvent;
 			import mx.rpc.soap.WebService;
+			import mx.validators.Validator;
 			
 			private var _xmlMoneda:XML = new XML();
 			private var _xmlBase:XML = new XML();
@@ -50,10 +52,10 @@
 			
 			public var datos:DatosProd = new DatosProd();
 			
-			private var global:Globales;	
-			private var du:Utils;
-			public var wsMS:WebService;	
 			public var tipoAccion:int;
+			private var du:Utils;
+			private var global:Globales;
+			private var vResult:ValidationResultEvent;
 			
 			public function enviarDatosProd(formData:DatosProd):void{
 				var invalidArray:Array = Validator.validateAll([codigoV, nombreV, monedaV, tipoCredV, validoV, minimoV, maximoV]);
@@ -64,8 +66,8 @@
 					formData.moneda = cboMoneda.selectedItem.id;
 					formData.tipoCred = cboTipoCred.selectedItem.id;
 					formData.valido = dtfValido.text;
-					formData.montoMin = Number(txtMinimo.text);
-					formData.montoMax = Number(txtMaximo.text);
+					formData.montoMin = Number(global.formatearNumerico(txtMinimo.text));
+					formData.montoMax = Number(global.formatearNumerico(txtMaximo.text));
 					formData.baseCalc = cboBaseCalc.selectedItem.id;
 					formData.guarda = true;
 				}
@@ -200,8 +202,8 @@
 								}
 								txtCodigo.text = info.cdgProd;
 								txtNombre.text = info.nombreProd;
-								txtMinimo.text = info.montoMin.toString();
-								txtMaximo.text = info.montoMax.toString();
+								txtMinimo.text = global.formatearDecimal(info.montoMin.toString());
+								txtMaximo.text = global.formatearDecimal(info.montoMax.toString());
 								dtfValido.selectedDate = global.convCadenaFecha(info.valido);						
 							}	
 						});
@@ -214,15 +216,8 @@
 				//Obtiene catalogo de Tipos de Crédito
 				wsCat.getCatalogoGral.send(16);	
 			}	
-			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}	
 		]]>
-	</mx:Script>
-
+	</mx:Script>	
 	<mx:Canvas x="14.75" y="29" width="520.5" height="190" styleName="canvasMod">
 		<mx:Label id="lblCodigo" x="26" y="12" text="Código:" width="43"/>
 		<mx:TextInput id="txtCodigo" x="77" y="10" width="55" maxChars="4"/>
@@ -235,8 +230,8 @@
 		<mx:Canvas x="23" y="99" width="200" height="80" styleName="canvasMod">
 			<mx:Label id="lblMinimo" x="32" y="12" text="Mínimo:"/>
 			<mx:Label id="lblMaximo" x="28" y="44" text="Máximo:"/>
-			<mx:TextInput id="txtMinimo" x="80" y="10" width="90"/>
-			<mx:TextInput id="txtMaximo" x="80" y="42" width="90"/>
+			<mx:TextInput id="txtMinimo" x="80" y="10" width="90" restrict="0-9;.;," maxChars="18" focusOut="{global.formatearMonto(event)}"/>
+			<mx:TextInput id="txtMaximo" x="80" y="42" width="90" restrict="0-9;.;," maxChars="18" focusOut="{global.formatearMonto(event)}"/>
 		</mx:Canvas>
 		<mx:Label id="lblMonto" x="23" y="80" text="Monto"/>
 		<mx:DateField id="dtfValido" x="344" y="78" width="109"/>

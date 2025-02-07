@@ -36,18 +36,16 @@
 			public var datos:DatosSolic = new DatosSolic();
 			
 			public var wsMS:WebService;	
-			public var du:Utils;
 			public var tipoAccion:int;
 			public var estatus:String;
+			private var du:Utils;
 			private var global:Globales;
 			
 			public function activaControles(_xmlControl:XML):void{	
 			}
 			
 			public function cargaParamsProd(_xmlParam:XML):void{
-				var j:int;
-				
-				for(j = 0; j < monedaObj.length; j++){
+				for(var j:int = 0; j < monedaObj.length; j++){
 					if(monedaObj[j].id.toString() == _xmlParam.Table[0].CDGMO){
 						cboMoneda.selectedIndex = j;
 						break;	
@@ -63,7 +61,6 @@
 			
 			public function enviarDatosSolic(formData:DatosSolic):void{
 				var invalidArray:Array = Validator.validateAll([fecSolicV, fecEntV]);
-				var j:int;
 				
 				if(invalidArray.length == 0 && situacion.selection != null){	
 					formData.fecSolic = dtfSolicitud.text;
@@ -82,7 +79,6 @@
 			}
 			
 			public function formateaMoneda():void{
-				var i:int;
 				var cont:int = _xmlMoneda.elements().length();
 				var oItem:Object
 				
@@ -91,7 +87,7 @@
 				oItem.nombre = "--Seleccionar--";
 				monedaObj.addItem(oItem);
 				
-				for (i = 0; i < cont; i++){
+				for (var i:int = 0; i < cont; i++){
 					oItem = new Object();
 					oItem.id = _xmlMoneda.Table[i].CODIGO;	
 					oItem.nombre = _xmlMoneda.Table[i].NOMBRE;
@@ -176,9 +172,9 @@
 			}
 			
 			public function validaEntrega():void{
-				var fecAct:String = global.formatoFechaYYYYMMDD(global.obtenerFechaSistema());
-				var fecIni:String = global.formatoFechaYYYYMMDD(dtfInicio.selectedDate);
-				var fecSol:String = global.formatoFechaYYYYMMDD(dtfSolicitud.selectedDate);
+				var fecAct:String = global.formatearFechaYYYYMMDD(global.obtenerFechaSistema());
+				var fecIni:String = global.formatearFechaYYYYMMDD(dtfInicio.selectedDate);
+				var fecSol:String = global.formatearFechaYYYYMMDD(dtfSolicitud.selectedDate);
 				if (fecIni < fecAct){
 					Alert.show("La fecha de entrega debe ser igual o posterior a la fecha actual","Mantenimiento de Solicitud",4,null,null,global.iAlert);
 					if(fecAct > fecSol)

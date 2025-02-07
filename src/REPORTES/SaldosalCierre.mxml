@@ -25,18 +25,24 @@
 			private var _xmlRep:XML =  new XML();
 			
 			public var wsRep:WebService;
-			public var du:Utils;
 			public var titulo:String;
 			public var fecha:String;
+			private var du:Utils;
 			private var global:Globales;
 						
 			private function exportar():void{
 				var dgE:ExcelExportXls = new ExcelExportXls();
 				dgE.loadDGInExcel(dgReporte,null,titulo + " del " + fecha);		
-			}			
+			}		
+			
+			private function formatearMontoGrid(item:Object, column:DataGridColumn):String{
+				var result:String;
+                result = global.formatearMoneda(item[column.dataField]);
+                return result;
+			}	
 						
 			public function generar(event:Event):void{
-				if(comFiltroFecha.valida() == true){
+				if(comFiltroFecha.valida()){
 					fecha = comFiltroFecha.dtfFecha.text;
 					initConexion();
 					du.sCursor();
@@ -71,7 +77,7 @@
 				global = new Globales();
 				du = new Utils();
 				titulo = "Saldos al Cierre";
-				comFiltroFecha.init("0", titulo.toUpperCase(), "01/08/2009", global.formatoFecha(global.obtenerFechaSistema()));
+				comFiltroFecha.init("0", titulo.toUpperCase(), "01/08/2009", global.formatearFecha(global.obtenerFechaSistema()));
 				comFiltroFecha.addEventListener("enviar",generar);
 				comFiltroFecha.addEventListener("limpiar",limpiar);
 			}		
@@ -89,7 +95,6 @@
 			}
 		]]>
 	</mx:Script>
-	
 	<control:FiltroFecha id="comFiltroFecha" x="10"/>
 	<Data:RowColorDataGrid id="dgReporte" sortableColumns="true" x="18.45" y="155" width="763.05" visible="true" height="176" horizontalScrollPolicy="on">
 		<Data:columns>
@@ -104,18 +109,18 @@
 			<mx:DataGridColumn headerText="INICIO" dataField="FINICIO"/>
 			<mx:DataGridColumn headerText="FIN" dataField="FFIN"/>
 			<mx:DataGridColumn headerText="FECHA LIQUIDA" dataField="FLIQUIDA" width="110"/>
-			<mx:DataGridColumn headerText="MONTO ENTREGADO" dataField="MONTO_ENTREGADO" width="130"/>
+			<mx:DataGridColumn headerText="MONTO ENTREGADO" dataField="MONTO_ENTREGADO" width="130" labelFunction="formatearMontoGrid"/>
 			<mx:DataGridColumn headerText="TASA" dataField="TASA"/>
 			<mx:DataGridColumn headerText="PLAZO" dataField="PLAZO"/>
 			<mx:DataGridColumn headerText="PERIODO" dataField="PERIODO"/>
-			<mx:DataGridColumn headerText="SALDO CAPITAL" dataField="SDOCAPITAL" width="120"/>
-			<mx:DataGridColumn headerText="SALDO INTERES" dataField="SDOINTERES" width="120"/>
-			<mx:DataGridColumn headerText="SALDO MORATORIOS" dataField="SDORECARGOS" width="120"/>
-			<mx:DataGridColumn headerText="SALDO TOTAL" dataField="SDOTOTAL" width="130"/>
+			<mx:DataGridColumn headerText="SALDO CAPITAL" dataField="SDOCAPITAL" width="120" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="SALDO INTERES" dataField="SDOINTERES" width="120" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="SALDO MORATORIOS" dataField="SDORECARGOS" width="120" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="SALDO TOTAL" dataField="SDOTOTAL" width="130" labelFunction="formatearMontoGrid"/>
 			<mx:DataGridColumn headerText="DIAS MORA" dataField="DIAS_MORA"/>
-			<mx:DataGridColumn headerText="MORA CAPITAL" dataField="MORACAP" width="120"/>
-			<mx:DataGridColumn headerText="MORA INTERES" dataField="MORAINT" width="120"/>
-			<mx:DataGridColumn headerText="MORA TOTAL" dataField="MORATOTAL" width="120"/>
+			<mx:DataGridColumn headerText="MORA CAPITAL" dataField="MORACAP" width="120" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="MORA INTERES" dataField="MORAINT" width="120" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="MORA TOTAL" dataField="MORATOTAL" width="120" labelFunction="formatearMontoGrid"/>
 		</Data:columns>
 	</Data:RowColorDataGrid>
 	<mx:Button id="btnExportar" x="678.5" y="123" label="Exportar Excel" click="exportar()" enabled="false"/>

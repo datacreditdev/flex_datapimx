@@ -23,7 +23,6 @@
 		
 		public var prodObj:ArrayCollection = new ArrayCollection();
 	
-		public var global:Globales;
 		public var openEffect:Effect = new WipeDown();
 		public var closeEffect:Effect = new WipeDown();
 		public var wsMS:WebService;	
@@ -32,7 +31,8 @@
 		public var codProd:String;
 		public var prod:String; 
 		public var titulo:String;
-		public var du:Utils;
+		private var du:Utils;
+		private var global:Globales;
 		
 		public function cargaInfoProd(codTipoProd:String, codProd:String, prod:String):void{
 			var wsCat:WebService = new WebService;
@@ -77,7 +77,7 @@
 			formTasasProd.enviarDatosProd(info);
 			formRecargosProd.enviarDatosProd(info);
 			formEntregaProd.enviarDatosProd(info);
-			formCondicionesProd.enviarDatosProd(info);
+			//formCondicionesProd.enviarDatosProd(info);
 			formComisiones.enviarDatosProd(info);
 			formPrelacion.enviarDatosProd(info);
 			validaFinal();
@@ -99,8 +99,7 @@
 									info.perCapital, info.multPerCap, info.metodoCobro, info.formaDist, info.instrumento, 
 									info.interes, info.fijaMCI, info.fijaFDI, info.fijaTas, info.tasaFija, info.factorTasa, 
 									info.aplican, info.metodoAplic, info.fijaMAP, info.fijaRec, info.formaEntre, info.fijaEnt, 
-									info.sexo, info.edadMin, info.edadMax, info.plazoMin, info.plazoMax, info.tipoMov, 
-									info.montoCom, info.porcCom, info.tipoCargo, info.opcional, info.orden, info.artefacto);			
+									info.tipoMov, info.montoCom, info.porcCom, info.tipoCargo, info.opcional, info.orden, info.artefacto);			
 		}
 	
 		public function init():void{
@@ -186,7 +185,7 @@
 			formTasasProd.init(info, tipoAccion);
 			formRecargosProd.init(info, tipoAccion);
 			formEntregaProd.init(info, tipoAccion);
-			formCondicionesProd.init(info, tipoAccion);
+			//formCondicionesProd.init(info, tipoAccion);
 			formComisiones.init(info, tipoAccion);
 			formPrelacion.init(info,tipoAccion);
 		}
@@ -204,7 +203,7 @@
 			formTasasProd.init(info, tipoAccion);
 			formRecargosProd.init(info, tipoAccion);
 			formEntregaProd.init(info, tipoAccion);
-			formCondicionesProd.init(info, tipoAccion);
+			//formCondicionesProd.init(info, tipoAccion);
 			formComisiones.init(info, tipoAccion);
 			formPrelacion.init(info, tipoAccion);
 		}
@@ -263,10 +262,10 @@
 			<Forms:FormEntregaProd id="formEntregaProd" x="89.5" y="0">
 			</Forms:FormEntregaProd>
 		</mx:Canvas>
-		<mx:Canvas label="Condiciones" width="100%" height="100%">
+		<!--<mx:Canvas label="Condiciones" width="100%" height="100%">
 			<Forms:FormCondicionesProd id="formCondicionesProd" x="89.5" y="0">
 			</Forms:FormCondicionesProd>
-		</mx:Canvas>
+		</mx:Canvas>-->
 		<mx:Canvas label="Capital" width="100%" height="100%">
 			<Forms:FormCapitalInteresProd id="formCapIntProd" x="74.5" y="10">
 			</Forms:FormCapitalInteresProd>

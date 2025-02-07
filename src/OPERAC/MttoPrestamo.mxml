@@ -79,7 +79,7 @@
 			
 			public function actualizaProdCred(event:ListEvent):void{
 				var formProd:FormProductoSolic = event.currentTarget as FormProductoSolic;
-				activaControles(formProd.obtieneTipoProd(), formProd.obtieneProdCred(), 1);
+				activaControles(formProd.obtenerTipoProd(), formProd.obtenerProdCred(), 1);
 			}
 			
 			//Funcion que actualiza la situacion de la solicitud

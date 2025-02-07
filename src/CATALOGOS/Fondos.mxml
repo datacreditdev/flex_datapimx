@@ -115,6 +115,7 @@
 				dgDisp.dataProvider = null;
 				du.initWsCat(wsCat);
 				du.sCursor();
+				
 			 	if (tipo == 1)
 					global.bloquear();
 					
@@ -132,7 +133,7 @@
 							dgDisp.validateNow();
 							dgDisp.verticalScrollPosition = vScroll;
 							dgDisp.selectedIndex = indDisp;
-							this.accionDisp = 0;
+							accionDisp = 0;
 						}
 					}
 					seleccionarDisp();
@@ -150,6 +151,7 @@
 				dgLC.dataProvider = null;
 				du.initWsCat(wsCat);
 				du.sCursor();
+				
 			 	if (tipo == 1)
 					global.bloquear();
 				
@@ -167,7 +169,7 @@
 							dgLC.validateNow();
 							dgLC.verticalScrollPosition = vScroll;
 							dgLC.selectedIndex = indLC;
-							this.accionLC = 0;
+							accionLC = 0;
 						}
 					}
 					seleccionarLC();
@@ -185,6 +187,7 @@
 					dgOF.dataProvider = null;
 					du.initWsCat(wsCat);
 					du.sCursor();
+					
 					if(tipo == 1)
 						global.bloquear();
 						
@@ -202,7 +205,7 @@
 								dgOF.validateNow();
 								dgOF.verticalScrollPosition = vScroll;
 								dgOF.selectedIndex = indOF;
-								this.accionOF = 0;
+								accionOF = 0;
 							}
 						}
 						seleccionarOF();	
@@ -225,11 +228,17 @@
 				Alert.show("¿Desea eliminar el Fondo seleccionado?", tituloOF, Alert.YES|Alert.NO,null, manejadorEliminarOF,global.iQuest);
 			}
 			
+			private function formatearMontoGrid(item:Object, column:DataGridColumn):String{
+				var result:String;
+                result = global.formatearMoneda(item[column.dataField]);
+                return result;
+			}
+			
 			public function iniVar():void{
 				this.indOF = -1;
 				this.indLC = -1;
 				this.indDisp = -1;
-				this.vScroll = -1;
+				this.vScroll = undefined;
 			}
 			
 			public function initApp():void{
@@ -253,7 +262,7 @@
 			}
 			
 			public function manejadorEliminarDisp(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codOF:String = dgOF.selectedItem.CODIGO;
 					var codLC:String = dgLC.selectedItem.CODIGO;  
 					var codDisp:String = dgDisp.selectedItem.CODIGO;
@@ -267,7 +276,7 @@
 			}
 			
 			public function manejadorEliminarLC(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codOF:String = dgOF.selectedItem.CODIGO;
 					var codLC:String = dgLC.selectedItem.CODIGO;  
 			    	initConexion();
@@ -280,7 +289,7 @@
 			}
 			
 			public function manejadorEliminarOF(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codOF:String = dgOF.selectedItem.CODIGO;
 			    	initConexion();
 			    	du.sCursor();
@@ -396,8 +405,8 @@
 			}
 			
 			public function permisos():void{
-				var mod_id:String = Application.application._Current_Mod_Id;
-				var perfil_id:String = Application.application.cadPerfil;
+				var mod_id:String = global.obtenerModulo();
+				var perfil_id:String = global.obtenerCadPerfil();
 				var ws:WebService = new WebService;
 				var Params:Array = new Array;
 				var cont:int;
@@ -546,7 +555,7 @@
 					<mx:DataGridColumn headerText="CONTRATO" dataField="CONTRATO" width="100"/>
 					<mx:DataGridColumn headerText="DESCRIPCION" dataField="DESCRIPCION" width="250"/>
 					<mx:DataGridColumn headerText="FEC. OTORGADA" dataField="FENTREGA" width="130"/>
-					<mx:DataGridColumn headerText="CANTIDAD" dataField="CANTIDAD" width="90"/>
+					<mx:DataGridColumn headerText="CANTIDAD" dataField="CANTIDAD" width="90" labelFunction="formatearMontoGrid"/>
 				</Data:columns>
 			</Data:RowColorDataGrid>
 		</mx:Canvas>
@@ -565,7 +574,7 @@
 					<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO" width="70"/>
 					<mx:DataGridColumn headerText="CONTRATO" dataField="CONTRATO" width="100"/>
 					<mx:DataGridColumn headerText="DESCRIPCION" dataField="DESCRIPCION" width="250"/>
-					<mx:DataGridColumn headerText="CANTIDAD" dataField="CANTIDAD" width="80"/>
+					<mx:DataGridColumn headerText="CANTIDAD" dataField="CANTIDAD" width="80" labelFunction="formatearMontoGrid"/>
 					<mx:DataGridColumn headerText="DISPOSICION" dataField="FDISP" width="80"/>
 				</Data:columns>
 			</Data:RowColorDataGrid>

@@ -24,11 +24,13 @@
 			import mx.utils.ArrayUtil;
 			import mx.validators.Validator;
 			
-			private var _xmlMetCob:XML =  new XML();
-			private var _xmlDistInt:XML =  new XML();
+			private var _xmlMetCob:XML = new XML();
+			private var _xmlDistInt:XML = new XML();
+			private var _xmlInstCred:XML = new XML();
 		
 			public var metCobObj:ArrayCollection = new ArrayCollection();
 			public var distIntObj:ArrayCollection = new ArrayCollection();
+			public var instCredObj:ArrayCollection = new ArrayCollection();
 			
 			public var datos:DatosSolic = new DatosSolic();
 			
@@ -53,10 +55,14 @@
 				else if(distInt == "N")
 					distInteres.enabled = true;
 				//Tasa
-				if(tasa == "S")
+				if(tasa == "S"){
 					cnvTasa.enabled = false;
-				else if(tasa == "N")
+					instrumento.enabled = false;
+				}
+				else if(tasa == "N"){
 					cnvTasa.enabled = true;
+					instrumento.enabled = true;
+				}
 			}
 			
 			private function actualizarMetodo():void{
@@ -80,6 +86,12 @@
 						break;
 					}
 				}	
+				for(j = 0; j < instCredObj.length; j++){
+					if(instCredObj[j].id.toString() == _xmlParam.Table[0].CDGTI){
+						cboInstrumento.selectedIndex = j;
+						break;
+					}
+				}	
 				txtInteres.text = _xmlParam.Table[0].TASA;
 			}
 			
@@ -94,6 +106,7 @@
 				if(invalidArray.length == 0){	
 					formData.metodoCobro = cboMetodoCobro.selectedItem.id;
 					formData.formaDist = cboDistInteres.selectedItem.id;
+					formData.instrumento = cboInstrumento.selectedItem.id;
 					formData.interes = Number(txtInteres.text);
 					formData.guardaTasas = true;
 				}
@@ -121,6 +134,25 @@
 					item.push(oItem);
 				}
 				distIntObj = new ArrayCollection(item);
+			}
+			
+			public function formateaInstCred():void{
+				var cont:int = _xmlInstCred.elements().length();
+				var oItem:Object;
+				var item:Array = new Array;		
+							
+				oItem = new Object();
+				oItem.id = "0";	
+				oItem.descripcion = "--Seleccionar--";
+				item.push(oItem);
+				
+				for (var i:int = 0; i < cont; i++){
+					oItem = new Object();
+					oItem.id = _xmlInstCred.Table[i].CODIGO;	
+					oItem.descripcion = _xmlInstCred.Table[i].DESCRIPCION;
+					item.push(oItem);
+				}
+				instCredObj = new ArrayCollection(item);
 			}
 			
 			private function formateaMetCob():void{
@@ -174,31 +206,52 @@
 							formateaDistInt();
 							cboDistInteres.dataProvider = distIntObj;
 						}
-							
-						if (info != null){
-							var j:int;
-							
-							datos = info;
-							
-							if(info.situacion == 'A' || info.situacion == 'R' || estatus == "evaluacion" || estatus == "entrega")
-								desactivaControles();
-							
-							for(j = 0; j < metCobObj.length; j++){
-								if(metCobObj[j].id.toString() == info.metodoCobro){
-									cboMetodoCobro.selectedIndex = j;
-									actualizarMetodo();
-									break;
-								}
+						
+						du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
+							_xmlInstCred = new XML(evt.result.toString());
+						
+							du.rCursor();
+							du.closeWs(wsCat);
+						
+							if (_xmlInstCred.elements().length() > 0){
+								formateaInstCred();
+								cboInstrumento.dataProvider = instCredObj;
 							}
 							
-							for(j = 0; j < distIntObj.length; j++){
-								if(distIntObj[j].id.toString() == info.formaDist){
-									cboDistInteres.selectedIndex = j;
-									break;
+							if (info != null){
+								var j:int;
+								
+								datos = info;
+								
+								if(info.situacion == 'A' || info.situacion == 'R' || estatus == "evaluacion" || estatus == "entrega")
+									desactivaControles();
+								
+								for(j = 0; j < metCobObj.length; j++){
+									if(metCobObj[j].id.toString() == info.metodoCobro){
+										cboMetodoCobro.selectedIndex = j;
+										actualizarMetodo();
+										break;
+									}
 								}
-							}
-							txtInteres.text = info.interes.toString();
-						}		
+								
+								for(j = 0; j < distIntObj.length; j++){
+									if(distIntObj[j].id.toString() == info.formaDist){
+										cboDistInteres.selectedIndex = j;
+										break;
+									}
+								}
+								
+								for(j = 0; j < instCredObj.length; j++){
+									if(instCredObj[j].id.toString() == info.instrumento){
+										cboInstrumento.selectedIndex = j;
+										break;
+									}
+								}
+								txtInteres.text = info.interes.toString();
+							}	
+						});
+						//Obtiene informacion del Instrumento de Credito
+						wsCat.getCatalogoGral.send(19);		
 					});
 					//Obtiene informacion de la distribucion de interes
 					wsCat.getCatalogoGral.send(18);
@@ -228,10 +281,12 @@
 			<mx:ComboBox id="cboDistInteres" width="285" labelField="nombre"/>
 		</mx:FormItem>
 	</mx:Canvas>
-	<mx:Canvas id="cnvTasa" x="155" y="107" width="400" height="45" styleName="canvasMod">
-		<mx:FormItem id="interes" label="Interés:" x="126.5" y="10" width="145">
+	<mx:Canvas id="cnvTasa" x="155" y="93" width="400" height="75" styleName="canvasMod">
+		<mx:FormItem id="instrumento" label="Instrumento:" x="34" y="10" width="330">
+			<mx:ComboBox id="cboInstrumento" width="245" labelField="descripcion"/>
+		</mx:FormItem>
+		<mx:FormItem id="interes" label="Interés:" x="57.5" y="42" width="145">
 			<mx:TextInput id="txtInteres" width="80" restrict="0-9;." change="validaMonto(event)"/>
 		</mx:FormItem>
 	</mx:Canvas>
-	<mx:Label x="155" y="88" text="Tasa fija"/>
 </mx:Canvas>

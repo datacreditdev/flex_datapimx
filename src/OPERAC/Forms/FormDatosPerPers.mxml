@@ -660,7 +660,7 @@
 			}
 			
 			public function permisos():void{
-				if(permiso.permisosModAcred(Application.application.PERFIL_ID)){
+				if(permiso.permisosModAcred(global.obtenerArrayPerfil())){
 					txtRfc.editable = true;
 					txtCurp.editable = true;
 				}
@@ -710,7 +710,7 @@
 	<mx:FormItem label="CURP:" id="curp" visible="true">
 		<mx:TextInput id="txtCurp" focusIn="generaCURP()" editable="false"/>
 	</mx:FormItem>
-	<mx:FormItem label="IFE:" id="ife" visible="true">
+	<mx:FormItem label="INE:" id="ife" visible="true">
 		<mx:TextInput id="txtIfe" restrict="0-9" maxChars="15"/>
 	</mx:FormItem>
 	<mx:FormItem label="Fiel:" id="fiel" visible="true" width="380">
@@ -727,7 +727,7 @@
 	<mx:FormItem label="Teléfono:" id="telefono" visible="true">
 		<mx:TextInput id="txtTel" restrict="0-9" maxChars="15"/>
 	</mx:FormItem>
-	<mx:FormItem label="Email:" id="email" visible="true">
-		<mx:TextInput id="txtEmail" maxChars="100"/>
+	<mx:FormItem label="Correo:" id="email" visible="true" width="380">
+		<mx:TextInput id="txtEmail" maxChars="100" width="260"/>
 	</mx:FormItem>
 </mx:Form>

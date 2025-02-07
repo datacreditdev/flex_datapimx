@@ -28,7 +28,6 @@
 			
 			public var datos:DatosSolic = new DatosSolic();
 			
-			public var wsMS:WebService;
 			private var du:Utils;
 			private var global:Globales;
 			private var vResult:ValidationResultEvent;
@@ -70,12 +69,6 @@
 				}
 			}
 			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}
-			
 			private function mostrarFormPers():void{
 				var obj:DisplayObject = this.parentApplication.parent;
 				var comBusqPers:MttoBusqPersona = new MttoBusqPersona;
@@ -85,7 +78,7 @@
 			}
 			
 			private function permisos():void{
-				var perfil_id:String = Application.application.cadPerfil;
+				var perfil_id:String = global.obtenerCadPerfil();
 				var cont:int;
 			}
 		

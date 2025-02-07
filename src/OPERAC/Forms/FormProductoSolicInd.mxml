@@ -47,9 +47,9 @@
 			import mx.rpc.events.FaultEvent;
 			import mx.validators.Validator;
 			
-			private var _xmlTipoProd:XML =  new XML();
-			private var _xmlCR:XML =  new XML();
-			private var _xmlProdCred:XML =  new XML();
+			private var _xmlTipoProd:XML = new XML();
+			private var _xmlCR:XML = new XML();
+			private var _xmlProdCred:XML = new XML();
 
 			public var credRevObj:ArrayCollection = new ArrayCollection();
 			public var tipoProdObj:ArrayCollection = new ArrayCollection();
@@ -57,7 +57,6 @@
 			
 			public var datos:DatosSolic = new DatosSolic();
 			
-			public var wsMS:WebService;
 			public var tipoAccion:int;
 			public var coord:String;
 			public var tipo:String;
@@ -140,8 +139,8 @@
 			
 			public function filtraProdCred(item:Object):Boolean{
 				var isMatch:Boolean = false
-				var d:Date = DateField.stringToDate(item.fecVal.toString(),"DD/MM/YYYY")
-				if(d >= global.obtenerFechaSistema())
+				var fecha:Date = DateField.stringToDate(item.fecVal.toString(),"DD/MM/YYYY")
+				if(fecha >= global.obtenerFechaSistema())
 					isMatch = true 
 				return isMatch; 
 			}
@@ -277,12 +276,6 @@
 				wsCat.getCatalogoGral.send(11);
 			}
 			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}		
-			
 			public function obtieneProdCred():String{
 				return cboProdCred.selectedItem.id;
 			}
@@ -319,10 +312,10 @@
 	]]>
 	</mx:Script>
 	<mx:Canvas id="cnvProdSolic" x="10" y="10" width="520" height="110" styleName="canvasMod">
-		<mx:FormItem label="Tipo de Producto:" id="tipoProd" visible="true" x="48.5" y="19" width="335">
-			<mx:ComboBox id="cboTipoProd" labelField="nombre" change="cargaProdCred()" width="225"/>
+		<mx:FormItem label="Tipo de Producto:" id="tipoProd" x="48.5" y="19" width="410" visible="true">
+			<mx:ComboBox id="cboTipoProd" labelField="nombre" width="300" change="cargaProdCred()"/>
 		</mx:FormItem>
-		<mx:FormItem label="Producto de Crédito:" id="prodCred" visible="true" x="34.5" y="63" width="460">
+		<mx:FormItem label="Producto de Crédito:" id="prodCred" x="34.5" y="63" width="460" visible="true">
 			<mx:ComboBox id="cboProdCred" labelField="nombre" width="340" change="actualizaProd()"/>
 		</mx:FormItem>
 	</mx:Canvas>

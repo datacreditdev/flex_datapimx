@@ -39,8 +39,9 @@
 			[Bindable]
 			public var dPermisos:XML = new XML();
 			
-			public var wsMS:WebService = new WebService();	
-			public var du:Utils;
+			public var wsMS:WebService;	
+			public var titulo:String;
+			private var du:Utils;
 			private var global:Globales;
 			private var permiso:Permisos;
 			
@@ -113,6 +114,7 @@
 				dgCiclo.dataProvider = null;
 				du.initWsCat(wsCat);
 				du.sCursor();
+				
 			 	if (tipo == 1)
 					global.bloquear();
 				
@@ -130,7 +132,7 @@
 							dgCiclo.validateNow();
 							dgCiclo.verticalScrollPosition = vScroll;
 							dgCiclo.selectedIndex = indCiclo;
-							this.accionCiclo = 0;
+							accionCiclo = 0;
 						}
 					}
 					seleccionaCiclo();
@@ -147,6 +149,7 @@
 				dgProducto.dataProvider = null;
 				du.initWsCat(wsCat);
 				du.sCursor();
+				
 			 	if (tipo == 1)
 					global.bloquear();
 					
@@ -164,7 +167,7 @@
 							dgProducto.validateNow();
 							dgProducto.verticalScrollPosition = vScroll;
 							dgProducto.selectedIndex = indProd;
-							this.accionProd = 0;
+							accionProd = 0;
 						}
 					}
 					seleccionaProd();
@@ -182,6 +185,7 @@
 					dgTipoProd.dataProvider = null;
 					du.initWsCat(wsCat);
 					du.sCursor();
+					
 					if(tipo == 1)
 						global.bloquear();
 					
@@ -199,7 +203,7 @@
 								dgTipoProd.validateNow();
 								dgTipoProd.verticalScrollPosition = vScroll;
 								dgTipoProd.selectedIndex = indTipoProd;
-								this.accionTipoProd = 0;
+								accionTipoProd = 0;
 							}
 						}
 						seleccionaTipoProd();
@@ -211,28 +215,35 @@
 			}
 
 			public function eliminarCiclo():void{
-				Alert.show("¿Desea eliminar el Ciclo seleccionado?", "Mantenimiento de Productos", Alert.YES|Alert.NO,null, manejadorEliminarCiclo,global.iQuest);
+				Alert.show("¿Desea eliminar el Ciclo seleccionado?", titulo, Alert.YES|Alert.NO,null, manejadorEliminarCiclo,global.iQuest);
 			}
 			
 			public function eliminarProd():void{
-				Alert.show("¿Desea eliminar el Producto seleccionado?", "Mantenimiento de Productos", Alert.YES|Alert.NO,null, manejadorEliminarProd,global.iQuest);
+				Alert.show("¿Desea eliminar el Producto seleccionado?", titulo, Alert.YES|Alert.NO,null, manejadorEliminarProd,global.iQuest);
 			}
 			
 			public function eliminarTipoProd():void{
-				Alert.show("¿Desea eliminar el Tipo de Producto seleccionado?", "Mantenimiento de Productos", Alert.YES|Alert.NO,null, manejadorEliminarTipoProd,global.iQuest);
+				Alert.show("¿Desea eliminar el Tipo de Producto seleccionado?", titulo, Alert.YES|Alert.NO,null, manejadorEliminarTipoProd,global.iQuest);
+			}
+			
+			private function formatearMontoGrid(item:Object, column:DataGridColumn):String{
+				var result:String;
+                result = global.formatearMoneda(item[column.dataField]);
+                return result;
 			}
 	
 			public function iniVar():void{
 				this.indTipoProd = -1;
 				this.indProd = -1;
 				this.indCiclo = -1;
-				this.vScroll = -1;
+				this.vScroll = undefined;
 			}
 			
 			public function initApp():void{
 				du = new Utils();
 				global = new Globales();
 				permiso = new Permisos();
+				titulo = "Mantenimiento de Productos";
 				alta = false;
 				borrado = false;
 				consulta = false;
@@ -247,7 +258,7 @@
 			}
 			
 			public function manejadorEliminarCiclo(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codTipoProd:String = dgTipoProd.selectedItem.CODIGO;
 					var codProd:String = dgProducto.selectedItem.CODIGO;  
 					var ciclo:String = dgCiclo.selectedItem.CICLO;
@@ -260,7 +271,7 @@
 			}
 			
 			public function manejadorEliminarProd(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codTipoProd:String = dgTipoProd.selectedItem.CODIGO;
 					var codProd:String = dgProducto.selectedItem.CODIGO;  
 			    	initConexion();
@@ -272,7 +283,7 @@
 			}
 			
 			public function manejadorEliminarTipoProd(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codTipoProd:String = dgTipoProd.selectedItem.CODIGO;
 			    	initConexion();
 			    	du.sCursor();
@@ -310,7 +321,7 @@
 								PopUpManager.centerPopUp(comMttoCiclo);
 							}
 							else
-								Alert.show("Debe seleccionar el registro de Ciclo","Mantenimiento de Productos",4,null,null,global.iAlert);
+								Alert.show("Debe seleccionar el registro de Ciclo",titulo,4,null,null,global.iAlert);
 						break;
 					}
 				}
@@ -346,7 +357,7 @@
 								PopUpManager.centerPopUp(comMttoProd);
 							}
 							else
-								Alert.show("Debe seleccionar el registro de Producto de Crédito","Mantenimiento de Productos",4,null,null,global.iAlert);
+								Alert.show("Debe seleccionar el registro de Producto de Crédito",titulo,4,null,null,global.iAlert);
 						break;
 					}
 				}
@@ -380,23 +391,27 @@
 								PopUpManager.centerPopUp(comMttoTipoProd);
 							}
 							else
-								Alert.show("Debe seleccionar el registro de la Gerencia Regional","Mantenimiento de Productos",4,null,null,global.iAlert); 
+								Alert.show("Debe seleccionar el registro de la Gerencia Regional",titulo,4,null,null,global.iAlert); 
 							break;
 					}
 				}
 			}
 			
 			public function permisos():void{
-				var mod_id:String = Application.application._Current_Mod_Id;
-				var perfil_id:String = Application.application.cadPerfil;
+				var ws:WebService = new WebService;
+				var mod_id:String = global.obtenerModulo();
+				var perfil_id:String = global.obtenerCadPerfil();
 				var Params:Array;
 				var cont:int;
 				
-				wsMS = du.initWs(wsMS);
+				du.initWs(ws);
 				du.sCursor();
 					
-				du.ejecutaWsMethod(wsMS,function(evt:ResultEvent):void {											
+				du.ejecutaWsMethod(ws,function(evt:ResultEvent):void {											
 					dPermisos = new XML(evt.result.toString());
+					
+					du.rCursor();
+					du.closeWs(ws);
 						
 					cont = dPermisos.elements().length();
 					
@@ -404,11 +419,9 @@
 						switch(dPermisos.Table[i].OPCION.toString()){
 							case "C":
 								consulta = true;
-								if (permiso.permisosModGrupos(Application.application.PERFIL_ID)){
-									borrado = true;
-									alta = true;
-									edicion = true;
-								}
+								borrado = true;
+								alta = true;
+								edicion = true;
 								break;	
 							/*case "B":
 								borrado = true;
@@ -421,14 +434,12 @@
 								break;	*/			
 						}
 					}
-					btnAgregar.enabled = alta;
-					du.rCursor();
-					du.closeWs(wsMS);					
+					btnAgregar.enabled = alta;	
 				});
 				Params = new Array();
 				Params[0] = perfil_id;
 				Params[1] = mod_id;
-				wsMS.ESLoginMethods.send(14,Params);	//Método que indica las opciones disponibles para el usuario	
+				ws.ESLoginMethods.send(14,Params);	//Método que indica las opciones disponibles para el usuario	
 			}
 			
 			public function seleccionaCiclo():void{
@@ -477,7 +488,7 @@
 				if (res.substr(0,1) == "1")
 					buscarListaProd(1);
 				else
-					Alert.show(res.substr(2,res.length-1), "Mantenimiento de Productos",4,null,null,global.iAlert);
+					Alert.show(res.substr(2,res.length-1), titulo, 4, null, null, global.iAlert);
 			}
 
 			private function setAccionTipoProd(event:ResultEvent):void{
@@ -489,7 +500,7 @@
 				if (res.substr(0,1) == "1")
 					buscarTipoProd(1);
 				else
-					Alert.show("Error en el proceso: " + res, "Mantenimiento de Productos",4,null,null,global.iAlert);
+					Alert.show("Error en el proceso: " + res, titulo, 4, null, null, global.iAlert);
 			}
 			
 			private function setEliminaCiclo(event:ResultEvent):void{
@@ -501,7 +512,7 @@
 				if (res.substr(0,1) == "1")
 					buscarListaCiclo(1);
 				else
-					Alert.show(res.substr(2,res.length-1), "Mantenimiento de Productos",4,null,null,global.iAlert);
+					Alert.show(res.substr(2,res.length-1), titulo, 4, null, null, global.iAlert);
 			}
 			
 			private function setEliminaProd(event:ResultEvent):void{
@@ -513,7 +524,7 @@
 				if (res.substr(0,1) == "1")
 					buscarListaProd(1);
 				else
-					Alert.show(res.substr(2,res.length-1), "Mantenimiento de Productos",4,null,null,global.iAlert);
+					Alert.show(res.substr(2,res.length-1), titulo, 4, null, null, global.iAlert);
 			}
 		]]>
 	</mx:Script>
@@ -548,11 +559,13 @@
 				<Data:columns>
 					<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO" width="60"/>
 					<mx:DataGridColumn headerText="NOMBRE" dataField="NOMBRE" width="250"/>
-					<mx:DataGridColumn headerText="MONEDA" dataField="MONEDA" width="120"/>
+					<mx:DataGridColumn headerText="MONEDA" dataField="MONEDA" width="70"/>
+					<mx:DataGridColumn headerText="TIPO CREDITO" dataField="TIPOCRED" width="110"/>
+					<mx:DataGridColumn headerText="VIGENCIA" dataField="VIGENCIA" width="80"/>
 					<mx:DataGridColumn headerText="PERIODICIDAD" dataField="PERIO" width="90"/>
-					<mx:DataGridColumn headerText="PLAZO" dataField="PLAZO" width="50"/>
-					<mx:DataGridColumn headerText="TASA" dataField="TASA" width="50"/>
-					<mx:DataGridColumn headerText="VIGENCIA" dataField="VIGENCIA" width="60"/>
+					<!--<mx:DataGridColumn headerText="PLAZO" dataField="PLAZO" width="50"/>
+					<<mx:DataGridColumn headerText="TASA" dataField="TASA" width="50"/>-->
+					
 				</Data:columns>
 			</Data:RowColorDataGrid>
 		</mx:Canvas>
@@ -569,7 +582,7 @@
 				<Data:columns>
 					<mx:DataGridColumn headerText="CICLO" dataField="CICLO" width="40"/>
 					<mx:DataGridColumn headerText="PLAZO" dataField="DURACION" width="50"/>
-					<mx:DataGridColumn headerText="MONTO MAXIMO" dataField="MONTOMAX" width="50"/>
+					<mx:DataGridColumn headerText="MONTO MAXIMO" dataField="MONTOMAX" width="50" labelFunction="formatearMontoGrid"/>
 					<mx:DataGridColumn headerText="TASA" dataField="TASA" width="50"/>
 				</Data:columns>
 			</Data:RowColorDataGrid>

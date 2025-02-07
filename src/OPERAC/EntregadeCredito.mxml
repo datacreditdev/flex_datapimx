@@ -43,8 +43,9 @@
 			
 			public var objMtto:Sprite = new Sprite();
 			
-			public var wsMS:WebService;	
-			public var du:Utils;
+			public var wsMS:WebService;
+			public var titulo:String;
+			private var du:Utils;
 			private var global:Globales;
 			private var permiso:Permisos;
 			
@@ -71,8 +72,10 @@
 			}
 			
 			public function activarContModSolic(band:Boolean):void{
-				if(edicion == true)	
+				if(edicion == true){	
 					btnEditarSolic.enabled = band;
+					btnImpEdoCta.enabled = band;
+				}
 			}
 			
 			public function actualizarAcred(event:Event):void{
@@ -87,32 +90,30 @@
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
 				
-				if (txtCodAcred.text != "" || txtPaterno.text != "" || txtNombre.text != ""){
-					btnBuscar.setFocus();
-					dgAcred.dataProvider = null;
+				btnBuscar.setFocus();
+				dgAcred.dataProvider = null;
+				
+				du.initWsCat(wsCat);
+				du.sCursor();
+				global.bloquear();
+				
+				du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
+					_xmlAcred = new XML(evt.result);
 					
-					du.initWsCat(wsCat);
-					du.sCursor();
-					global.bloquear();
+					du.rCursor();
+					du.closeWs(wsCat);
+					global.desbloquear();
 					
-					du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
-						_xmlAcred = new XML(evt.result);
-						
-						du.rCursor();
-						du.closeWs(wsCat);
-						global.desbloquear();
-						
-						if (_xmlAcred.elements().length() > 0){
-							dgAcred.dataProvider = _xmlAcred.Table;
-						}
-						seleccionaAcred(); 	
-					});
-					params[0] = global.obtenerUsuario();
-					params[1] = txtCodAcred.text;
-					params[2] = txtNombre.text;
-					params[3] = txtPaterno.text;
-					wsCat.getInfoAcred.send(9, params);
-				}	
+					if (_xmlAcred.elements().length() > 0){
+						dgAcred.dataProvider = _xmlAcred.Table;
+					}
+					seleccionaAcred(); 	
+				});
+				params[0] = global.obtenerUsuario();
+				params[1] = txtCodAcred.text;
+				params[2] = txtNombre.text;
+				params[3] = txtPaterno.text;
+				wsCat.getInfoAcred.send(9, params);	
 			}
 			
 			private function buscarListaPrn(tipo:int):void{
@@ -122,6 +123,7 @@
 				
 				du.initWsCat(wsCat);
 				du.sCursor();
+				
 			 	if(tipo == 1)
 			 		global.bloquear();
 			 		
@@ -132,14 +134,14 @@
 					du.closeWs(wsCat);
 					global.desbloquear();
 					
-					dgSolic.dataProvider = null;
+					dgCred.dataProvider = null;
 					if (_xmlSolic.elements().length() > 0){
-						dgSolic.dataProvider = _xmlSolic.Table;
+						dgCred.dataProvider = _xmlSolic.Table;
 						if (accionSolic == 2){
-							dgSolic.validateNow();
-							dgSolic.verticalScrollPosition = vScroll;
-							dgSolic.selectedIndex = indSolic;
-							this.accionSolic = 0;
+							dgCred.validateNow();
+							dgCred.verticalScrollPosition = vScroll;
+							dgCred.selectedIndex = indSolic;
+							accionSolic = 0;
 						}
 					}
 					seleccionaSolic();
@@ -148,15 +150,37 @@
 			 	wsCat.getListado.send(36 ,params);
 			}
 			
+			private function formatearMonto(item:Object, column:DataGridColumn):String{
+				var result:String;
+                result = global.formatearMoneda(item[column.dataField]);
+                return result;
+			}
+			
+			private function imprimirEdoCta():void{
+				var url:String;
+				var codAcred:String;
+				var infoCiclo:String;
+				var usuario:String;
+				var nomUsuario:String;
+				
+				codAcred = "&acred=" + dgAcred.selectedItem.CODIGO;
+				infoCiclo = "&ciclo=" + dgCred.selectedItem.CICLO;
+				usuario = "&usuario=" + global.obtenerUsuario();
+				nomUsuario = "&nomUsuario=" + global.obtenerNombreUsuario();
+				url = global.urlPdf + "&id=4" + codAcred + infoCiclo + usuario + nomUsuario;
+				navigateToURL(new URLRequest(url), "_blank");
+			}
+			
 			public function iniVar():void{
 				this.indSolic = -1;
-				this.vScroll = -1;
+				this.vScroll = undefined;
 			}
 			
 			public function initApp():void{
 				du = new Utils();
 				global = new Globales();
 				permiso = new Permisos();
+				titulo = "Mantenimiento de Crédito";
 				alta = false;
 				borrado = false;
 				consulta = false;
@@ -192,35 +216,35 @@
 					munic = dgAcred.selectedItem.MUNIC;
 					switch(tipo){
 						case 2: 
-							if (dgSolic.selectedIndex >= 0){
+							if (dgCred.selectedIndex >= 0){
 								accionSolic = tipo;					
 								comMttoPrn = MttoPrestamoInd(PopUpManager.createPopUp(this,MttoPrestamoInd,true));  
 								comMttoPrn.addEventListener(Event.REMOVED_FROM_STAGE, actualizarPrn);
 								PopUpManager.centerPopUp(comMttoPrn);
 								iniVar();
-								this.vScroll = dgSolic.verticalScrollPosition;		
-								this.indSolic = dgSolic.selectedIndex;
-								ciclo = dgSolic.selectedItem.CICLO;
+								this.vScroll = dgCred.verticalScrollPosition;		
+								this.indSolic = dgCred.selectedIndex;
+								ciclo = dgCred.selectedItem.CICLO;
 								comMttoPrn.cargaInfoPrn(acred, nomAcred, ciclo, munic, coord, nomCoord, promotor);
 							}
 							else
-								Alert.show("Debe seleccionar el registro de Solicitud","Mantenimiento de Solicitud",4,null,null,global.iAlert); 
+								Alert.show("Debe seleccionar el registro de Crédito", titulo, 4, null, null, global.iAlert); 
 							break;
 					}
 				}
 			}
 			
 			public function permisos():void{
-				var mod_id:String = Application.application._Current_Mod_Id;
-				var perfil_id:String = Application.application.cadPerfil;
+				var ws:WebService = new WebService;
+				var mod_id:String = global.obtenerModulo();
+				var perfil_id:String = global.obtenerCadPerfil();
 				var Params:Array;
 				var cont:int;
 				
-				wsMS = new WebService();
-				wsMS = du.initWs(wsMS);
+				du.initWs(ws);
 				du.sCursor();
 					
-				du.ejecutaWsMethod(wsMS,function(evt:ResultEvent):void {											
+				du.ejecutaWsMethod(ws,function(evt:ResultEvent):void {											
 					dPermisos = new XML(evt.result.toString());
 						
 					cont = dPermisos.elements().length();
@@ -229,7 +253,7 @@
 						switch(dPermisos.Table[i].OPCION.toString()){
 							case "C":
 								consulta = true;
-								if (permiso.permisosModSolic(Application.application.PERFIL_ID)){
+								if (permiso.permisosModSolic(global.obtenerArrayPerfil())){
 									borrado = true;
 									alta = true;
 									edicion = true;
@@ -247,16 +271,16 @@
 						}
 					}
 					du.rCursor();
-					du.closeWs(wsMS);					
+					du.closeWs(ws);					
 				});
 				Params = new Array();
 				Params[0] = perfil_id;
 				Params[1] = mod_id;
-				wsMS.ESLoginMethods.send(14,Params);	//Método que indica las opciones disponibles para el usuario	
+				ws.ESLoginMethods.send(14,Params);	//Método que indica las opciones disponibles para el usuario	
 			}		
 			
 			public function seleccionaAcred():void{
-				dgSolic.dataProvider = null;
+				dgCred.dataProvider = null;
 				if (dgAcred.selectedIndex >= 0){
 					activarContSolic(true);
 				}
@@ -265,7 +289,7 @@
 			}
 			
 			public function seleccionaSolic():void{
-				if (dgSolic.selectedIndex >= 0)
+				if (dgCred.selectedIndex >= 0)
 					activarContModSolic(true);
 				else
 					activarContModSolic(false);
@@ -287,15 +311,14 @@
 		]]>
 	</mx:Script>
 	<mx:Canvas width="800" height="509" backgroundColor="#FFFFFF" backgroundAlpha="1.0">
-		<mx:Canvas id="cnvDetalle" x="18.5" y="84" width="763.5" height="194" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true">
-			<Data:RowColorDataGrid id="dgAcred" x="10" y="10" width="741.5" height="172" sortableColumns="false" verticalScrollPolicy="auto" 
+		<mx:Canvas id="cnvDetalle" x="18.5" y="84" width="763.5" height="175" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true">
+			<Data:RowColorDataGrid id="dgAcred" x="10" y="10" width="741.5" height="150" sortableColumns="false" verticalScrollPolicy="auto" 
 				horizontalScrollPolicy="auto" itemClick="seleccionaAcred()" doubleClickEnabled="true" itemDoubleClick="buscarListaPrn(1)"> 
 				<Data:columns>
 					<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO" width="70"/>
 					<mx:DataGridColumn headerText="ACREDITADO" dataField="NOMBRE_CL" width="250"/>
 					<mx:DataGridColumn headerText="OFICINA" dataField="COORD" width="80"/>
 					<mx:DataGridColumn headerText="NOMBRE OFICINA" dataField="NOMCO" width="170"/>
-					<!--<mx:DataGridColumn headerText="EJECUTIVO" dataField="ASESOR" width="100"/>-->
 					<mx:DataGridColumn headerText="NOMBRE EJECUTIVO" dataField="NOMASESOR" width="200"/>
 				</Data:columns>
 			</Data:RowColorDataGrid>
@@ -304,26 +327,26 @@
 		<mx:Canvas x="721" y="39" width="61" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true">
 			<mx:Button id="btnBuscar" x="10" y="3" icon="@Embed(source='assets/ico_lupa.png')" click="buscarAcred()" toolTip="Buscar Acreditado" width="40"/>
 		</mx:Canvas>
-		<mx:Canvas id="cnvDetalle0" x="18.5" y="337" width="763.5" height="162" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true" verticalScrollPolicy="off">
-			<Data:RowColorDataGrid id="dgSolic" x="10" y="10" width="741.5" height="140" sortableColumns="false" resizableColumns="false" 
+		<mx:Canvas id="cnvDetalle0" x="18.5" y="318" width="763.5" height="181" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true" verticalScrollPolicy="off">
+			<Data:RowColorDataGrid id="dgCred" x="10" y="10" width="741.5" height="159" sortableColumns="false" resizableColumns="false" 
 				verticalScrollPolicy="auto" itemClick="seleccionaSolic()" doubleClickEnabled="true" itemDoubleClick="mostrarFormPrn(2)" 
-				horizontalScrollPolicy="on"> 
+				horizontalScrollPolicy="off"> 
 				<Data:columns>
 					<mx:DataGridColumn headerText="CICLO" dataField="CICLO" width="50"/>
 					<mx:DataGridColumn headerText="SOLICITUD" dataField="FSOLICITUD" width="90"/>
 					<mx:DataGridColumn headerText="FECHA DE ENTREGA" dataField="INICIO" width="140"/>
-					<mx:DataGridColumn headerText="MONTO AUTORIZADO" dataField="CANTAUTOR" width="140"/>
-					<mx:DataGridColumn headerText="MONTO ENTREGADO" dataField="CANTENTRE" width="140"/>
+					<mx:DataGridColumn headerText="MONTO AUTORIZADO" dataField="CANTAUTOR" width="140" labelFunction="formatearMonto"/>
+					<mx:DataGridColumn headerText="MONTO ENTREGADO" dataField="CANTENTRE" width="140" labelFunction="formatearMonto"/>
 					<mx:DataGridColumn headerText="SITUACION" dataField="SITUACION" width="100"/>
 				</Data:columns>
 			</Data:RowColorDataGrid>
 		</mx:Canvas>
-		<mx:Canvas x="621" y="292" width="110" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true" id="canvas1">
+		<mx:Canvas x="627" y="273" width="155" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true" id="canvas1">
 			<mx:Button id="btnEditarSolic" x="58" y="3" icon="@Embed(source='assets/edit.png')" enabled="false" click="mostrarFormPrn(2)" toolTip="Editar Solicitud" width="40"/>
 			<mx:Button id="btnDatosSolic" x="10" y="3" icon="@Embed(source='assets/folder.png')" click="buscarListaPrn(1)" enabled="false" toolTip="Solicitudes del Acreditado" width="40"/>
+			<mx:Button id="btnImpEdoCta" x="106" y="3" icon="@Embed(source='assets/print.png')" enabled="false" click="imprimirEdoCta()" toolTip="Emitir Estado de Cuenta" width="40"/>
 		</mx:Canvas>
-		<mx:Label x="18.5" y="308" text="CICLO" width="247" fontSize="12" fontWeight="bold" fontStyle="italic"/>
-		<mx:Image x="739" y="286" width="43" height="43" source="assets/notepad.png"/>
+		<mx:Label x="18.5" y="289" text="CICLO" fontSize="12" fontWeight="bold" fontStyle="italic"/>
 		<mx:Canvas x="18" y="39" width="695" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true">
 			<mx:Label id="lblCodAcred" x="15" y="7" text="Código:" textAlign="right"/>
 			<mx:TextInput id="txtCodAcred" x="64" y="6" width="68" enter="buscarAcred()" maxChars="6" restrict="0-9"/>

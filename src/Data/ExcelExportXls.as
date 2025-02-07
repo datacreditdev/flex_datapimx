@@ -14,7 +14,7 @@ package Data
 	 	private var urlExcelExport:String;
 	    private var titulo:String;
 	 	private var disp:ExcelExportJsonDispatcher;
-	 	public var isXls:Boolean = true;
+	 	public var isXls:Boolean = false;
 	 	public var header:Boolean = false;
 			
 		public function ExcelExportXls():void{

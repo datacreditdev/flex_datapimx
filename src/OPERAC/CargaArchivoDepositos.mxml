@@ -180,7 +180,7 @@
             else if(index == 2)
                 cellObject.CICLO = cellValue;
             else if(index == 3)
-                cellObject.INICIO = global.formatoFechaExcel(Number(cellValue));
+                cellObject.INICIO = global.formatearFechaExcel(Number(cellValue));
             else if(index == 4)
                 cellObject.TIPOMOV = cellValue;               
         }
@@ -272,7 +272,7 @@
 		private function limpiar():void{
 			var fec:Date;
 			fec = global.obtenerFechaSistema();
-			dtFecha.selectedDate = global.seleccionaDiaHabil(new Date(fec.fullYear,fec.month,fec.date)); 
+			dtFecha.selectedDate = global.seleccionarDiaHabil(new Date(fec.fullYear,fec.month,fec.date)); 
 			dgInfo.dataProvider = null;	
 			infoObj = new ArrayCollection();
 			txtArchivo.text = "";	

@@ -350,6 +350,7 @@
 				info.devolucion = _xmlPrn.Table[0].CANTDEVOL;
 				info.devoluciones = _xmlPrn.Table[0].SUMADEV;
 				info.moneda = _xmlPrn.Table[0].CDGMO;
+				info.naturaleza = _xmlPrn.Table[0].NATURALEZA;
 				
 				//Datos del calendario de la solicitud
 				info.periodicidad = _xmlPrn.Table[0].PERIODICIDAD;
@@ -398,7 +399,7 @@
 				comTablaAmort = CtrlTablaAmort(PopUpManager.createPopUp(obj,CtrlTablaAmort,true));
 				comTablaAmort.addEventListener("enviar", actualizaTablaAmort);
 				PopUpManager.centerPopUp(comTablaAmort);
-				comTablaAmort.init(cdgAcred, txtAcred.text, txtCiclo.text, tipoCred, editable);
+				comTablaAmort.init(2, cdgAcred, txtAcred.text, txtCiclo.text, tipoCred, editable);
 			}
 			
 			private function registraCausaRechazo(event:ListEvent):void{

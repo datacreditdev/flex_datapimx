@@ -4,7 +4,6 @@
 	
 	<mx:Script>
 	<![CDATA[
-		import mx.events.IndexChangedEvent;
 		import Data.Globales;
 		import Data.Utils;
 		import mx.collections.ArrayCollection;
@@ -21,10 +20,9 @@
 		private var comObj:ArrayCollection = new ArrayCollection();
 		private var tipoObj:ArrayCollection = new ArrayCollection();
 		
-		public var global:Globales;
-		public var wsMS:WebService;	
 		public var titulo:String;
-		public var du:Utils;
+		private var du:Utils;
+		private var global:Globales;
 		private var codTipoMov:String;
 		private var indice:int;
 		private var vResult:ValidationResultEvent;
@@ -39,7 +37,7 @@
 			this.title = "Edición";
 			codTipoMov = comObj[indice].tipoMov;
 			txtMov.text = comObj[indice].nomMov;
-			txtMonto.text = comObj[indice].monto;
+			txtMonto.text = global.formatearDecimal(comObj[indice].monto);
 			txtPorcentaje.text = comObj[indice].porc;
 			for(var i:int = 0; i < tipoObj.length; i++){
 				if(comObj[indice].formaAfec.toString() == tipoObj[i].id.toString()){
@@ -55,12 +53,11 @@
 		}
 	
 	 	private function enviar():void{
-			if(valida() == true)
+			if(valida())
 				guardaComision();
 		}
 		
 		private function formateaTipo():void{
-			var i:int;
 			var cont:int = _xmlTipo.elements().length();
 			var oItem:Object;
 			var item:Array = new Array;
@@ -70,7 +67,7 @@
 			oItem.desc = "--Seleccionar--";
 			item.push(oItem);
 				
-			for(i = 0; i < cont; i++){
+			for(var i:int = 0; i < cont; i++){
 				oItem = new Object();
 				oItem.id = _xmlTipo.Table[i].CODIGO;
 				oItem.desc = _xmlTipo.Table[i].DESCRIPCION;
@@ -84,7 +81,7 @@
 			if(indice >= 0){
 				comObj[indice].tipoMov = codTipoMov;
 				comObj[indice].nomMov = txtMov.text;
-				comObj[indice].monto = txtMonto.text;
+				comObj[indice].monto = global.formatearNumerico(txtMonto.text);
 				comObj[indice].porc = txtPorcentaje.text;
 				comObj[indice].formaAfec = cboTipoCargo.selectedItem.id;
 				comObj[indice].descForma = cboTipoCargo.selectedLabel;
@@ -97,7 +94,7 @@
 				var item:Array = new Array;
 				oItem.tipoMov = codTipoMov;
 				oItem.nomMov = txtMov.text;  
-				oItem.monto = txtMonto.text;
+				oItem.monto = global.formatearNumerico(txtMonto.text);
 				oItem.porc = txtPorcentaje.text;
 				oItem.formaAfec = cboTipoCargo.selectedItem.id;
 				oItem.descForma = cboTipoCargo.selectedLabel;
@@ -140,12 +137,6 @@
 			wsCat.getCatalogoGral.send(34);
 		}
 		
-		public function initConexion():void{				
-			wsMS = new WebService();			
-			wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-			wsMS.loadWSDL();
-		}	
-			
 		private function mostrarFormTipoMov():void{
 			//Permite seleccionar el control padre del objeto contenedor para centrar el formulario al desplegarlo
 		 	var obj:DisplayObject = this.parentApplication.parent;
@@ -173,7 +164,7 @@
 				return false;
 			}
 			else{
-				if(txtMonto.text != "" && txtPorcentaje.text != ""){
+				if((txtMonto.text != "" && Number(global.formatearNumerico(txtMonto.text)) > 0) && txtPorcentaje.text != ""){
 					Alert.show("Debe registrar el monto o el porcentaje de la comisión.",titulo,4,null,null,global.iAlert);
 					return false;
 				}	
@@ -185,14 +176,6 @@
 			return true;
 		}
 		
-		private function validaMonto(event:Event):void{
-			numVal.source = TextInput(event.currentTarget);
-			vResult = numVal.validate();
-
-			if (vResult.type!=ValidationResultEvent.VALID)
-               	TextInput(event.currentTarget).text = "";
-		}
-		
 		private function validaPorc(event:Event):void{
 			porcVal.source = TextInput(event.currentTarget);
 			vResult = porcVal.validate();
@@ -200,12 +183,9 @@
 			if (vResult.type!=ValidationResultEvent.VALID)
                	TextInput(event.currentTarget).text = "";
 		}
+		
 	]]>
-	</mx:Script>
-
-	<mx:NumberValidator id="numVal" property="text" precision="2" required="false"
-        allowNegative="true" domain="real" decimalSeparator="." thousandsSeparator=","/>
-        
+	</mx:Script>        
     <mx:NumberValidator id="porcVal" property="text" precision="5" required="false"
         allowNegative="true" domain="real" decimalSeparator="." thousandsSeparator=","/>
         
@@ -213,7 +193,7 @@
 		<mx:Label id="lblMov" x="126.5" y="15" text="Movimiento:"/>
 		<mx:TextInput id="txtMov" x="195.5" y="13" width="222" editable="false"/>
 		<mx:Label id="lblMonto" x="150.5" y="47" text="Monto:"/>
-		<mx:TextInput id="txtMonto" x="195.5" y="45" width="90" maxChars="11" restrict="0-9;,;." change="validaMonto(event)"/>
+		<mx:TextInput id="txtMonto" x="195.5" y="45" width="90" maxChars="18" restrict="0-9;,;." focusOut="{global.formatearMonto(event)}"/>
 		<mx:Label id="lblPorcentaje" x="128.5" y="79" text="Porcentaje:"/>
 		<mx:TextInput id="txtPorcentaje" x="195.5" y="77" width="58" maxChars="7" restrict="0-9;." change="validaPorc(event)"/>
 		<mx:Label id="lblForma" x="78.5" y="112" text="Forma de Afectación:"/>

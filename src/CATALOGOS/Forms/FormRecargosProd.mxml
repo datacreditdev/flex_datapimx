@@ -22,9 +22,8 @@
 			
 			public var datos:DatosProd = new DatosProd();
 			
-			private var global:Globales;	
 			private var du:Utils;
-			public var wsMS:WebService;	
+			private var global:Globales;
 			public var tipoAccion:int;
 			
 			public function cambiaContTasa():void{
@@ -103,13 +102,7 @@
 					else if(info.fijaRec == "N")
 						chkRec.selected = false;																			
 				}		
-			}	
-			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}	
+			}
 				
 		]]>
 	</mx:Script>

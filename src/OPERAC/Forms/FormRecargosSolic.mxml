@@ -27,7 +27,6 @@
 			
 			public var datos:DatosSolic = new DatosSolic();
 			
-			public var wsMS:WebService;
 			public var tipoAccion:int;
 			public var estatus:String;
 			private var global:Globales;
@@ -141,12 +140,6 @@
 						desactivaControles();
 				}	
 			}
-			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}	
 			
 			public function validaMonto(event:Event):void{
 				numVal.source = TextInput(event.currentTarget);

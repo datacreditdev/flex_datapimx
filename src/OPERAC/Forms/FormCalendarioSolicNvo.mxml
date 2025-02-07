@@ -24,7 +24,6 @@
 			
 			public var datos:DatosSolic = new DatosSolic();
 			
-			public var wsMS:WebService;
 			public var tipoAccion:int;
 			public var estatus:String;
 			public var dia:String;
@@ -152,13 +151,7 @@
 					}						
 				});
 				wsCat.getCatalogoGral.send(13);
-			}
-			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}		
+			}	
 	]]>
 	</mx:Script>
 	<mx:Canvas id="cnvPeriodicidad" x="125.5" y="29" width="190" height="68" styleName="canvasMod">

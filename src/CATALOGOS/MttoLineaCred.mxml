@@ -45,13 +45,13 @@
 		public var instObj:ArrayCollection = new ArrayCollection();
 		public var pagoObj:ArrayCollection = new ArrayCollection();
 		
-		public var global:Globales;
 		public var openEffect:Effect = new WipeDown();
 		public var closeEffect:Effect = new WipeDown();
 		public var wsMS:WebService;	
 		public var tipoAccion:int;
 		public var titulo:String;
-		public var du:Utils;
+		private var du:Utils;
+		private var global:Globales;
 		private var vResult:ValidationResultEvent;
 		
 		public function cargaInfoLC(tipo:int, codOF:String, orgFond:String, codLC:String):void{
@@ -101,8 +101,8 @@
 				i = _xmlInst.Table.(DESCRIPCION.toString() == cboInstrumento.selectedLabel).childIndex();
 				info.cdgTI = instObj[i + 1].id;
 				info.plazo = txtPlazo.text != ""? Number(txtPlazo.text):0;
-				info.cantidad = Number(txtCantidad.text);
-				info.montoMax = Number(txtMontoMax.text); 
+				info.cantidad = Number(global.formatearNumerico(txtCantidad.text));
+				info.montoMax = Number(global.formatearNumerico(txtMontoMax.text)); 
 				info.periodoRep = Number(txtPeriodoRep.text);
 				info.pagoCap = cboPagoCap.selectedItem.codigo;
 				info.pagoInt = cboPagoInt.selectedItem.codigo;
@@ -248,8 +248,8 @@
 			i = _xmlInst.Table.(CODIGO.toString() == _xmlLC.Table[0].CDGTI).childIndex();
 			cboInstrumento.selectedIndex = i + 1;
 			txtPlazo.text = _xmlLC.Table[0].PLAZO;
-			txtCantidad.text = _xmlLC.Table[0].CANTIDAD;
-			txtMontoMax.text = _xmlLC.Table[0].MONTOMAX;
+			txtCantidad.text = global.formatearDecimal(_xmlLC.Table[0].CANTIDAD);
+			txtMontoMax.text = global.formatearDecimal(_xmlLC.Table[0].MONTOMAX);
 			txtPeriodoRep.text = _xmlLC.Table[0].PERIODOREP;
 			for(i = 0; i < pagoObj.length; i++){
 				if(pagoObj[i].codigo == _xmlLC.Table[0].PAGOCAP.toString())
@@ -320,20 +320,8 @@
 				Alert.show("Debe capturar los datos requeridos",titulo,4,null,null,global.iAlert);
 		}
 		
-		public function validaMonto(event:Event):void{
-			numVal.source = TextInput(event.currentTarget);
-			vResult = numVal.validate();
-
-			if (vResult.type!=ValidationResultEvent.VALID)
-            	TextInput(event.currentTarget).text = "";
-		}
-		
 		]]>
 	</mx:Script>
-	
-	<mx:NumberValidator id="numVal" property="text" precision="2" required="false"
-        allowNegative="true" domain="real" decimalSeparator="." thousandsSeparator=","/>
-	
 	<mx:Canvas x="202.5" y="10" width="375" height="40" styleName="canvasMod">
 		<mx:Label id="lblOF" x="14.5" y="9" text="Fondeadora:"/>
 		<mx:TextInput id="txtCodOF" x="85.5" y="7" width="50" editable="false"/>
@@ -353,12 +341,12 @@
 		<Data:CustomComboBox id="cboInstrumento" x="111" y="106" width="230" labelField="nombre"/>
 		<mx:TextInput id="txtPlazo" x="111" y="138" width="50.5" maxChars="3" restrict="0-9"/>
 		<mx:DateField id="txtOtor" width="109" x="111" y="170"/>
-		<mx:TextInput id="txtCantidad" x="111" y="202" width="110.25" maxChars="13" change="validaMonto(event)"/>
+		<mx:TextInput id="txtCantidad" x="111" y="202" width="110.25" restrict="0-9;.;," maxChars="18" focusOut="{global.formatearMonto(event)}"/>
 		<mx:Label id="lblMesesPlazo" x="169.5" y="140" text="meses"/>
 		<mx:Label id="lblMontoMax" x="10" y="236" text="Monto Max Acred:"/>
-		<mx:TextInput id="txtMontoMax" x="111" y="234" width="110.25" maxChars="13" change="validaMonto(event)"/>
+		<mx:TextInput id="txtMontoMax" x="111" y="234" width="110.25" restrict="0-9;.;," maxChars="18" focusOut="{global.formatearMonto(event)}"/>
 		<mx:Label id="lblPeriodoRep" x="12" y="268" text="Periodo Reportes:"/>
-		<mx:TextInput id="txtPeriodoRep" x="111" y="266" width="50.5" maxChars="13" change="validaMonto(event)"/>
+		<mx:TextInput id="txtPeriodoRep" x="111" y="266" width="50.5" restrict="0-9"/>
 		<mx:Label id="lblMesesPR" x="169.5" y="268" text="meses"/>
 	</mx:Canvas>
 	<mx:Canvas x="400.5" y="61" width="360" height="339" styleName="canvasMod">
@@ -386,9 +374,9 @@
 		<mx:Label id="lblPagoInt" x="26" y="43.5" text="Pago Interés:"/>
 		<mx:ComboBox id="cboPagoInt" x="102" y="41" width="230" labelField="nombre" height="23"/>
 		<mx:Label id="lblGraciaCap" x="19" y="74" text="Gracia Capital:"/>
-		<mx:TextInput id="txtGraciaInt" x="102" y="104" width="50.5" maxChars="13" change="validaMonto(event)"/>
+		<mx:TextInput id="txtGraciaInt" x="102" y="104" width="50.5" restrict="0-9"/>
 		<mx:Label id="lblMesesGC" x="160.5" y="74" text="meses"/>
-		<mx:TextInput id="txtGraciaCap" x="102" y="72" width="50.5" maxChars="13" change="validaMonto(event)"/>
+		<mx:TextInput id="txtGraciaCap" x="102" y="72" width="50.5" restrict="0-9"/>
 		<mx:Label id="lblGraciaInt" x="19" y="106" text="Gracia Interés:"/>
 		<mx:Label id="lblMesesGI" x="160.5" y="106" text="meses"/>
 	</mx:Canvas>

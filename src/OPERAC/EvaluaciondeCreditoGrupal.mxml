@@ -1,41 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="initApp()" width="100%" xmlns:forms="forms.*" xmlns:Data="Data.*" horizontalScrollPolicy="off" creationPolicy="all" xmlns:Administracion="Administracion.*" height="100%">
-	<mx:states>
-		<mx:State name="evaluacion">
-			<mx:RemoveChild target="{btnAgregarSolic}"/>
-			<mx:RemoveChild target="{btnEliminarSolic}"/>
-			<mx:SetProperty target="{canvas1}" name="width" value="110"/>
-			<mx:SetProperty target="{canvas1}" name="x" value="621"/>
-		</mx:State>
-	</mx:states>
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="initApp()" width="100%" xmlns:forms="forms.*" 
+	xmlns:Data="Data.*" horizontalScrollPolicy="off" creationPolicy="all" xmlns:Administracion="Administracion.*" height="100%">
 	
 	<!--Componente de mantenimiento de solicitudes-->
 	<mx:Script>
 		<![CDATA[
+			import Data.Globales;
 			import Data.Permisos;
 			import Data.Utils;
+			import mx.collections.ArrayCollection;
+			import mx.containers.TitleWindow;
+			import mx.controls.Alert;
+			import mx.controls.ComboBox;
 			import mx.controls.DataGrid;
 			import mx.controls.dataGridClasses.DataGridItemRenderer;  
-			import mx.events.*;  
-			import Data.Globales;
-			import mx.controls.ComboBox;
-			import mx.events.FlexEvent;
-			import mx.formatters.SwitchSymbolFormatter;
-			import mx.formatters.NumberFormatter;
-			import mx.rpc.Fault;
-			import mx.rpc.soap.WebService;
-			import mx.rpc.events.ResultEvent;
-			import mx.rpc.events.FaultEvent;
+			import mx.core.Application;
+			import mx.effects.easing.Elastic;
 			import mx.events.DataGridEvent;				
 			import mx.events.CloseEvent;	
-			import mx.events.ListEvent;	
-			import mx.core.Application;
-			import mx.containers.TitleWindow;				
+			import mx.events.FlexEvent;
+			import mx.events.ListEvent;
+			import mx.formatters.NumberFormatter;
+			import mx.formatters.SwitchSymbolFormatter;
 			import mx.managers.PopUpManager;
-			import mx.controls.Alert;
-			import mx.collections.ArrayCollection;
-			import mx.effects.easing.Elastic;
-			import mx.events.ValidationResultEvent;            
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.Fault;
+			import mx.rpc.soap.WebService;           
 
 			[Bindable]
 			public var _xmlGrupos:XML = new XML();
@@ -46,10 +37,9 @@
 			[Bindable]
 			public var dPermisos:XML = new XML();	
 			
-			public var objMtto:Sprite = new Sprite();
-			
-			public var wsMS:WebService = new WebService();	
-			public var du:Utils;
+			public var wsMS:WebService;
+			public var titulo:String;	
+			private var du:Utils;
 			private var global:Globales;
 			private var permiso:Permisos;
 			
@@ -58,7 +48,6 @@
 			public var accionSolic:int;
 			public var indSolic:int;
 			public var vScroll:Number;
-			public var res:String;
 			
 			//variables que indican las opciones disponibles para el usuario
 			public var alta:Boolean = new Boolean();
@@ -76,14 +65,10 @@
 			}	
 					
 			public function activarContSolic(band:Boolean):void{
-				if(alta == true)
-					btnAgregarSolic.enabled = band;
 				btnDatosSolic.enabled = band;
 			}
 			
 			public function activarContModSolic(band:Boolean):void{
-				if(borrado == true)
-					btnEliminarSolic.enabled = band;
 				if(edicion == true)	
 					btnEditarSolic.enabled = band;
 			}
@@ -98,32 +83,30 @@
 			
 			public function buscarGrupo():void{
 				var wsCat:WebService = new WebService;
-				var params:Array = new Array;
+				var params:Array = new Array; 
 				
-				if (txtCodGrupo.text != "" || txtGrupo.text != ""){
-					btnBuscar.setFocus();
-					dgGrupos.dataProvider = null;
-					du.initWsCat(wsCat);
-					du.sCursor();
-					global.bloquear();
+				btnBuscar.setFocus();
+				dgGrupos.dataProvider = null;
+				du.initWsCat(wsCat);
+				du.sCursor();
+				global.bloquear();
+				
+				du.ejecutaWsMethod(wsCat, function(event:ResultEvent):void{
+					this._xmlGrupos = new XML(event.result);
 					
-					du.ejecutaWsMethod(wsCat, function(event:ResultEvent):void{
-						this._xmlGrupos = new XML(event.result);
-						
-						du.closeWs(wsCat);
-						du.rCursor();
-						global.desbloquear();
-						
-						if (this._xmlGrupos.elements().length() > 0){
-							dgGrupos.dataProvider = _xmlGrupos.Table;
-						}
-						seleccionaGrupo();
-					});
-					params[0] = global.obtenerUsuario();
-					params[1] = txtCodGrupo.text;
-					params[2] = txtGrupo.text;
-					wsCat.getListado.send(11, params);
-				}	
+					du.closeWs(wsCat);
+					du.rCursor();
+					global.desbloquear();
+					
+					if (this._xmlGrupos.elements().length() > 0){
+						dgGrupos.dataProvider = _xmlGrupos.Table;
+					}
+					seleccionaGrupo();
+				});
+				params[0] = global.obtenerUsuario();
+				params[1] = txtCodGrupo.text;
+				params[2] = txtGrupo.text;
+				wsCat.getListado.send(11, params);
 			}
 			
 			public function buscarListaAcredSolic(tipo:int):void{
@@ -160,19 +143,19 @@
 			public function buscarListaSolic(tipo:int):void{
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
-
+				
 				var indice:int = dgGrupos.selectedIndex;
 				var grupo:String = this._xmlGrupos.Table[indice].CODIGO;
 				du.initWsCat(wsCat);
-				du.sCursor();
+			 	du.sCursor();
 			 	if(tipo == 1)
 			 		global.bloquear();
-			 		
-			 	du.ejecutaWsMethod(wsCat,function(event:ResultEvent):void{
-			 		this._xmlSolic = new XML(event.result);
-			 		
-			 		du.closeWs(wsCat);
-			 		du.rCursor();
+				
+				du.ejecutaWsMethod(wsCat,function(event:ResultEvent):void{
+					this._xmlSolic = new XML(event.result);
+					
+					du.closeWs(wsCat);
+					du.rCursor();
 					global.desbloquear();
 					
 					if (this._xmlSolic.elements().length() > 0){
@@ -188,29 +171,21 @@
 					else
 						activarContAcred(false);
 					seleccionaSolic();
-			 	});
-			 	params[0] = grupo;
+				});
+				params[0] = grupo;
 				wsCat.getListado.send(2, params);
-			}
-			
-			public function eliminarSolic():void{
-				var indSolic:int = dgSolic.selectedIndex;
-				if(_xmlSolic.Table[indSolic].SITUACION == 'S'){
-					Alert.show("¿Desea eliminar la solicitud seleccionada?", "Mantenimiento de Solicitud", Alert.YES|Alert.NO,null, manejadorEliminarSolic,global.iQuest);
-				}
-				else
-					Alert.show("No es posible eliminar la solicitud.\n\nVerifique la situación que presenta la misma", "Mantenimiento de Solicitud", 4,null,null,global.iInfo);
-				
 			}
 			
 			public function iniVar():void{
 				this.indSolic = -1;
-				this.vScroll = -1;
+				this.vScroll = undefined;
 			}
 			
 			public function initApp():void{
+				du = new Utils();
 				global = new Globales();
 				permiso = new Permisos();
+				titulo = "Mantenimiento de Solicitud";
 				alta = false;
 				borrado = false;
 				consulta = false;
@@ -224,22 +199,7 @@
 				wsMS.loadWSDL();
 			}			
 			
-			public function manejadorEliminarSolic(e:CloseEvent):void{
-				if(e.detail == Alert.YES){    	
-					var indGr:int = dgGrupos.selectedIndex;
-					var indSolic:int = dgSolic.selectedIndex;
-					var grupo:String = _xmlGrupos.Table[indGr].CODIGO;
-					var ciclo:String = _xmlSolic.Table[indSolic].CICLO; 
-					initConexion();
-					du.sCursor();
-					global.bloquear();
-					wsMS.addEventListener(ResultEvent.RESULT, setEliminaSolic);
-					wsMS.setEliminaSolic.send(grupo, ciclo, "G", global.obtenerUsuario());
-			    } 
-			}
-			
 			public function mostrarFormSolic(tipo:int):void{
-				//tipo = 1 NUEVO REGISTRO
 				//tipo = 2 MODIFICA REGISTRO
 				var grupo:String;
 				var nomGrupo:String;
@@ -248,9 +208,8 @@
 				var munic:String;
 				var indGrupo:int;
 				var ciclo:String;
-				if(edicion){
+				if(edicion == true){
 					var comMttoSolic:MttoSolicitud = new MttoSolicitud();
-					comMttoSolic.currentState = '';
 					indGrupo = dgGrupos.selectedIndex;
 					grupo = this._xmlGrupos.Table[indGrupo].CODIGO;
 					nomGrupo = this._xmlGrupos.Table[indGrupo].GRUPO;
@@ -258,34 +217,11 @@
 					promotor = this._xmlGrupos.Table[indGrupo].CDGPRPE;
 					munic = this._xmlGrupos.Table[indGrupo].MUNIC;
 					switch(tipo){
-						case 1: 
-							//ASIGNACION QUE ESTABLECE AL OBJETO PADRE
-							objMtto = this;	
-							
-							initConexion();
-							du.sCursor();
-							
-							du.ejecutaWsMethod(wsMS,function(evt:ResultEvent):void {											
-								res = evt.result.toString();
-								
-								du.rCursor();
-								du.closeWs(wsMS);	
-								
-								if(res.substr(0,1) == "1"){
-									comMttoSolic = MttoSolicitud(PopUpManager.createPopUp(objMtto,MttoSolicitud,true));
-									comMttoSolic.addEventListener(Event.REMOVED_FROM_STAGE, actualizarSolic);
-									PopUpManager.centerPopUp(comMttoSolic);
-									comMttoSolic.registraInfoSolic(grupo, nomGrupo, munic, coord, promotor);
-								}
-								else
-									Alert.show(res.substr(2,res.length -1),"Mantenimiento de Solicitud",4,null,null,global.iAlert);
-							});
-							wsMS.getSituacionSolic.send(grupo);	//Método que valida que no exista mas de una solicitud en proceso							
-							break;
 						case 2: 
 							if (dgSolic.selectedIndex >= 0){
-								accionSolic = tipo;					
+								accionSolic = tipo;
 								comMttoSolic = MttoSolicitud(PopUpManager.createPopUp(this,MttoSolicitud,true));  
+								comMttoSolic.currentState = 'evaluacion';
 								comMttoSolic.addEventListener(Event.REMOVED_FROM_STAGE, actualizarSolic);
 								PopUpManager.centerPopUp(comMttoSolic);
 								iniVar();
@@ -297,19 +233,18 @@
 								comMttoSolic.cargaInfoSolic(grupo, nomGrupo, ciclo, munic, coord, promotor);
 							}
 							else
-								Alert.show("Debe seleccionar el registro de Solicitud","Mantenimiento de Solicitud",4,null,null,global.iAlert); 
+								Alert.show("Debe seleccionar el registro de Solicitud", titulo, 4, null, null, global.iAlert); 
 							break;
 					}
 				}
 			}
 			
 			public function permisos():void{
-				var mod_id:String = Application.application._Current_Mod_Id;
-				var perfil_id:String = Application.application.cadPerfil;
+				var mod_id:String = global.obtenerModulo();
+				var perfil_id:String = global.obtenerCadPerfil();
 				var Params:Array;
 				var cont:int;
 				
-				du = new Utils();
 				wsMS = du.initWs(wsMS);
 				du.sCursor();
 					
@@ -322,7 +257,7 @@
 						switch(dPermisos.Table[i].OPCION.toString()){
 							case "C":
 								consulta = true;
-								if (permiso.permisosModSolic(Application.application.PERFIL_ID)){
+								if (permiso.permisosEvSolic(global.obtenerArrayPerfil())){
 									borrado = true;
 									alta = true;
 									edicion = true;
@@ -346,7 +281,7 @@
 				Params[0] = perfil_id;
 				Params[1] = mod_id;
 				wsMS.ESLoginMethods.send(14,Params);	//Método que indica las opciones disponibles para el usuario	
-			}		
+			}
 			
 			public function seleccionaAcred():void{
 				if (dgSolic.selectedIndex >= 0){
@@ -381,32 +316,6 @@
 				}
 			}
 			
-			private function setEliminaSolic(event:ResultEvent):void{
-				wsMS.disconnect();
-				du.rCursor();
-				global.desbloquear();
-				wsMS.removeEventListener(ResultEvent.RESULT, setEliminaSolic);
-				var res:String = new String(event.result.toString());
-				if (res.substr(0,1) == "1")
-					buscarListaSolic(1);
-				else
-					Alert.show(res.substr(2,res.length-1), "Mantenimiento de Solicitud",4,null,null,global.iAlert);
-			}
-			
-			public function validaSituacionSolic(grupo:String):void{
-				initConexion();
-				du.sCursor();
-							
-				du.ejecutaWsMethod(wsMS,function(evt:ResultEvent):void {											
-					res = evt.result.toString();
-								
-					du.rCursor();
-					du.closeWs(wsMS);	
-								
-				});
-				wsMS.getSituacionSolic.send(grupo);	//Método que indica las opciones disponibles para el usuario
-			}
-			
 		]]>
 	</mx:Script>
 	<mx:Canvas width="800" height="650" backgroundColor="#FFFFFF" backgroundAlpha="1.0">
@@ -418,10 +327,7 @@
 					<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO" width="70"/>
 					<mx:DataGridColumn headerText="GRUPO" dataField="GRUPO" width="200"/>
 					<mx:DataGridColumn headerText="MUNICIPIO" dataField="MUNIC" width="200"/>
-					<mx:DataGridColumn headerText="CODIGO" dataField="CDGPRPE" width="70"/>
 					<mx:DataGridColumn headerText="OFICIAL DE CREDITO" dataField="PROMOTOR" width="200"/>
-					<mx:DataGridColumn headerText="LOCALIDAD" dataField="LOCALIDAD" width="200"/>
-					<mx:DataGridColumn headerText="COLONIA" dataField="COLONIA" width="200"/>
 				</Data:columns>
 			</Data:RowColorDataGrid>
 		</mx:Canvas>
@@ -430,8 +336,8 @@
 			<mx:Button id="btnBuscar" x="10" y="3" icon="@Embed(source='assets/ico_lupa.png')" click="buscarGrupo()" toolTip="Buscar Grupo" width="40"/>
 		</mx:Canvas>
 		<mx:Canvas x="98.25" y="39" width="550.5" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true">
-			<mx:Label id="lblCodGrupo" x="17" y="7" text="Código:"/>
-			<mx:Label id="lblGrupo" x="143" y="7" text="Grupo:"/>
+			<mx:Label id="lblCodGrupo" x="10" y="7" text="CODIGO:" width="53"/>
+			<mx:Label id="lblGrupo" x="137" y="7" text="GRUPO:" width="52.5"/>
 			<mx:TextInput id="txtGrupo" x="187" y="5" width="351.5" enter="buscarGrupo()" maxChars="50"/>
 			<mx:TextInput id="txtCodGrupo" x="64" y="5" width="68" enter="buscarGrupo()" maxChars="6" restrict="0-9"/>
 		</mx:Canvas>
@@ -451,9 +357,7 @@
 				</Data:columns>
 			</Data:RowColorDataGrid>
 		</mx:Canvas>
-		<mx:Canvas x="528" y="244" width="203" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true" id="canvas1">
-			<mx:Button id="btnAgregarSolic" x="103" y="3" icon="@Embed(source='assets/add.png')" enabled="false" click="mostrarFormSolic(1)" toolTip="Agregar Solicitud" width="40"/>
-			<mx:Button id="btnEliminarSolic" x="151" y="3" icon="@Embed(source='assets/delete-icon.png')" enabled="false" click="eliminarSolic()" toolTip="Eliminar Solicitud" width="40"/>
+		<mx:Canvas x="621" y="244" width="110" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true" id="canvas1">
 			<mx:Button id="btnEditarSolic" x="58" y="3" icon="@Embed(source='assets/edit.png')" enabled="false" click="mostrarFormSolic(2)" toolTip="Editar Solicitud" width="40"/>
 			<mx:Button id="btnDatosSolic" x="10" y="3" icon="@Embed(source='assets/folder.png')" click="buscarListaSolic(1)" enabled="false" toolTip="Solicitudes del Grupo" width="40"/>
 		</mx:Canvas>

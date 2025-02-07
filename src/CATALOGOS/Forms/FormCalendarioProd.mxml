@@ -22,7 +22,6 @@
 			
 			public var datos:DatosProd = new DatosProd();
 			
-			public var wsMS:WebService;	
 			public var tipoAccion:int;
 			private var du:Utils;
 			private var global:Globales;
@@ -111,14 +110,7 @@
 					else if(info.fijaPlazo == "N")
 						chkPlazo.selected = false;																							
 				}		
-			}	
-			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}	
-				
+			}
 		]]>
 	</mx:Script>
 

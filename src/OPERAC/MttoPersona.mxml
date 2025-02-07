@@ -275,7 +275,7 @@
 			}
 			
 			private function permisos():void{
-				var perfil_id:String = Application.application.cadPerfil;	
+				var perfil_id:String = global.obtenerCadPerfil();	
 			}
 			
 			public function registraInfoPersona():void{
@@ -338,10 +338,10 @@
 		<mx:Canvas label="Datos Personales" width="100%" height="100%">
 			<Forms:FormDatosPerPers id="formDatosPers" x="79.5" height="480" width="430"/>
 		</mx:Canvas>
-		<mx:Canvas label="Dirección" width="100%" height="100%">	
+		<mx:Canvas label="Domicilio" width="100%" height="100%">	
 			<Forms:FormDirPers id="formDirPers" x="84.5" height="390" width="420"/>
 		</mx:Canvas>
-		<mx:Canvas label="Dirección Negocio" width="100%" height="100%">	
+		<mx:Canvas label="Domicilio Fiscal" width="100%" height="100%">	
 			<Forms:FormDirNegPers id="formDirNegPers" x="84.5" height="390" width="420"/>
 		</mx:Canvas>
 		<mx:Canvas label="Inf. Adicional KYC" width="100%" height="100%">	

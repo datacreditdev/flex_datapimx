@@ -37,8 +37,8 @@
 			public var dPermisos:XML = new XML();	
 			
 			public var wsMS:WebService;	
-			private var du:Utils;
 			public var titulo:String;
+			private var du:Utils;
 			private var global:Globales;
 			private var permiso:Permisos;
 			
@@ -141,7 +141,7 @@
 			
 			public function iniVar():void{
 				this.indAcred = -1;
-				this.vScroll = -1;
+				this.vScroll = undefined;
 			}
 			
 			public function initApp():void{
@@ -242,15 +242,16 @@
 			}
 			
 			public function permisos():void{
-				var mod_id:String = Application.application._Current_Mod_Id;
-				var perfil_id:String = Application.application.cadPerfil;
+				var ws:WebService = new WebService;
+				var mod_id:String = global.obtenerModulo();
+				var perfil_id:String = global.obtenerCadPerfil();
 				var Params:Array;
 				var cont:int;
 
-				wsMS = du.initWs(wsMS);
+				du.initWs(ws);
 				du.sCursor();
 					
-				du.ejecutaWsMethod(wsMS,function(evt:ResultEvent):void {											
+				du.ejecutaWsMethod(ws,function(evt:ResultEvent):void {											
 					dPermisos = new XML(evt.result.toString());
 						
 					cont = dPermisos.elements().length();
@@ -259,7 +260,7 @@
 						switch(dPermisos.Table[i].OPCION.toString()){
 							case "C":
 								consulta = true;
-								if (permiso.permisosModAcredInd(Application.application.PERFIL_ID)){
+								if (permiso.permisosModAcredInd(global.obtenerArrayPerfil())){
 									borrado = true;
 									alta = true;
 									edicion = true;
@@ -278,12 +279,12 @@
 					}
 //					btnAgregar.enabled = alta;
 					du.rCursor();
-					du.closeWs(wsMS);					
+					du.closeWs(ws);					
 				});
 				Params = new Array();
 				Params[0] = perfil_id;
 				Params[1] = mod_id;
-				wsMS.ESLoginMethods.send(14,Params);	//Método que indica las opciones disponibles para el usuario	
+				ws.ESLoginMethods.send(14,Params);	//Método que indica las opciones disponibles para el usuario	
 			}
 			
 			public function seleccionaAcred():void{
@@ -316,8 +317,6 @@
 					<mx:DataGridColumn headerText="OFICINA" dataField="COORD" width="90"/>
 					<mx:DataGridColumn headerText="NOMBRE OFICINA" dataField="NOMCO" width="200"/>
 					<mx:DataGridColumn headerText="TIPO" dataField="TIPOPREST" width="90"/>
-					<!--<mx:DataGridColumn headerText="GRUPO" dataField="CDGNS" width="70"/>
-					<mx:DataGridColumn headerText="NOMBRE GRUPO" dataField="GRUPO" width="170"/>-->
 				</Data:columns>
 			</Data:RowColorDataGrid>
 		</mx:Canvas>

@@ -17,13 +17,13 @@
 		[Bindable]
 		private var info:DatosDispersion;
 		
-		private var global:Globales;
-		private var du:Utils;
-		private var wsMS:WebService;	
 		public var titulo:String;
 		public var cdgAcred:String;
 		public var ciclo:String;
 		public var tipoAccion:int;
+		private var du:Utils;
+		private var global:Globales;
+		private var wsMS:WebService;	
 		
 		public function cerrar():void{
 			PopUpManager.removePopUp(this);
@@ -54,9 +54,9 @@
 			this.ciclo = ciclo;
 			txtCdgAcred.text = cdgAcred;
 			txtAcreditado.text = acred;
-			formDatosTrans.txtReferencia.setFocus();
-			formDatosTrans.txtMonto.text = monto.toString();
-			formDatosTrans.dtfFecha.text = fecha;
+			formDatosTrans.asignarFoco();
+			formDatosTrans.asignarMonto(global.formatearDecimal(monto.toString()));
+			formDatosTrans.asignarFecha(fecha);
 			tipoAccion = 1;
 		}
 		

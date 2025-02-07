@@ -22,10 +22,9 @@
 			
 			public var datos:DatosProd = new DatosProd();
 			
-			public var global:Globales;	
-			public var wsMS:WebService;	
 			public var tipoAccion:int;
-			public var du:Utils;
+			private var du:Utils;
+			private var global:Globales;	
 			
 			public function enviarDatosProd(formData:DatosProd):void{
 				formData.formaEntre = entrega.selectedValue.toString();
@@ -55,22 +54,14 @@
 						chkEntrega.selected = false;																						
 				}		
 			}	
-			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}	
-				
 		]]>
 	</mx:Script>
-	
 	<mx:Canvas id="cnvEntrega" x="95" y="50" width="360" height="148" styleName="canvasMod">
 		<mx:RadioButtonGroup id="entrega"/>
 		<mx:RadioButton id="rdbEfectivo" x="28" y="10" label="Efectivo" groupName="entrega" value="E"/>
 		<mx:RadioButton id="rdbChequeClien" x="28" y="42" label="Cheque" groupName="entrega" value="C"/>
 		<mx:RadioButton id="rdbTransElect" x="28" y="74" label="Transferencia electrónica" groupName="entrega" value="T"/>
-		<mx:RadioButton id="rdbDispersion" x="28" y="106" label="Dispersión de fondos" groupName="entrega" value="D"/>
+		<!--<mx:RadioButton id="rdbDispersion" x="28" y="106" label="Dispersión de fondos" groupName="entrega" value="D"/>-->
 		<mx:CheckBox id="chkEntrega" x="215" y="54" label="No Permitir modificar"/>
 	</mx:Canvas>
 	<mx:Label x="95" y="30" text="Forma de entrega"/>

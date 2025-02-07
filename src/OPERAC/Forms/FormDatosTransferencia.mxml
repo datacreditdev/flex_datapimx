@@ -21,7 +21,6 @@
 
 	<mx:Script>
 		<![CDATA[
-			import OPERAC.MttoBusqSup;
 			import Data.DatosDispersion;
 			import Data.EventDispersion;
 			import Data.Globales;
@@ -29,20 +28,36 @@
 			import mx.collections.ArrayCollection;
 			import mx.controls.Alert;
 			import mx.core.Application;
+			import mx.events.ValidationResultEvent;
 			import mx.managers.PopUpManager;
 			import mx.rpc.events.ResultEvent;
 			import mx.rpc.soap.WebService;
 			import mx.validators.Validator;
+			import OPERAC.MttoBusqSup;
 			
-			private var global:Globales;
 			private var du:Utils;
+			private var global:Globales;
 			private var titulo:String;
 			private var codFid:String;
 			private var codSup:String;
 			
 			public var _xmlBanco:XML = new XML();
 			
+			private var vResult:ValidationResultEvent;
+			
 			public var bancoObj:ArrayCollection = new ArrayCollection();
+			
+			public function asignarFecha(fecha:String):void{
+				dtfFecha.text = fecha;
+			}
+			
+			public function asignarFoco():void{
+				txtReferencia.setFocus();
+			}
+			
+			public function asignarMonto(monto:String):void{
+				txtMonto.text = monto;
+			}
 			
 			private function initApp():void{
 				var wsCat:WebService = new WebService;
@@ -77,7 +92,7 @@
 					formData.cdgBanco = cboBanco.selectedItem.id;
 					formData.cuenta = txtReferencia.text;
 					formData.concepto = txtConcepto.text;
-					formData.monto = Number(txtMonto.text);
+					formData.monto = Number(global.formatearNumerico(txtMonto.text));
 					formData.fecha = dtfFecha.text;
 					formData.cdgMotivo = "DE";
 					formData.cdgFid = codFid;
@@ -125,12 +140,12 @@
 	</mx:Script>
 	<mx:Label id="lblBanco" x="78" y="13" text="Banco:"/>
 	<mx:ComboBox id="cboBanco" labelField="nombre" width="189" x="125" y="10"/>
-	<mx:Label id="lblReferencia" x="56" y="43" text="Referencia:"/>
+	<mx:Label id="lblReferencia" x="43" y="43" text="Clabe Destino:"/>
 	<mx:TextInput id="txtReferencia" maxChars="18" width="150" x="125" y="42"/>
 	<mx:Label id="lblConcepto" x="63" y="73" text="Concepto:"/>
 	<mx:TextArea id="txtConcepto" maxChars="30" width="300" x="125" y="72"/>
 	<mx:Label id="lblMonto" x="80" y="125" text="Monto:"/>
-	<mx:TextInput id="txtMonto" maxChars="12" width="82" restrict="0-9\." x="125" y="124"/>
+	<mx:TextInput id="txtMonto" width="90" restrict="0-9\.;," maxChars="18" x="125" y="124" focusOut="{global.formatearMonto(event)}"/>
 	<mx:Label id="lblFecha" x="79" y="155" text="Fecha:"/>
 	<mx:DateField id="dtfFecha" width="100" x="125" y="154"/>
 	<mx:Label id="lblSup" x="53" y="185" text="Suplemento:"/>

@@ -193,13 +193,13 @@
             if(index == 0)
                 cellObject.NOPAGO = cellValue;
             else if(index == 1)
-                cellObject.FECHA = global.formatoFechaExcel(Number(cellValue));
+                cellObject.FECHA = global.formatearFechaExcel(Number(cellValue));
             else if(index == 2)
-                cellObject.IMPORTE = global.formatoDecimalSinSep(cellValue);
+                cellObject.IMPORTE = global.formatearDecimalSinSep(cellValue);
             else if(index == 3)
-                cellObject.CAPITAL = global.formatoDecimalSinSep(cellValue);
+                cellObject.CAPITAL = global.formatearDecimalSinSep(cellValue);
             else if(index == 4)
-                cellObject.INTERES = global.formatoDecimalSinSep(cellValue);               
+                cellObject.INTERES = global.formatearDecimalSinSep(cellValue);               
         }
         
         private function complete(event:Event):void {
@@ -209,6 +209,12 @@
         	else
  				lblResultado.text = count + " Registros Encontrados";
         	btnCargar.enabled = true;
+		}
+		
+		private function formatearMontoGrid(item:Object, column:DataGridColumn):String{
+			var result:String;
+            result = global.formatearMoneda(item[column.dataField]);
+            return result;
 		}
               
       	private function initApp():void{ 
@@ -301,9 +307,9 @@
 			<mx:columns>
 				<mx:DataGridColumn headerText="NUMERO PAGO" dataField="NOPAGO" width="110"/>
 				<mx:DataGridColumn headerText="FECHA" dataField="FECHA" width="110"/>
-				<mx:DataGridColumn headerText="IMPORTE" dataField="IMPORTE" width="110"/>
-				<mx:DataGridColumn headerText="CAPITAL" dataField="CAPITAL" width="110"/>
-				<mx:DataGridColumn headerText="INTERES" dataField="INTERES" width="110"/>			
+				<mx:DataGridColumn headerText="IMPORTE" dataField="IMPORTE" width="110" labelFunction="formatearMontoGrid"/>
+				<mx:DataGridColumn headerText="CAPITAL" dataField="CAPITAL" width="110" labelFunction="formatearMontoGrid"/>
+				<mx:DataGridColumn headerText="INTERES" dataField="INTERES" width="110" labelFunction="formatearMontoGrid"/>			
 			</mx:columns>
 		</mx:DataGrid>
 		<mx:Label id="lblResultado" x="48.4" y="358.95" width="526.15" fontStyle="italic" fontWeight="bold" fontSize="12" textAlign="center"/>
