@@ -170,7 +170,7 @@
 					Alert.show("¿Desea eliminar la solicitud seleccionada?", titulo, Alert.YES|Alert.NO, null, manejadorEliminarSolic, global.iQuest);
 				}
 				else
-					Alert.show("No es posible eliminar la solicitud.\n\nVerifique la situación que presenta la misma", titulo, 4,null, null, global.iInfo);
+					Alert.show("No es posible eliminar la solicitud.\n\nVerifique la situación que presenta la misma.", titulo, 4,null, null, global.iAlert);
 			}
 			
 			private function formatearMontoGrid(item:Object, column:DataGridColumn):String{
@@ -257,7 +257,7 @@
 								else
 									Alert.show(res.substr(2,res.length -1), titulo, 4, null, null, global.iAlert);
 							});
-							wsMS.getSituacionSolic.send(acred, 'I');	//Método que valida que no exista mas de una solicitud en proceso							
+							wsMS.getValidaSituacionSolic.send(acred, 'I');	//Método que valida que no exista mas de una solicitud en proceso							
 							break;
 						case 2: 
 							if (dgSolic.selectedIndex >= 0){
@@ -369,7 +369,7 @@
 					du.rCursor();
 					du.closeWs(wsMS);				
 				});
-				wsMS.getSituacionSolic.send(acred, 'I');	
+				wsMS.getValidaSituacionSolic.send(acred, 'I');	
 			}
 			
 		]]>

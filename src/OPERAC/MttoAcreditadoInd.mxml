@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:forms="forms.*" layout="absolute" 
-	width="610" height="580" showCloseButton="true" close="cerrar()" xmlns:Forms="OPERAC.Forms.*" 
+	width="610" height="680" showCloseButton="true" close="cerrar()" xmlns:Forms="OPERAC.Forms.*" 
 	creationComplete="initApp()" creationPolicy="all">
 	
 	<mx:Metadata>
@@ -9,7 +9,6 @@
 	
 	<mx:states>
 		<mx:State name="moral">
-			<mx:RemoveChild target="{cnvOtros}"/>
 			<mx:SetProperty target="{cnvOficial}" name="label" value="Segmento Negocio"/>
 			<mx:SetProperty target="{cnvAdic}" name="label" value="Inf. Adicional KYC"/>
 			<mx:SetProperty target="{formOficialAcred}" name="y" value="10"/>
@@ -40,7 +39,6 @@
 		<mx:Transition fromState="*" toState="*">		
 			<mx:Parallel>
 				<mx:Fade duration="500" target="{cnvDirNeg}"/>
-				<mx:Fade duration="500" target="{cnvOtros}"/>  
 			</mx:Parallel>
 		</mx:Transition>
 	</mx:transitions>
@@ -142,7 +140,6 @@
 					formDPAcred.enviarDatosAcred(info);
 					formDirAcred.enviarDatosAcred(info);
 					formDirNegocio.enviarDatosAcred(info);
-					formOtroAcred.enviarDatosAcred(info);
 					formOficialAcred.enviarOficialAcred(info);
 					formPLDAcred.enviarDatosAcred(info);
 					validaFinal();
@@ -186,8 +183,8 @@
 											 info.sexo, info.fecha, info.cdgNacPais, info.cdgNacEntFed, info.cdgNac, info.rfc, 
 											 info.curp, info.ife, info.fiel, info.calle, info.noInt, info.noExt, info.entreCalles, info.telefono, 
 											 info.codPostal, info.cdgPais, info.cdgEntFed, info.entFed, info.cdgMun, info.municipio, info.cdgLoc, 
-											 info.localidad, info.cdgCol, info.colonia, info.edoCivil, info.nivelEsc, info.depend, 
-											 info.marca, info.enano, info.cantEnano, info.cdgPr, info.cdgRec, info.calleNeg, info.noIntNeg,
+											 info.localidad, info.cdgCol, info.colonia, info.edoCivil/*, info.nivelEsc, info.depend, 
+											 info.marca, info.enano, info.cantEnano*/, info.cdgPr, info.cdgRec, info.calleNeg, info.noIntNeg,
 											 info.noExtNeg, info.entreCallesNeg, info.telefonoNeg, info.cdgPaisNeg, info.cdgEntFedNeg, info.cdgMunNeg, 
 											 info.cdgLocNeg, info.cdgColNeg, info.tipoPers, info.arrRepLegal, info.giro, info.origen, 
 										 	 info.destino, info.otroDesRec, info.pep, info.arrPropReal, info.arrProvRec, info.figura, 
@@ -239,6 +236,7 @@
 				info.figura = _xmlAcred.Table[0].FIGURA;
 				info.nomCom = _xmlAcred.Table[0].NOMCOM;
 				info.fiel = _xmlAcred.Table[0].FIEL;
+				info.edoCivil = _xmlAcred.Table[0].EDOCIVIL;
 				info.telefono = _xmlAcred.Table[0].TELEFONO;
 				info.telefono2 = _xmlAcred.Table[0].TELEFONO2;
 				info.email1 = _xmlAcred.Table[0].EMAIL1;
@@ -285,11 +283,11 @@
 				
 				//Otra información del Acreditado
 				info.edoCivil = _xmlAcred.Table[0].EDOCIVIL;
-				info.nivelEsc = _xmlAcred.Table[0].NIVESCOLAR;
+				/*info.nivelEsc = _xmlAcred.Table[0].NIVESCOLAR;
 				info.depend = _xmlAcred.Table[0].NODEPEND;
 				info.marca = _xmlAcred.Table[0].MARCA;
 				info.enano = _xmlAcred.Table[0].ENANO;
-				info.cantEnano = _xmlAcred.Table[0].CANTENANO;
+				info.cantEnano = _xmlAcred.Table[0].CANTENANO;*/
 				
 				//Oficial de Crédito
 				info.cdgPr = _xmlAcred.Table[0].CDGOCPE;
@@ -324,7 +322,6 @@
 				formDirAcred.init(info);
 				formDirNegocio.init(info);
 				formDirNegocio.chkMismoDom.addEventListener(MouseEvent.CLICK, copiaDomicilio);
-				formOtroAcred.init(info);
 				formOficialAcred.init(info, currentState);
 				formPLDAcred.init(info, currentState);
 			}
@@ -336,8 +333,8 @@
 				formPLDAcred.asignaEstatus(cboTipoPers.selectedItem.id);
 				if(cboTipoPers.selectedItem.id == "F"){
 					currentState = "";
-					formDPAcred.width = 440;
-					formDPAcred.height = 396;
+					formDPAcred.width = 430;
+					formDPAcred.height = 510;
 				}
 				else if(cboTipoPers.selectedItem.id == "M")
 					currentState = "moral";
@@ -426,7 +423,6 @@
 				formDirAcred.init(info);
 				formDirNegocio.init(info);
 				formDirNegocio.chkMismoDom.addEventListener(MouseEvent.CLICK, copiaDomicilio);
-				formOtroAcred.init(info);
 				formOficialAcred.init(info, currentState);
 				formPLDAcred.init(info, currentState);
 			} 
@@ -449,7 +445,7 @@
 						if(tipoAccion == 1){
 							var rSplit:Array = res.toString().split('|');
 							codigo = rSplit[1].toString();
-							Alert.show("Registro de acreditado almacenado con el código - " + codigo, titulo, 4, null, null, global.iInfo);
+							Alert.show("Registro exitoso de acreditado con el código - " + codigo, titulo, 4, null, null, global.iInfo);
 						}	
 						else
 							Alert.show("Proceso finalizado exitosamente.", titulo, 4, null, null, global.iInfo);
@@ -509,18 +505,15 @@
 			}
 		]]>
 	</mx:Script>
-	<mx:TabNavigator id="tabNav" width="591" height="450" x="10" y="52" creationPolicy="all" >
+	<mx:TabNavigator id="tabNav" width="591" height="546" x="10" y="52" creationPolicy="all" >
 		<mx:Canvas label="Datos Generales" width="100%" height="100%" verticalScrollPolicy="off" horizontalScrollPolicy="off">
-			<Forms:FormDatosPerAcredInd id="formDPAcred" x="74.5" height="396" width="440"/>
+			<Forms:FormDatosPerAcredInd id="formDPAcred" x="74.5" height="510" width="440"/>
 		</mx:Canvas>
 		<mx:Canvas id="cnvDir" label="Domicilio" width="100%" height="100%">	
 			<Forms:FormDirAcred id="formDirAcred" x="84.5" height="390" width="420"/>
 		</mx:Canvas>
 		<mx:Canvas id="cnvDirNeg" label="Dom. Fiscal" width="100%" height="100%">	
 			<Forms:FormDirNegocio id="formDirNegocio" x="84.5" width="420"/>
-		</mx:Canvas>
-		<mx:Canvas id="cnvOtros" label="Otros Datos" width="100%" height="100%">	
-			<Forms:FormOtroAcred id="formOtroAcred" x="94.5"/> 
 		</mx:Canvas>
 		<mx:Canvas id="cnvOficial" label="Origen Comercial" width="100%" height="100%">	
 			<Forms:FormOficialAcred id="formOficialAcred" x="94.5"/>
@@ -529,10 +522,10 @@
 			<Forms:FormPLDAcred id="formPLDAcred" x="44.5" y="10" width="500"/>
 		</mx:Canvas>
 	</mx:TabNavigator>
-	<mx:Button id="btnCancelar" x="560" y="508" icon="@Embed(source='assets/Icon-Delete.png')" click="cerrar()" width="40"/>
-	<mx:Button id="btnAceptar" x="512" y="508" icon="@Embed(source='assets/button_ok.png')" click="enviar()" width="40"/>
-	<mx:Button id="btnConsBuro" x="10" y="508" click="consultaBuro()" label="Consulta Rep. Crédito" visible="true"/>
-	<mx:Button id="btnDoc" x="166" y="508" click="mostrarDocumentos()" label="Ver Documentación" visible="true"/>
+	<mx:Button id="btnCancelar" x="556" y="606" icon="@Embed(source='assets/Icon-Delete.png')" click="cerrar()" width="40"/>
+	<mx:Button id="btnAceptar" x="508" y="606" icon="@Embed(source='assets/button_ok.png')" click="enviar()" width="40"/>
+	<mx:Button id="btnConsBuro" x="10" y="605" click="consultaBuro()" label="Consulta Rep. Crédito" visible="false"/>
+	<mx:Button id="btnDoc" x="166" y="605" click="mostrarDocumentos()" label="Ver Documentación" visible="false"/>
 	<mx:Label x="144" y="18" text="Tipo Persona:"/>
 	<mx:ComboBox id="cboTipoPers" labelField="nombre" x="235" y="16" change="modificaEstatus()"/>
 </mx:TitleWindow>

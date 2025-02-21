@@ -28,13 +28,14 @@
 		[Bindable]
 		private var _xmlTPC:XML =  new XML();
 		
-		public var global:Globales;
 		public var openEffect:Effect = new WipeDown();
 		public var closeEffect:Effect = new WipeDown();
 		public var wsMS:WebService;	
 		public var tipoAccion:int;
 		public var titulo:String;
-		public var du:Utils;
+		
+		private var du:Utils;
+		private var global:Globales;
 		
 		public function cargaInfoTipoProd(cdgTPC:String, tipoProd:String):void{
 			tipoAccion = 2; 
@@ -56,10 +57,9 @@
 		}
 	
 		public function enviar():void{
-			global = new Globales();
 			info = new DatosTipoProd();
 				
-			var invalidArray:Array = Validator.validateAll([codigoV, nombreV]);
+			var invalidArray:Array = Validator.validateAll([nombreV]);
 				
 			if(invalidArray.length == 0){	
 				info.cdgTPC = txtCodigo.text;
@@ -108,8 +108,7 @@
 			this.title = "Nuevo";
 			info = null;
 			
-			txtCodigo.setFocus();
-			txtCodigo.editable = true;
+			txtNombre.setFocus();
 		}
 		
 		private function setAccionTipoProd(event:ResultEvent):void{
@@ -118,7 +117,13 @@
 			global.desbloquear();
 			wsMS.removeEventListener(ResultEvent.RESULT, setAccionTipoProd);
 			var res:String = event.result.toString();
+			var codigo:String;
 			if (res.substr(0,1) == "1"){
+				if(tipoAccion == 1){
+					var rSplit:Array = res.toString().split('|');
+					codigo = rSplit[1].toString();
+					Alert.show("Registro exitoso de tipo de producto con el código - " + codigo, titulo, 4, null, null, global.iInfo);
+				}
 				cerrar();
 			}	
 			else
@@ -135,7 +140,7 @@
 		}
 		
 		public function validaFinal():void{
-			if (info.guarda == true)
+			if (info.guarda)
 				guardaTipoProd();
 			else
 				Alert.show("Debe capturar los datos requeridos",titulo,4,null,null,global.iAlert);
@@ -146,8 +151,8 @@
 	<mx:Canvas x="10" y="10" width="338" height="80" styleName="canvasMod">
 		<mx:Label id="lblCodigo" x="36.75" y="12" text="Código:"/>
 		<mx:Label id="lblNombre" x="36.75" y="44" text="Nombre:"/>
-		<mx:TextInput id="txtCodigo" x="85.75" y="10" width="50" maxChars="2"/>
-		<mx:TextInput id="txtNombre" x="85.75" y="42" width="213.5"/>
+		<mx:TextInput id="txtCodigo" x="85.75" y="10" width="50" maxChars="2" editable="false"/>
+		<mx:TextInput id="txtNombre" x="85.75" y="42" width="213.5" maxChars="50"/>
 	</mx:Canvas>
 	<mx:Button id="btnAceptar" x="260" y="98" icon="@Embed(source='assets/button_ok.png')" click="enviar()" width="40"/>
 	<mx:Button id="btnCancelar" x="308" y="98" icon="@Embed(source='assets/Icon-Delete.png')" click="cerrar()" width="40"/>

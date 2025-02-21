@@ -2,8 +2,7 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="400" height="300" xmlns:control="CONTROL.*">
 	<mx:states>
 		<mx:State name="moral">
-			<mx:SetProperty target="{lblPromotor}" name="text" value="Socio Comercial:"/>
-			<mx:SetProperty target="{lblPromotor}" name="x" value="28"/>
+			<mx:SetProperty target="{lblPromotor}" name="x" value="58"/>
 			<!--<mx:SetProperty target="{txtPromotor}" name="width" value="280"/>-->
 			<mx:SetProperty name="width" value="450"/>
 			<mx:RemoveChild target="{lblRecuperador}"/>
@@ -48,7 +47,10 @@
 			</mx:AddChild>
 			<mx:SetProperty target="{comPromGrid}" name="x" value="121"/>
 		</mx:State>
-		<mx:State name="fideicomiso" basedOn="moral"/>
+		<mx:State name="fideicomiso" basedOn="moral">
+			<mx:SetProperty target="{lblPromotor}" name="text" value="Banquero:"/>
+			<mx:SetProperty target="{lblPromotor}" name="x" value="58"/>
+		</mx:State>
 	</mx:states>
 	
 	<mx:Metadata>
@@ -229,7 +231,7 @@
 	]]>
 	</mx:Script>
 	
-	<mx:Label id="lblPromotor" text="Asesor:" x="77" y="12"/>
+	<mx:Label id="lblPromotor" text="Banquero:" x="66" y="12"/>
 	<control:TextGrid id="comPromGrid" x="129" height="24" y="10" width="235"/>
 	<mx:Label id="lblRecuperador" text="Recuperador:" x="50" y="44"/>
 	<control:TextGrid id="comRecGrid" x="129" height="24" y="42" width="235"/>

@@ -142,10 +142,10 @@
 		<mx:Canvas x="12.75" y="87" width="538.25" height="37" styleName="canvasMod" visible="true">
 			<mx:Label id="lblCodAcred" x="6" y="7" text="Código:"/>
 			<mx:Label id="lblAcred" x="366.75" y="7" text="Paterno:"/>
-			<mx:TextInput id="txtPaterno" x="416.75" y="6" width="110" enter="buscarAcred()" maxChars="50"/>
+			<mx:Label id="lblNombre" x="130.75" y="7" text="Nombre/Razón Social:"/>
 			<mx:TextInput id="txtCodAcred" x="49.75" y="6" width="68" enter="buscarAcred()" maxChars="6" restrict="0-9"/>
 			<mx:TextInput id="txtNombre" x="245.75" y="6" width="110" enter="buscarAcred()" maxChars="50"/>
-			<mx:Label id="lblNombre" x="130.75" y="7" text="Nombre/Razón Social:"/>
+			<mx:TextInput id="txtPaterno" x="416.75" y="6" width="110" enter="buscarAcred()" maxChars="50"/>
 		</mx:Canvas>
 		<mx:Label x="12.75" y="67" text="ACREDITADO" fontSize="12" fontWeight="bold" fontStyle="italic"/>
 		<mx:Canvas id="cnvAcred" x="12.75" y="132" width="607.25" height="140" styleName="canvasMod" visible="true" verticalScrollPolicy="off">

@@ -23,9 +23,8 @@
 			[Bindable]
 			public var _xmlPer:XML =  new XML();
 			
-			public var indice:int;
-			private var global:Globales;
 			private var du:Utils;
+			private var global:Globales;
 			private var titulo:String;
 			
 			private function buscarPersona():void{

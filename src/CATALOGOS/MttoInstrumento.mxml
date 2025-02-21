@@ -28,13 +28,14 @@
 		[Bindable]
 		private var _xmlProd:XML =  new XML();
 		
-		public var global:Globales;
+		private var du:Utils;
+		private var global:Globales;
+		
 		public var openEffect:Effect = new WipeDown();
 		public var closeEffect:Effect = new WipeDown();
 		public var wsMS:WebService;	
 		public var tipoAccion:int;
 		public var titulo:String;
-		public var du:Utils;
 		
 		public function cargaInstrumento(codigo:String, instrumento:String, tipo:String):void{
 			tipoAccion = 2; 
@@ -59,7 +60,7 @@
 		public function enviar():void{
 			info = new DatosInstrumento();
 			
-			var invalidArray:Array = Validator.validateAll([codigoV, descripcionV]);
+			var invalidArray:Array = Validator.validateAll([descripcionV]);
 		
 			if(invalidArray.length == 0 && tipo.selectedValue.toString() != ""){	
 				info.codigo = txtCodigo.text;
@@ -97,9 +98,6 @@
 		}	
 		
 		public function llenaRegistros():void{
-			txtCodigo.setFocus();
-			txtCodigo.editable = false;
-			
 			txtCodigo.text = info.codigo;
 			txtDescripcion.text = info.descripcion;
 			tipo.selectedValue = info.tipo;
@@ -109,9 +107,6 @@
 			tipoAccion = 1;
 			this.title = "Nuevo";
 			info = null;
-			
-			txtCodigo.setFocus();
-			txtCodigo.editable = true;
 		}
 		
 		private function setAccionInst(event:ResultEvent):void{
@@ -120,7 +115,13 @@
 			global.desbloquear();
 			wsMS.removeEventListener(ResultEvent.RESULT, setAccionInst);
 			var res:String = event.result.toString();
+			var codigo:String;
 			if (res.substr(0,1) == "1"){
+				if(tipoAccion == 1){
+					var rSplit:Array = res.toString().split('|');
+					codigo = rSplit[1].toString();
+					Alert.show("Registro exitoso del instrumento de crédito con el código - " + codigo, titulo, 4, null, null, global.iInfo);
+				}
 				cerrar();
 			}	
 			else
@@ -156,7 +157,7 @@
 			<mx:RadioButton x="218" y="7" label="Fondeo" groupName="tipo" value="F"/>
 		</mx:Canvas>
 		<mx:Label id="lblTipo" x="10" y="75" text="Tipo"/>
-		<mx:TextInput id="txtCodigo" x="85.75" y="10" width="50" maxChars="3"/>
+		<mx:TextInput id="txtCodigo" x="85.75" y="10" width="50" maxChars="3" editable="false"/>
 		<mx:TextInput id="txtDescripcion" x="85.75" y="42" width="213.5"/>
 		</mx:Canvas>
 	<mx:Button id="btnAceptar" x="232" y="164" icon="@Embed(source='assets/button_ok.png')" click="enviar()" width="40"/>

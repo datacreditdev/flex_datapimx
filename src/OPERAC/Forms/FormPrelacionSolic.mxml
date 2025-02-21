@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="380" height="230" creationPolicy="all">
 	<mx:Metadata>
-		[Event(name="enviarDatosProd", type="Data.EventProd")]
+		[Event(name="enviarDatosSolic", type="Data.EventSolic")]
 	</mx:Metadata>
 	
 	<mx:Script>
 		<![CDATA[
-			import mx.events.IndexChangedEvent;
 			import CATALOGOS.MttoArtefacto;
-			import Data.DatosProd;
-			import Data.EventProd;
+			import Data.DatosSolic;
+			import Data.EventSolic;
 			import Data.Globales;
 			import Data.Utils;
 			import mx.collections.ArrayCollection;
@@ -27,12 +26,14 @@
 			[Bindable]
 			public var preObj:ArrayCollection = new ArrayCollection();
 			
-			public var datos:DatosProd = new DatosProd();
+			public var datos:DatosSolic = new DatosSolic();
 			
-			private var titulo:String;
+			public var estatus:String;
+			
 			private var du:Utils;
 			private var global:Globales;
 			private var tipoAccion:int;
+			private var titulo:String;
 			
 			//variables que especifican el indice del elemento 
 			//seleccionado al realizar la modificacion del registro
@@ -70,6 +71,10 @@
 				}
 			}
 			
+			public function desactivaControles():void{
+				cnvControles.enabled = false;
+			}
+			
 			private function eliminarPrelacion():void{
 				var indice:int = dgPrelacion.selectedIndex;
 				preObj.removeItemAt(indice);
@@ -78,7 +83,7 @@
 				selecPrelacion();
 			}
 			
-			public function enviarDatosProd(formData:DatosProd):void{
+			public function enviarDatosSolic(formData:DatosSolic):void{
 				var listaPre:ArrayCollection;
 				
 				listaPre = dgPrelacion.dataProvider as ArrayCollection;
@@ -97,7 +102,7 @@
 				}
 				formData.guardaPre = true;
 				
-				var event:EventProd = new EventProd("enviarDatosProd", formData);
+				var event:EventSolic = new EventSolic("enviarDatosSolic", formData);
 				dispatchEvent(event);
 			}
 			
@@ -119,12 +124,15 @@
 				preObj = new ArrayCollection(item);
 			}
 			
-			public function init(info:DatosProd, tipoAccion:int):void{
+			public function init(info:DatosSolic, tipoAccion:int, estatus:String):void{
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
-				global = new Globales();
+				
 				du = new Utils();
+				global = new Globales();
+				
 				this.tipoAccion = tipoAccion;
+				this.estatus = estatus;
 				
 				if (info != null){
 					datos = info;
@@ -142,11 +150,17 @@
 							formateaPrelacion();
 						dgPrelacion.dataProvider = preObj;
 						selecPrelacion();
+						
+						if(info.situacion == 'A' || info.situacion == 'R' || info.situacion == 'T' || 
+						   info.situacion == 'E' || info.situacion == 'L' || estatus == "evaluacion"){
+							desactivaControles();	
+						}
 					});
 					//Consulta la lista de artefactos que forman parte de la prelacion del producto
-					params[0] = info.cdgTipoProd;
-					params[1] = info.cdgProd;
-					wsCat.getListado.send(46, params);										
+					params[0] = info.cdgAcred;
+					params[1] = info.ciclo;
+					params[2] = "I";
+					wsCat.getListado.send(69, params);										
 				}	
 			}	
 			
@@ -225,7 +239,7 @@
 			</mx:columns>
 		</mx:DataGrid>
 	</mx:Canvas>
-	<mx:Canvas x="170" y="183" width="200" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true">
+	<mx:Canvas id="cnvControles" x="170" y="183" width="200" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true">
 		<mx:Button id="btnAgregar" x="8" y="3.65" icon="@Embed(source='assets/add.png')" click="mostrarFormArtefacto(1)" toolTip="Agregar Artefacto" width="40"/>
 		<mx:Button id="btnEliminar" x="56" y="3.65" icon="@Embed(source='assets/delete-icon.png')" click="eliminarPrelacion()" enabled="false" toolTip="Eliminar Artefacto" width="40"/>
 		<mx:Button id="btnSubir" x="104" y="3.65" icon="@Embed(source='assets/arriba.png')" enabled="false" toolTip="Subir" width="40" click="aumentarOrden()"/>

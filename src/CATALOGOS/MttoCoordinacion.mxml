@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="460" height="510" creationPolicy="all" xmlns:Forms="CATALOGOS.Forms.*">
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" 
+	width="460" height="510" creationPolicy="all" xmlns:Forms="CATALOGOS.Forms.*">
 	
 	<mx:Validator id="codigoV" source="{txtCodigo}" property="text" 
-	invalid="{txtCodigo.setFocus()}" triggerEvent="" requiredFieldError="Código de Gerencia Requerido"/>
+	invalid="{txtCodigo.setFocus()}" triggerEvent="" requiredFieldError="Código de Oficina Requerido"/>
 	
 	<mx:Validator id="nombreV" source="{txtNombre}" property="text" 
-	invalid="{txtNombre.setFocus()}" triggerEvent="" requiredFieldError="Nombre de Gerencia Requerido"/>
+	invalid="{txtNombre.setFocus()}" triggerEvent="" requiredFieldError="Nombre de Oficina Requerido"/>
 
 	<mx:Script>
 	<![CDATA[
@@ -35,6 +36,7 @@
 	
 		private var du:Utils;
 		private var global:Globales;
+		
 		public var openEffect:Effect = new WipeDown();
 		public var closeEffect:Effect = new WipeDown();
 		public var wsMS:WebService;	
@@ -78,7 +80,6 @@
 		}
 	
 		public function enviar():void{
-			global = new Globales();
 			info = new DatosDir();
 				
 			formDatosCoord.enviarDatosDir(info);
@@ -89,21 +90,23 @@
 			
 		}
 		
-		public function formateaPers(datos:String):void{
+		public function formateaPers():void{
+			var cont:int = _xmlPers.elements().length();
 			var oItem:Object;
-			var array:Array;
-			var arr:ArrayCollection;
+			var item:Array = new Array;
 				
 			oItem = new Object();
-			oItem.CODIGO = "";
-			oItem.NOMBREC = "--Seleccionar--";
+			oItem.codigo = "";	
+			oItem.nombre = "--Seleccionar--";
+			item.push(oItem);
 				
-			var xml:XMLDocument = new XMLDocument( datos ); 
-     		var decoder:SimpleXMLDecoder = new SimpleXMLDecoder();  
-     		var data:Object = decoder.decodeXML( xml );  
-			array = ArrayUtil.toArray(data.NewDataSet.Table);   
-			persObj = new ArrayCollection(array);
-			persObj.addItemAt(oItem,0);
+			for (var i:int = 0; i < cont; i++){
+				oItem = new Object();
+				oItem.codigo = _xmlPers.Table[i].CODIGO;	
+				oItem.nombre = _xmlPers.Table[i].NOMBRE;
+				item.push(oItem);
+			}
+			persObj = new ArrayCollection(item);
 		}
 		
 		public function guardaCoord():void{
@@ -112,7 +115,7 @@
 			global.bloquear()
 			wsMS.addEventListener(ResultEvent.RESULT, setAccionCoord);
 			wsMS.setAccionCoord.send(tipoAccion, txtCodReg.text, txtCodigo.text, txtNombre.text, 
-									cboGerente.selectedItem.CODIGO, info.calle, info.cdgEntFed, info.cdgMun, 
+									cboGerente.selectedItem.codigo, info.calle, info.cdgEntFed, info.cdgMun, 
 									info.cdgLoc, info.cdgCol, info.telefono, info.iva); 			
 		}
 	
@@ -123,7 +126,7 @@
 			tipoAccion = tipo;
 			global = new Globales();
 			du = new Utils(); 
-			titulo = "Mantenimiento de Sucursal";
+			titulo = "Mantenimiento de Oficina";
 			//Codigo que permite ejecutar el efecto de apertura
 			openEffect.duration = 1000;
 			openEffect.play([this]);
@@ -138,24 +141,20 @@
 				du.closeWs(wsCat); 
 					
 				if (_xmlPers.elements().length() > 0){
-					formateaPers(evt.result.toString());
+					formateaPers();
 					cboGerente.dataProvider = persObj;
 				} 	
 				for(var j:int = 0; j < persObj.length; j++){
-					if (persObj[j].CODIGO.toString() == codPers){
+					if (persObj[j].codigo.toString() == codPers){
 						cboGerente.selectedIndex = j;
 						break;
 					}
 				}	
 				if(tipoAccion == 1){
 					registraInfoCoord(codReg, regional);
-					txtCodigo.editable = true;
-					txtNombre.editable = true;
 				}
 				else if(tipoAccion == 2){
 					cargaInfoCoord(codReg, regional, codCoord, coord, codPers);
-					txtCodigo.editable = false;
-					txtNombre.editable = false;
 				}
 			});
 			params[0] = "";
@@ -201,7 +200,13 @@
 			global.desbloquear();
 			wsMS.removeEventListener(ResultEvent.RESULT, setAccionCoord);
 			var res:String = event.result.toString();
+			var codigo:String;
 			if (res.substr(0,1) == "1"){
+				if(tipoAccion == 1){
+					var rSplit:Array = res.toString().split('|');
+					codigo = rSplit[1].toString();
+					Alert.show("Registro exitoso de oficina con el código - " + codigo, titulo, 4, null, null, global.iInfo);
+				}
 				cerrar();
 			}	
 			else
@@ -218,7 +223,8 @@
 		}
 		
 		public function validaFinal():void{
-			var invalidArray:Array = Validator.validateAll([codigoV, nombreV]);
+			var invalidArray:Array = Validator.validateAll([nombreV]);
+			
 			if (info.guarda == true && invalidArray.length == 0)
 				guardaCoord();
 			else
@@ -230,11 +236,11 @@
 	
 	<mx:Canvas x="15" y="62" width="430" height="100" styleName="canvasMod" id="canvas1">
 		<mx:Label id="lblCodigo" x="62.5" y="10" text="Código:"/>
-		<mx:TextInput id="txtCodigo" editable="false" x="111.5" y="8" width="45" maxChars="3"/>
+		<mx:TextInput id="txtCodigo" x="111.5" y="8" width="45" maxChars="3" editable="false"/>
 		<mx:Label id="lblNombre" x="58.5" y="38" text="Nombre:"/>
-		<mx:TextInput id="txtNombre" editable="false" x="111.5" y="36" width="250" height="24" maxChars="50"/>
-		<mx:Label id="lblGerente" x="36.5" y="68" text="Coordinador:"/>
-		<mx:ComboBox id="cboGerente" x="111.5" y="65" width="290" height="24" labelField="NOMBREC"/>
+		<mx:TextInput id="txtNombre" x="111.5" y="36" width="250" height="24" maxChars="50"/>
+		<mx:Label id="lblGerente" x="32.5" y="68" text="Responsable:"/>
+		<mx:ComboBox id="cboGerente" x="111.5" y="65" width="290" height="24" labelField="nombre"/>
 	</mx:Canvas>
 	<mx:Canvas x="15" y="170" width="430" height="260" styleName="canvasMod">
 		<Forms:FormDatosCoord id="formDatosCoord" x="14" height="248"/>
@@ -244,6 +250,6 @@
 	<mx:Canvas x="15" y="10" width="430" height="44" styleName="canvasMod">
 		<mx:TextInput id="txtCodReg" x="111" y="8" width="45" editable="false"/>
 		<mx:TextInput id="txtRegional" x="164" y="8" width="254" editable="false"/>
-		<mx:Label x="10" y="10" text="Gerencia Regional:"/>
+		<mx:Label x="10" y="10" text="Región:"/>
 	</mx:Canvas>
 </mx:TitleWindow>

@@ -73,11 +73,11 @@
 			info = new DatosProd();
 			formDatosGralProd.enviarDatosProd(info);
 			formCalendarioProd.enviarDatosProd(info);
-			formCapIntProd.enviarDatosProd(info);
 			formTasasProd.enviarDatosProd(info);
 			formRecargosProd.enviarDatosProd(info);
 			formEntregaProd.enviarDatosProd(info);
 			//formCondicionesProd.enviarDatosProd(info);
+			//formCapIntProd.enviarDatosProd(info);
 			formComisiones.enviarDatosProd(info);
 			formPrelacion.enviarDatosProd(info);
 			validaFinal();
@@ -95,8 +95,8 @@
 			wsMS.setAccionProd.send(tipoAccion, codTipoProd, info.cdgProd, info.nombreProd, info.moneda, info.tipoCred,
 									info.valido, info.montoMin, info.montoMax, info.baseCalc, info.periodicidad, info.multPerio,
 									info.diaEsp, info.pagoCapital, info.pagoInteres, info.duracion, info.fijaPer, info.fijaMultPer, 
-									info.fijaPGC, info.fijaPGI, info.fijaPlazo, info.perPagoCap, info.fijaPagoCap,
-									info.perCapital, info.multPerCap, info.metodoCobro, info.formaDist, info.instrumento, 
+									info.fijaPGC, info.fijaPGI, info.fijaPlazo, /*info.perPagoCap, info.fijaPagoCap,
+									info.perCapital, info.multPerCap,*/ info.metodoCobro, info.formaDist, info.instrumento, 
 									info.interes, info.fijaMCI, info.fijaFDI, info.fijaTas, info.tasaFija, info.factorTasa, 
 									info.aplican, info.metodoAplic, info.fijaMAP, info.fijaRec, info.formaEntre, info.fijaEnt, 
 									info.tipoMov, info.montoCom, info.porcCom, info.tipoCargo, info.opcional, info.orden, info.artefacto);			
@@ -181,11 +181,11 @@
 
 			formDatosGralProd.init(info, tipoAccion);
 			formCalendarioProd.init(info, tipoAccion);
-			formCapIntProd.init(info, tipoAccion);
 			formTasasProd.init(info, tipoAccion);
 			formRecargosProd.init(info, tipoAccion);
 			formEntregaProd.init(info, tipoAccion);
 			//formCondicionesProd.init(info, tipoAccion);
+			//formCapIntProd.init(info, tipoAccion);
 			formComisiones.init(info, tipoAccion);
 			formPrelacion.init(info,tipoAccion);
 		}
@@ -199,11 +199,11 @@
 			
 			formDatosGralProd.init(info, tipoAccion);
 			formCalendarioProd.init(info, tipoAccion);
-			formCapIntProd.init(info, tipoAccion);
 			formTasasProd.init(info, tipoAccion);
 			formRecargosProd.init(info, tipoAccion);
 			formEntregaProd.init(info, tipoAccion);
 			//formCondicionesProd.init(info, tipoAccion);
+			//formCapIntProd.init(info, tipoAccion);
 			formComisiones.init(info, tipoAccion);
 			formPrelacion.init(info, tipoAccion);
 		}
@@ -214,8 +214,15 @@
 			global.desbloquear();
 			wsMS.removeEventListener(ResultEvent.RESULT, setAccionProd);
 			var res:String = event.result.toString();
-			if (res.substr(0,1) == "1")
+			var codigo:String;
+			if (res.substr(0,1) == "1"){
+				if(tipoAccion == 1){
+					var rSplit:Array = res.toString().split('|');
+					codigo = rSplit[1].toString();
+					Alert.show("Registro exitoso de producto de crédito con el código - " + codigo, titulo, 4, null, null, global.iInfo);
+				}
 				cerrar();
+			}
 			else
 				Alert.show(res.substr(2,res.length -1),titulo,4,null,null,global.iAlert);		
 		}
@@ -231,7 +238,7 @@
 		
 		private function validaFinal():void{
 			if (info.guarda == true && info.guardaCalendario == true && info.guardaTasas == true 
-			 	&& info.guardaRecargos == true && info.guardaEntre == true && info.guardaCapInt == true 
+			 	&& info.guardaRecargos == true && info.guardaEntre == true /*&& info.guardaCapInt == true*/
 			 	&& info.guardaCom == true && info.guardaPre == true)
 				guardaProd();
 			else
@@ -266,10 +273,10 @@
 			<Forms:FormCondicionesProd id="formCondicionesProd" x="89.5" y="0">
 			</Forms:FormCondicionesProd>
 		</mx:Canvas>-->
-		<mx:Canvas label="Capital" width="100%" height="100%">
+		<!--<mx:Canvas label="Capital" width="100%" height="100%">
 			<Forms:FormCapitalInteresProd id="formCapIntProd" x="74.5" y="10">
 			</Forms:FormCapitalInteresProd>
-		</mx:Canvas>
+		</mx:Canvas>-->
 		<mx:Canvas label="Comisiones" width="100%" height="100%">
 			<Forms:FormComisiones id="formComisiones" x="14.5" y="10">
 			</Forms:FormComisiones>

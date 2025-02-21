@@ -285,7 +285,7 @@
 								else
 									Alert.show(res.substr(2,res.length -1), titulo, 4, null, null, global.iAlert);
 							});
-							wsMS.getSituacionSolic.send(grupo);	//Método que valida que no exista mas de una solicitud en proceso							
+							wsMS.getValidaSituacionSolic.send(grupo);	//Método que valida que no exista mas de una solicitud en proceso							
 							break;
 						case 2: 
 							if (dgSolic.selectedIndex >= 0){
@@ -408,7 +408,7 @@
 					du.closeWs(wsMS);	
 								
 				});
-				wsMS.getSituacionSolic.send(grupo);	//Método que indica las opciones disponibles para el usuario
+				wsMS.getValidaSituacionSolic.send(grupo);	//Método que indica las opciones disponibles para el usuario
 			}
 			
 		]]>

@@ -386,15 +386,15 @@
 			}
 	]]>
 	</mx:Script>
-	<mx:Label id="lblCalle" text="Calle:" x="111.5" y="37"/>
+	<mx:Label id="lblCalle" text="Calle*:" x="107.5" y="36"/>
 	<mx:Label id="lblNoExt" text="Número Exterior:" x="57.5" y="68"/>
 	<mx:Label id="lblNoInt" text="Número Interior:" x="61.5" y="100"/>
 	<mx:Label id="lblCodPostal" text="Código Postal:" x="69.5" y="162"/>
-	<mx:Label id="lblEntFed" text="Entidad Federativa:" x="45.5" y="193"/>
-	<mx:Label id="lblMunic" text="Municipio:" x="90.5" y="224"/>
-	<mx:Label id="lblLoc" text="Localidad:" x="88.5" y="256"/>
-	<mx:Label id="lblCol" text="Colonia:" x="99.5" y="288"/>
-	<mx:Label id="lblPais" text="País:" x="114.5" y="131"/>
+	<mx:Label id="lblEntFed" text="Entidad Federativa*:" x="41.5" y="193"/>
+	<mx:Label id="lblMunic" text="Municipio*:" x="86.5" y="224"/>
+	<mx:Label id="lblLoc" text="Localidad*:" x="84.5" y="256"/>
+	<mx:Label id="lblCol" text="Colonia*:" x="95.5" y="288"/>
+	<mx:Label id="lblPais" text="País*:" x="110.5" y="131"/>
 	<mx:Label id="lblEntre" text="Entre las calles:" x="61.5" y="320"/>
 	<mx:TextInput id="txtCalle" maxChars="80" restrict="A-Z;a-z;Ñ;ñ;0-9; " width="170" x="150.5" y="35"/>
 	<mx:TextInput id="txtNoExt" maxChars="20" width="170" x="150.5" y="67"/>

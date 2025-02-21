@@ -42,6 +42,7 @@
 			
 			public var tipoAccion:int;
 			public var estatus:String;
+			
 			private var du:Utils;
 			private var global:Globales;
 			

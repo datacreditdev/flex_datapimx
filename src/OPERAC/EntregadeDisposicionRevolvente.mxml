@@ -293,7 +293,7 @@
 					du.rCursor();
 					du.closeWs(wsMS);
 				});
-				wsMS.getSituacionSolic.send(grupo);	//Método que indica las opciones disponibles para el usuario
+				wsMS.getValidaSituacionSolic.send(grupo);	//Método que indica las opciones disponibles para el usuario
 			}
 			
 		]]>

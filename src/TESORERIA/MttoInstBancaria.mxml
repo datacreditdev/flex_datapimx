@@ -21,20 +21,20 @@
 		import mx.managers.PopUpManager;
 		import mx.rpc.events.ResultEvent;
 		import mx.rpc.soap.WebService;
-		import mx.validators.Validator;	
 		
 		[Bindable]
 		private var info:DatosInstBancaria;
 		[Bindable]
 		private var _xmlIB:XML =  new XML();
 		
-		public var global:Globales;
 		public var openEffect:Effect = new WipeDown();
 		public var closeEffect:Effect = new WipeDown();
 		public var wsMS:WebService;	
 		public var tipoAccion:int;
 		public var titulo:String;
-		public var du:Utils;
+		
+		private var du:Utils;
+		private var global:Globales;
 		
 		public function cargaInfoInstBancaria(cdgIB:String, instBanc:String):void{
 			tipoAccion = 2; 

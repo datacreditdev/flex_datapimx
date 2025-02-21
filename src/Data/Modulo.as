@@ -24,7 +24,7 @@ package Data
 		public var frm_16:RegionesyOficinas;
 		public var frm_17:SituaciondeCartera;
 		public var frm_18:PagosEsperados;
-		public var frm_19:ProductosdeCreditoyCiclos;
+		public var frm_19:ProductosdeCredito;
 		public var frm_20:PagosNoIdentificados;
 		public var frm_21:PagosIdentificados;
 		public var frm_23:AntiguedaddeSaldos;
@@ -99,7 +99,7 @@ package Data
 		public var frm_121:EntregadeDisposicionRevolvente;
 		public var frm_122:SolicituddeDisposicionRevolvente;
 		public var frm_123:ImpresiondeChequesdeDisposicion;
-		public var frm_124:KYCPersonasPFyPM;
+		public var frm_124:RegistrodePersonasPFyPM;
 		public var frm_125:AjustesdeComisionySeguro;
 		public var frm_126:AnalisisdeAlertas;
 		public var frm_127:IdentificaciondeAcreditados;

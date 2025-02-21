@@ -33,6 +33,7 @@
 				txtTasaFija.text = "";
 				txtFactorTasa.text = "";
 				aplicaDesde.selectedValue = 1;
+				
 				if(tipoTasa.selectedValue == 1){
 					tasaFija.enabled = true;
 					cnvAplicaDesde.enabled = true;

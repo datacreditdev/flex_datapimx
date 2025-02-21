@@ -50,13 +50,13 @@
 			
 			public var datos:DatosDir = new DatosDir();
 			
-			public var wsMS:WebService;   					 //variable utilizada para las llamadas asincronas de WS	
 			public var texto:String;
 			private var du:Utils;
 			private var global:Globales;
 			
 			public function enviarDatosDir(formData:DatosDir):void{
 				var invalidArray:Array = Validator.validateAll([calleV, entFedV, municipioV, localidadV, coloniaV]);
+				
 				if(invalidArray.length == 0){	
 					formData.calle = StringUtil.trim(txtCalle.text);
 					formData.telefono = StringUtil.trim(txtTelefono.text);
@@ -116,12 +116,6 @@
 				});
 				wsCat.getCatalogoGral.send(2);
 			}
-			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}	
 			
 			public function limpiaDatosDir():void{
 				comEntGrid.limpiar();

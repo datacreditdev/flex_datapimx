@@ -302,7 +302,7 @@
 					if(tipoAccion == 1){
 						var rSplit:Array = res.toString().split('|');
 						codigo = rSplit[1].toString();
-						Alert.show("Registro de persona almacenado con el código - " + codigo,titulo,4,null,null,global.iInfo);
+						Alert.show("Registro exitoso de persona con el código - " + codigo,titulo,4,null,null,global.iInfo);
 					}	
 					else
 						Alert.show("Proceso finalizado exitosamente.",titulo,4,null,null,global.iInfo);
@@ -335,7 +335,7 @@
 		]]>
 	</mx:Script>
 	<mx:TabNavigator id="tabNav" width="591" height="530" x="7.5" y="50" creationPolicy="all">
-		<mx:Canvas label="Datos Personales" width="100%" height="100%">
+		<mx:Canvas label="Datos Generales" width="100%" height="100%">
 			<Forms:FormDatosPerPers id="formDatosPers" x="79.5" height="480" width="430"/>
 		</mx:Canvas>
 		<mx:Canvas label="Domicilio" width="100%" height="100%">	
@@ -355,6 +355,6 @@
 	<mx:Button id="btnAceptar" x="508" y="588" icon="@Embed(source='assets/button_ok.png')" click="enviar()" width="40"/>
 	<mx:Label x="183.5" y="16" text="Tipo Persona:" id="lblTipoPers"/>
 	<mx:ComboBox id="cboTipoPers" labelField="nombre" x="262.5" y="13" change="modificaEstatus()"/>
-	<mx:Button id="btnConsBuro" x="10" y="588" click="consultarBuro()" label="Consulta Rep. Crédito" visible="true"/>
-	<mx:Button id="btnDoc" x="166" y="588" click="mostrarDocumentos()" label="Ver Documentación" visible="true"/>
+	<mx:Button id="btnConsBuro" x="10" y="588" click="consultarBuro()" label="Consulta Rep. Crédito" visible="false"/>
+	<mx:Button id="btnDoc" x="166" y="588" click="mostrarDocumentos()" label="Ver Documentación" visible="false"/>
 </mx:TitleWindow>

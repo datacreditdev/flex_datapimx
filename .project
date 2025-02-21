@@ -21,5 +21,10 @@
 			<type>2</type>
 			<location>C:/inetpub/wwwroot/admin_pimx</location>
 		</link>
+		<link>
+			<name>bin-release</name>
+			<type>2</type>
+			<location>C:/Deploy/FlexDataPIMX</location>
+		</link>
 	</linkedResources>
 </projectDescription>

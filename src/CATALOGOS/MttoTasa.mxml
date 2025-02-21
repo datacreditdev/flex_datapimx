@@ -26,7 +26,6 @@
 		[Bindable]
 		private var _xmlTasa:XML =  new XML();
 		
-		public var global:Globales;
 		public var instrumento:String;
 		public var descInst:String;
 		public var openEffect:Effect = new WipeDown();
@@ -34,8 +33,9 @@
 		public var wsMS:WebService;	
 		public var tipoAccion:int;
 		public var titulo:String;
-		public var du:Utils;
-		private var vResult:ValidationResultEvent;
+		
+		private var du:Utils;
+		private var global:Globales;
 		
 		public function cargaInfoTasa(instrumento:String, descInst:String, tasa:Number, valDesde:String):void{
 			tipoAccion = 2; 
@@ -151,14 +151,6 @@
 				Alert.show("Debe capturar los datos requeridos",titulo,4,null,null,global.iAlert);
 		}
 		
-		public function validaMonto(event:Event):void{
-			numVal.source = TextInput(event.currentTarget);
-			vResult = numVal.validate();
-
-			if (vResult.type!=ValidationResultEvent.VALID)
-                TextInput(event.currentTarget).text = "";
-		}
-		
 		]]>
 	</mx:Script>
 	<mx:NumberValidator id="numVal" property="text" required="false"
@@ -173,7 +165,7 @@
 		<mx:Label id="lblValDesde" x="89.5" y="11" text="Válido desde:" textAlign="right"/>
 		<mx:TextInput id="txtValDesde" x="169.25" y="9" width="80" editable="false"/>
 		<mx:DateField id="dtfValDesde" x="168.5" y="9" width="100"/>
-		<mx:TextInput id="txtTasa" x="169.25" y="39" width="80" restrict="0-9;." change="validaMonto(event)"/>
+		<mx:TextInput id="txtTasa" x="169.25" y="39" width="80" restrict="0-9;." maxChars="5" focusOut="{global.formatearMonto(event)}"/>
 	</mx:Canvas>
 	<mx:Button id="btnAceptar" x="282" y="146" icon="@Embed(source='assets/button_ok.png')" click="enviar()" width="40"/>
 	<mx:Button id="btnCancelar" x="330" y="146" icon="@Embed(source='assets/Icon-Delete.png')" click="cerrar()" width="40"/>

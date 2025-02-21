@@ -163,7 +163,7 @@
 				var usuario:String;
 				var nomUsuario:String;
 				
-				codAcred = "&acred=" + dgAcred.selectedItem.CODIGO;
+				codAcred = "&codigo=" + dgAcred.selectedItem.CODIGO;
 				infoCiclo = "&ciclo=" + dgCred.selectedItem.CICLO;
 				usuario = "&usuario=" + global.obtenerUsuario();
 				nomUsuario = "&nomUsuario=" + global.obtenerNombreUsuario();
@@ -305,7 +305,7 @@
 					du.rCursor();
 					du.closeWs(wsMS);
 				});
-				wsMS.getSituacionSolic.send(grupo);	//Método que indica las opciones disponibles para el usuario
+				wsMS.getValidaSituacionSolic.send(grupo);	//Método que indica las opciones disponibles para el usuario
 			}
 			
 		]]>

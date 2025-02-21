@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="844" height="390" 
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="844" height="420" 
 	title="Edición" showCloseButton="true" close="cerrar()" xmlns:Forms="OPERAC.Forms.*">
 	
 	<mx:Script>
@@ -9,28 +9,25 @@
 			import Data.EventSolic;
 			import Data.Globales;
 			import Data.Utils;
-			import mx.events.MoveEvent;
-			import mx.events.FlexEvent;
-			import mx.events.CollectionEvent;
-			import mx.events.ValidationResultEvent;
-			import mx.events.DataGridEvent;
-			import mx.events.DataGridEventReason;
-			import mx.events.ItemClickEvent;
-			import mx.events.ListEvent;
-			import mx.events.CalendarLayoutChangeEvent;
-			import mx.events.IndexChangedEvent;
 			import mx.collections.ArrayCollection;
-			import mx.core.Application;
-			import mx.containers.TitleWindow;			
-			import mx.managers.PopUpManager;
+			import mx.containers.TitleWindow;
 			import mx.controls.Alert;
 			import mx.controls.ComboBox;
 			import mx.controls.DateField;
 			import mx.controls.RadioButtonGroup;
+			import mx.core.Application;
 			import mx.effects.*;
-			import mx.rpc.soap.WebService;
-			import mx.rpc.events.ResultEvent;
+			import mx.events.CollectionEvent;
+			import mx.events.DataGridEvent;
+			import mx.events.FlexEvent;
+			import mx.events.ItemClickEvent;
+			import mx.events.ListEvent;
+			import mx.events.MoveEvent;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
 			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.soap.WebService;
 			import mx.utils.ObjectUtil;
 			
 			[Bindable]
@@ -64,9 +61,10 @@
 			public var montoMax:Number;
 			public var promotor:String;
 			public var titulo:String;
+			public var openEffect:Effect = new Fade();
+			
 			private var du:Utils;
 			private var global:Globales;
-			public var openEffect:Effect = new Fade();
 			
 			public function actualizaListaAcred(fecSolic:String):void{
 				cargaAcred(cdgAcred, txtCiclo.text, fecSolic);
@@ -236,7 +234,6 @@
 			
 			//funcion que realiza la carga de datos 
 			public function formateaAcred(ciclo:String, fecSolic:String):void{
-				var i:int;
 				var cont:int = _xmlAcred.elements().length();
 				var oItem:Object;
 				var item:Array = new Array;
@@ -244,7 +241,7 @@
 				Arr.removeAll();
 				acredObj.removeAll();
 				
-				for(i = 0; i < cont; i++){
+				for(var i:int = 0; i < cont; i++){
 					oItem = new Object();
 					oItem.codigo = _xmlAcred.Table[i].CDGCL;
 					oItem.nombre = _xmlAcred.Table[i].NOMBREC;
@@ -295,7 +292,7 @@
 			}
 			
 			public function guardaPrn():void{
-				if(formateaRegAcred() == true){ //valida que todos los clientes se hayan registrado con montos validos
+				if(formateaRegAcred()){ //valida que todos los clientes se hayan registrado con montos validos
 					initConexion();
 					du.sCursor();
 					global.bloquear();
@@ -308,7 +305,8 @@
 						tipoAccion = 3
 					wsMS.addEventListener(ResultEvent.RESULT, setAccionPrn);
 					wsMS.setAccionPrn.send(tipoAccion, global.obtenerUsuario(), cdgAcred, null, cdgAcred, txtCiclo.text, "I", info.entregado, 
-											   info.devolucion, info.situacion, info.fecEntre, info.fecSolic, acred, cantEntreAcred, situacionAcred, "", "");
+										   info.devolucion, info.situacion, info.fecEntre, info.fecSolic, acred, cantEntreAcred, situacionAcred, 
+										   "", "");
 				}
 			}
 			
@@ -390,6 +388,9 @@
 				formTasasSolic.init(info, 2, estatus);
 				formRecargosSolic.init(info, 2, estatus);
 				formEntregaSolic.init(info, 2, estatus);
+				formComisionesSolic.init(info, 2, estatus);
+				formPrelacionSolic.init(info, 2, estatus);
+				
 				//validaSituacionInicial();
 			}
 			
@@ -437,21 +438,13 @@
 				else
 					Alert.show("Debe capturar los datos requeridos",titulo,4,null,null,global.iAlert);
 			}
-			
-			public function validaMonto(event:Event):void{	
-				numVal.source = TextInput(event.currentTarget);
-				vResult = numVal.validate();
-
-				if (vResult.type!=ValidationResultEvent.VALID)
-                	TextInput(event.currentTarget).text = "";
-			}
 		]]>
 	</mx:Script>
 
 	 <mx:NumberValidator id="numVal" property="text" precision="2"
         allowNegative="true" domain="real" decimalSeparator="." thousandsSeparator="," required="false"/>
 
-	<mx:TabNavigator id="tabNav" width="824" height="251" x="10" y="52" creationPolicy="all">
+	<mx:TabNavigator id="tabNav" width="824" height="285" x="10" y="52" creationPolicy="all">
 		<mx:Canvas label="Producto" width="100%" height="100%">
 			<Forms:FormProductoSolicInd id="formProdSolic" x="140" y="39" width="540" height="130"/>
 		</mx:Canvas>
@@ -470,9 +463,15 @@
 		<mx:Canvas label="Entrega" width="100%" height="100%" id="canvas2">	
 			<Forms:FormEntregaSolic id="formEntregaSolic" x="76" y="29"/>
 		</mx:Canvas>
+		<mx:Canvas label="Comisiones" width="100%" height="100%" id="cnvComision">	
+			<Forms:FormComisionesSolic id="formComisionesSolic" x="61" y="10"/>
+		</mx:Canvas>
+		<mx:Canvas label="Prelación" width="100%" height="100%" id="cnvPrelacion">	
+			<Forms:FormPrelacionSolic id="formPrelacionSolic" x="221" y="10"/>
+		</mx:Canvas>
 	</mx:TabNavigator>
-	<mx:Button id="btnCancelar" x="794" y="311" icon="@Embed(source='assets/Icon-Delete.png')" click="cerrar()" width="40"/>
-	<mx:Button id="btnAceptar" x="746" y="311" icon="@Embed(source='assets/button_ok.png')" click="enviar()" width="40"/>
+	<mx:Button id="btnCancelar" x="790" y="345" icon="@Embed(source='assets/Icon-Delete.png')" click="cerrar()" width="40"/>
+	<mx:Button id="btnAceptar" x="742" y="345" icon="@Embed(source='assets/button_ok.png')" click="enviar()" width="40"/>
 	<mx:Canvas x="62" y="10" width="720" height="36" styleName="canvasMod">
 		<mx:Label x="20" y="6" text="Acreditado:"/>
 		<mx:TextInput id="txtAcred" x="89" y="5" width="238" editable="false"/>
@@ -481,5 +480,5 @@
 		<mx:TextInput x="516" y="5" width="181" id="txtSucursal" editable="false"/>
 		<mx:TextInput x="384" y="5" width="45" id="txtCiclo" editable="false"/>
 	</mx:Canvas>
-	<mx:Button id="btnTabla" x="10" y="310" label="Tabla Amortización" click="muestraTablaAmort()"/>
+	<mx:Button id="btnTabla" x="10" y="345" label="Tabla Amortización" click="muestraTablaAmort()"/>
 </mx:TitleWindow>

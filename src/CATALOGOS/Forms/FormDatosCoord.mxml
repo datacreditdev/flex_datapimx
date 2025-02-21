@@ -20,9 +20,6 @@
 	<mx:Validator id="coloniaV" source="{comColGrid.txtDato}" property="text" 
 	invalid="{comColGrid.txtDato.setFocus()}" triggerEvent="" requiredFieldError="Nombre de Colonia Requerido"/>
 
-	<mx:NumberValidator id="ivaV" source="{cboIVA}" property="selectedIndex" 
-	invalid="{cboIVA}" minValue="1" triggerEvent="" lowerThanMinError="IVA de Sucursal Requerido"/>
-	
 	<mx:Script>
 		<![CDATA[
 			import Data.EventDir;
@@ -44,7 +41,6 @@
 			private var _xmlDir:XML =  new XML();
 			private var _xmlColonia:XML =  new XML();
 			private var _xmlEntidad:XML =  new XML();
-			private var _xmlIVA:XML =  new XML();
 			private var _xmlMunicipio:XML =  new XML();
 			private var _xmlLocalidad:XML =  new XML();
 		
@@ -67,14 +63,13 @@
 			}	
 			
 			public function enviarDatosDir(formData:DatosDir):void{
-				var invalidArray:Array = Validator.validateAll([calleV, entFedV, municipioV, localidadV, coloniaV, ivaV]);
+				var invalidArray:Array = Validator.validateAll([calleV, entFedV, municipioV, localidadV, coloniaV]);
 				if(invalidArray.length == 0){	
 					formData.calle = StringUtil.trim(txtCalle.text);
 					formData.cdgEntFed = datos.cdgEntFed;
 					formData.cdgMun = datos.cdgMun;
 					formData.cdgLoc = datos.cdgLoc;
 					formData.cdgCol = datos.cdgCol;
-					formData.iva = cboIVA.selectedItem.codigo;
 					formData.guarda = true;
 				}
 				else{
@@ -84,30 +79,9 @@
 				dispatchEvent(event);
 			}
 			
-			public function formateaIVA():void{
-				var i:int;
-				var cont:int = _xmlIVA.elements().length();
-				var oItem:Object;
-				var item:Array = new Array;
-				
-				oItem = new Object();
-				oItem.codigo = "";
-				oItem.nombre = "--Seleccionar--";
-				item.push(oItem);
-				
-				for (i = 0; i < cont; i++){
-					oItem = new Object();
-					oItem.codigo = _xmlIVA.Table[i].CODIGO;
-					oItem.nombre = _xmlIVA.Table[i].NOMBRE;
-					item.push(oItem);
-				}
-				ivaObj = new ArrayCollection(item);
-			}
-			
 			public function init(info:DatosDir):void{
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
-				var i:int;
 				
 				global = new Globales();
 				du = new Utils();
@@ -120,49 +94,31 @@
 				du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
 					_xmlEntidad = new XML(evt.result.toString());
 					
+					du.closeWs(wsCat);
+					du.rCursor();
+					
 					if(_xmlEntidad.elements().length() > 0){
 						comEntGrid.init(_xmlEntidad, 130);
 						comEntGrid.addEventListener("seleccionar",selecEntFed);
 						comEntGrid.addEventListener("verificar",verifEntFed);
 					}
-					
-					du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
-						_xmlIVA = new XML(evt.result.toString());
-					 
-					 	du.rCursor();
-						du.closeWs(wsCat);
-					 	
-					 	if(_xmlIVA.elements().length() > 0){
-							formateaIVA();
-							cboIVA.dataProvider = ivaObj;
-						}
 						
-						if (info != null){
-							txtCalle.text = info.calle;
-							comEntGrid.asignarTexto(info.entFed);
-							comMunGrid.asignarTexto(info.municipio);
-							comLocGrid.asignarTexto(info.localidad);
-							comColGrid.asignarTexto(info.colonia);	
-							
-							for(i = 0; i < ivaObj.length; i++){
-								if(ivaObj[i].codigo == info.iva){
-									cboIVA.selectedIndex = i;
-									break;	
-								}
-							}
-							
-							datos.cdgEntFed = info.cdgEntFed;		
-							datos.cdgMun = info.cdgMun;
-							datos.cdgLoc = info.cdgLoc;
-							datos.cdgCol = info.cdgCol;	
-							
-							obtieneMunicipio();
-							obtieneLocalidad();
-							obtieneColonia();
-						}	
-					});
-					//obtiene informacion de la distribucion de interes
-					wsCat.getCatalogoGral.send(18);
+					if (info != null){
+						txtCalle.text = info.calle;
+						comEntGrid.asignarTexto(info.entFed);
+						comMunGrid.asignarTexto(info.municipio);
+						comLocGrid.asignarTexto(info.localidad);
+						comColGrid.asignarTexto(info.colonia);	
+						
+						datos.cdgEntFed = info.cdgEntFed;		
+						datos.cdgMun = info.cdgMun;
+						datos.cdgLoc = info.cdgLoc;
+						datos.cdgCol = info.cdgCol;	
+						
+						obtieneMunicipio();
+						obtieneLocalidad();
+						obtieneColonia();
+					}	
 				});
 				//obtiene informacion de la entidad federativa
 				wsCat.getCatalogoGral.send(2);
@@ -329,6 +285,4 @@
 	<control:TextGrid id="comLocGrid" x="154" y="118" height="24"/>
 	<mx:Label id="lblCol" text="Colonia:" x="103" y="152"/>
 	<control:TextGrid id="comColGrid" x="154" y="150" height="24"/>
-	<mx:Label id="lblIva" text="IVA de Sucursal:" x="59" y="185"/>
-	<Data:CustomComboBox id="cboIVA" width="230" labelField="nombre" x="154" y="182"/>	
 </mx:Canvas>

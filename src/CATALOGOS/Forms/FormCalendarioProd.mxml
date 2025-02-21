@@ -146,6 +146,6 @@
 		<mx:Label text="Periodos" y="12" x="96"/>
 		<mx:CheckBox id="chkPlazo" label="No Permitir modificar"  x="163" y="10"/>
 		<mx:Label id="lblDiaPago" text="Día de Pago:" x="84" y="51"/>
-		<mx:NumericStepper id="numDiaEsp" maximum="31" minimum="1" x="157" y="49"/>
+		<mx:NumericStepper id="numDiaEsp" maximum="31" minimum="0" x="157" y="49"/>
 	</mx:Canvas>
 </mx:Canvas>

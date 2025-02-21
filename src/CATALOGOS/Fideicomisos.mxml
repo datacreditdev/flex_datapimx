@@ -107,7 +107,7 @@
 							dgSup.validateNow();
 							dgSup.verticalScrollPosition = vScroll;
 							dgSup.selectedIndex = indSup;
-							this.accionSup = 0;
+							accionSup = 0;
 						}
 					}
 					seleccionarSup();
@@ -120,37 +120,35 @@
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
 				
-				if (txtCodFid.text != "" || txtFid.text != ""){
-					btnBuscar.setFocus();
-					dgFid.dataProvider = null;
-					du.initWsCat(wsCat);
-					du.sCursor();
-					if(tipo == 1)
-						global.bloquear();
+				btnBuscar.setFocus();
+				dgFid.dataProvider = null;
+				du.initWsCat(wsCat);
+				du.sCursor();
+				if(tipo == 1)
+					global.bloquear();
+					
+				du.ejecutaWsMethod(wsCat,function(event:ResultEvent):void{
+					_xmlFid = new XML(event.result);
+					
+					du.closeWs(wsCat);
+					du.rCursor();
+					global.desbloquear();
+					
+					if (_xmlFid.elements().length() > 0){
+						dgFid.dataProvider = _xmlFid.Table;
 						
-					du.ejecutaWsMethod(wsCat,function(event:ResultEvent):void{
-						_xmlFid = new XML(event.result);
-						
-						du.closeWs(wsCat);
-						du.rCursor();
-						global.desbloquear();
-						
-						if (_xmlFid.elements().length() > 0){
-							dgFid.dataProvider = _xmlFid.Table;
-							
-							if(accionFid == 2){
-								dgFid.validateNow();
-								dgFid.verticalScrollPosition = vScroll;
-								dgFid.selectedIndex = indFid;
-								this.accionFid = 0;
-							}
+						if(accionFid == 2){
+							dgFid.validateNow();
+							dgFid.verticalScrollPosition = vScroll;
+							dgFid.selectedIndex = indFid;
+							accionFid = 0;
 						}
-						seleccionarFid();	
-					});
-					params[0] = txtCodFid.text;
-					params[1] = txtFid.text;
-					wsCat.getListado.send(56, params);
-				}	
+					}
+					seleccionarFid();	
+				});
+				params[0] = txtCodFid.text;
+				params[1] = txtFid.text;
+				wsCat.getListado.send(56, params);	
 			}
 
 			private function eliminarSup():void{
@@ -164,7 +162,7 @@
 			public function iniVar():void{
 				this.indFid = -1;
 				this.indSup = -1;
-				this.vScroll = -1;
+				this.vScroll = undefined;
 			}
 			
 			public function initApp():void{
@@ -187,7 +185,7 @@
 			}
 			
 			private function manejadorEliminarSup(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codFid:String = dgFid.selectedItem.CODIGO;
 					var codSup:String = dgSup.selectedItem.CODIGO;  
 			    	initConexion();
@@ -199,7 +197,7 @@
 			}
 			
 			private function manejadorEliminarFid(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codFid:String = dgFid.selectedItem.CODIGO;
 			    	initConexion();
 			    	du.sCursor();

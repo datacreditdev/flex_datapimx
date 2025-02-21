@@ -114,6 +114,7 @@
 				dgCB.dataProvider = null;
 				du.initWsCat(wsCat);
 				du.sCursor();
+				
 			 	if (tipo == 1)
 					global.bloquear();
 					
@@ -179,38 +180,37 @@
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
 				
-				if (txtCodIB.text != "" || txtIB.text != ""){
-					btnBuscar.setFocus();
-					dgIB.dataProvider = null;
+				btnBuscar.setFocus();
+				dgIB.dataProvider = null;
+				
+				du.initWsCat(wsCat);
+				du.sCursor();
+				
+				if(tipo == 1)
+					global.bloquear();
 					
-					du.initWsCat(wsCat);
-					du.sCursor();
-					if(tipo == 1)
-						global.bloquear();
+				du.ejecutaWsMethod(wsCat, function(event:ResultEvent):void{
+					_xmlIB = new XML(event.result);
+					
+					du.closeWs(wsCat);
+					du.rCursor();
+					global.desbloquear();
+					
+					if (_xmlIB.elements().length() > 0){
+						dgIB.dataProvider = _xmlIB.Table;
 						
-					du.ejecutaWsMethod(wsCat, function(event:ResultEvent):void{
-						_xmlIB = new XML(event.result);
-						
-						du.closeWs(wsCat);
-						du.rCursor();
-						global.desbloquear();
-						
-						if (_xmlIB.elements().length() > 0){
-							dgIB.dataProvider = _xmlIB.Table;
-							
-							if(accionIB == 2){
-								dgIB.validateNow();
-								dgIB.verticalScrollPosition = vScroll;
-								dgIB.selectedIndex = indIB;
-								accionIB = 0;
-							}
+						if(accionIB == 2){
+							dgIB.validateNow();
+							dgIB.verticalScrollPosition = vScroll;
+							dgIB.selectedIndex = indIB;
+							accionIB = 0;
 						}
-						seleccionarIB();
-					});
-					params[0] = txtCodIB.text;
-					params[1] = txtIB.text;
-					wsCat.getListado.send(24, params);
-				}	
+					}
+					seleccionarIB();
+				});
+				params[0] = txtCodIB.text;
+				params[1] = txtIB.text;
+				wsCat.getListado.send(24, params);
 			}
 
 			public function eliminarCB():void{

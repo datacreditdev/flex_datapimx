@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="700" height="230" creationPolicy="all">
 	<mx:Metadata>
-		[Event(name="enviarDatosProd", type="Data.EventProd")]
+		[Event(name="enviarDatosSolic", type="Data.EventSolic")]
 	</mx:Metadata>
 	
 	<mx:Script>
 		<![CDATA[
 			import CATALOGOS.MttoComision;
-			import Data.DatosProd;
-			import Data.EventProd;
+			import Data.DatosSolic;
+			import Data.EventSolic;
 			import Data.Globales;
 			import Data.Utils;
 			import mx.collections.ArrayCollection;
@@ -20,18 +20,19 @@
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
 			import mx.rpc.soap.WebService;
-			import mx.validators.Validator;
 			
-			private var _xmlCom:XML =  new XML();
+			private var _xmlCom:XML = new XML();
 			
 			public var comObj:ArrayCollection = new ArrayCollection();
 			
-			public var datos:DatosProd = new DatosProd();
+			public var datos:DatosSolic = new DatosSolic();
 			
-			private var titulo:String;
+			public var estatus:String;
+			
 			private var du:Utils;
 			private var global:Globales;
 			private var tipoAccion:int;
+			private var titulo:String;
 			
 			//variables que especifican el indice del elemento 
 			//seleccionado al realizar la modificacion del registro
@@ -49,6 +50,10 @@
 				}
 			}
 			
+			public function desactivaControles():void{
+				cnvControles.enabled = false;
+			}
+			
 			private function eliminarComision():void{
 				var indice:int = dgComision.selectedIndex;
 				comObj.removeItemAt(indice);
@@ -57,7 +62,7 @@
 				selecComision();
 			}
 			
-			public function enviarDatosProd(formData:DatosProd):void{
+			public function enviarDatosSolic(formData:DatosSolic):void{
 				var listaCom:ArrayCollection;
 				
 				listaCom = dgComision.dataProvider as ArrayCollection;
@@ -85,7 +90,7 @@
 				}
 				formData.guardaCom = true;
 				
-				var event:EventProd = new EventProd("enviarDatosProd", formData);
+				var event:EventSolic = new EventSolic("enviarDatosSolic", formData);
 				dispatchEvent(event);
 			}
 			
@@ -119,12 +124,15 @@
                 return result;
 			}
 			
-			public function init(info:DatosProd, tipoAccion:int):void{
+			public function init(info:DatosSolic, tipoAccion:int, estatus:String):void{
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
-				global = new Globales();
+				
 				du = new Utils();
+				global = new Globales();
+				
 				this.tipoAccion = tipoAccion;
+				this.estatus = estatus;
 				
 				if (info != null){
 					datos = info;
@@ -142,11 +150,17 @@
 							formateaComision();
 						dgComision.dataProvider = comObj;
 						selecComision();
+						
+						if(info.situacion == 'A' || info.situacion == 'R' || info.situacion == 'T' || 
+						   info.situacion == 'E' || info.situacion == 'L' || estatus == "evaluacion"){
+							desactivaControles();	
+						}
 					});
-					//Consulta la lista de comisiones registradas para el producto
-					params[0] = info.cdgTipoProd;
-					params[1] = info.cdgProd;
-					wsCat.getListado.send(43, params);										
+					//Consulta la lista de comisiones registradas para la solicitud
+					params[0] = info.cdgAcred;
+					params[1] = info.ciclo;
+					params[2] = "I";
+					wsCat.getListado.send(68, params);										
 				}	
 			}	
 			
@@ -210,7 +224,7 @@
 			</mx:columns>
 		</mx:DataGrid>
 	</mx:Canvas>
-	<mx:Canvas x="540" y="183" width="150" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true">
+	<mx:Canvas id="cnvControles" x="540" y="183" width="150" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true">
 		<mx:Button id="btnAgregar" x="54" y="3" icon="@Embed(source='assets/add.png')" click="mostrarFormComision(1)" toolTip="Registrar Comisión" width="40"/>
 		<mx:Button id="btnEliminar" x="102" y="3" icon="@Embed(source='assets/delete-icon.png')" click="eliminarComision()" enabled="false" toolTip="Eliminar Comisión" width="40"/>
 		<mx:Button id="btnEditar" x="6" y="3" icon="@Embed(source='assets/edit.png')" enabled="false" click="mostrarFormComision(2)" toolTip="Editar Comisión" width="40"/>

@@ -10,17 +10,15 @@
 			import Data.EventSolic;
 			import Data.Utils;
 			import Data.Globales;
-			import mx.controls.Alert;
 			import mx.collections.ArrayCollection;
-			import mx.core.Application;
 			import mx.containers.TitleWindow;			
-			import mx.managers.PopUpManager;
+			import mx.controls.Alert;
+			import mx.core.Application;
 			import mx.effects.easing.Elastic;
-			import mx.rpc.soap.WebService;
-			import mx.rpc.events.ResultEvent;
+			import mx.managers.PopUpManager;
 			import mx.rpc.events.FaultEvent;
-			import mx.events.ValidationResultEvent;
-			import mx.validators.Validator;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.soap.WebService;
 			
 			[Bindable]
 			private var _xmlCodigo:XML =  new XML();
@@ -29,9 +27,9 @@
 			
 			public var tipoAccion:int;
 			public var estatus:String;
-			private var global:Globales;
+			
 			private var du:Utils;
-			private var vResult:ValidationResultEvent;
+			private var global:Globales;
 			
 			public function activaControles(_xmlControl:XML):void{
 				var tipoTasa:String = _xmlControl.Table[0].FIJAREC;
@@ -140,20 +138,8 @@
 						desactivaControles();
 				}	
 			}
-			
-			public function validaMonto(event:Event):void{
-				numVal.source = TextInput(event.currentTarget);
-				vResult = numVal.validate();
-
-				if (vResult.type != ValidationResultEvent.VALID)
-                	TextInput(event.currentTarget).text = "";
-			}
 	]]>
 	</mx:Script>
-	
-	 <mx:NumberValidator id="numVal" property="text" precision="2" required="false"
-        allowNegative="true" domain="real" decimalSeparator="." thousandsSeparator=","/>
-	
 	<mx:Canvas id="cnvTipoTasa" x="136" y="28" width="210" height="67" styleName="canvasMod">
 		<mx:RadioButtonGroup id="tipoTasa" itemClick="cambiaContTasa()"/>
 		<mx:RadioButton id="rdbFijaInd" x="11" y="0" label="Fija Independiente" groupName="tipoTasa"/>
@@ -167,10 +153,10 @@
 	</mx:Canvas>
 	<mx:Canvas id="cnvTasaFija" x="136" y="122" width="210" height="65" styleName="canvasMod">
 		<mx:FormItem id="tasaFija" label="Tasa fija:" x="96" y="5">
-			<mx:TextInput id="txtTasaFija" width="44" restrict="0-9;." change="validaMonto(event)"/>	
+			<mx:TextInput id="txtTasaFija" width="44" restrict="0-9;." focusOut="{global.formatearMonto(event)}"/>	
 		</mx:FormItem>
 		<mx:FormItem id="factorTasa" label="Factor sobre tasa de interés:" x="1" y="34">
-			<mx:TextInput id="txtFactorTasa" width="44" restrict="0-9;." change="validaMonto(event)"/>	
+			<mx:TextInput id="txtFactorTasa" width="44" restrict="0-9;." focusOut="{global.formatearMonto(event)}"/>	
 		</mx:FormItem>
 	</mx:Canvas>
 	<mx:Canvas id="cnvMetAplica" x="354" y="122" width="279" height="65" styleName="canvasMod"> 

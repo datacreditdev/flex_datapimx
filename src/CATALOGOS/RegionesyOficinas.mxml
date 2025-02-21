@@ -110,36 +110,35 @@
 			public function buscarReg(tipo:int):void{
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
-				if (txtCodReg.text != "" || txtRegional.text != ""){
-					dgRegional.dataProvider = null;
-					du.initWsCat(wsCat);
-					du.sCursor();
-					if(tipo == 1)
-						global.bloquear();
+				
+				dgRegional.dataProvider = null;
+				du.initWsCat(wsCat);
+				du.sCursor();
+				if(tipo == 1)
+					global.bloquear();
+					
+				du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void{
+					_xmlReg = new XML(evt.result);
+					
+					du.rCursor();
+					du.closeWs(wsCat);
+					global.desbloquear();
+					
+					if(_xmlReg.elements().length() > 0){
+						dgRegional.dataProvider = _xmlReg.Table;
 						
-					du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void{
-						_xmlReg = new XML(evt.result);
-						
-						du.rCursor();
-						du.closeWs(wsCat);
-						global.desbloquear();
-						
-						if(_xmlReg.elements().length() > 0){
-							dgRegional.dataProvider = _xmlReg.Table;
-							
-							if(accionReg == 2){
-								dgRegional.validateNow();
-								dgRegional.verticalScrollPosition = vScroll;
-								dgRegional.selectedIndex = indReg;
-								this.accionReg = 0;
-							}
+						if(accionReg == 2){
+							dgRegional.validateNow();
+							dgRegional.verticalScrollPosition = vScroll;
+							dgRegional.selectedIndex = indReg;
+							accionReg = 0;
 						}
-						seleccionaReg();
-					});
-					params[0] = txtCodReg.text;
-					params[1] = txtRegional.text;
-					wsCat.getListado.send(15, params);
-				}	
+					}
+					seleccionaReg();
+				});
+				params[0] = txtCodReg.text;
+				params[1] = txtRegional.text;
+				wsCat.getListado.send(15, params);
 			}
 			
 			public function buscarListaCoord(tipo:int):void{
@@ -167,7 +166,7 @@
 							dgCoord.validateNow();
 							dgCoord.verticalScrollPosition = vScroll;
 							dgCoord.selectedIndex = indCoord;
-							this.accionCoord = 0;
+							accionCoord = 0;
 						}
 					}
 					seleccionaCoord();
@@ -177,17 +176,17 @@
 			}
 
 			public function eliminarCoord():void{
-				Alert.show("¿Desea eliminar la Coordinación seleccionada?", tituloCoord, Alert.YES|Alert.NO,null, manejadorEliminarCoord,global.iQuest);
+				Alert.show("¿Desea eliminar la Oficina seleccionada?", tituloCoord, Alert.YES|Alert.NO,null, manejadorEliminarCoord,global.iQuest);
 			}
 			
 			public function eliminarReg():void{
-				Alert.show("¿Desea eliminar la Gerencia Regional seleccionada?", tituloReg, Alert.YES|Alert.NO,null, manejadorEliminarReg,global.iQuest);
+				Alert.show("¿Desea eliminar la Región seleccionada?", tituloReg, Alert.YES|Alert.NO,null, manejadorEliminarReg,global.iQuest);
 			}
 			
 			public function iniVar():void{
 				this.indReg = -1;
 				this.indCoord = -1;
-				this.vScroll = -1;
+				this.vScroll = undefined;
 			}
 			
 			public function initApp():void{
@@ -216,7 +215,7 @@
 			}
 			
 			public function manejadorEliminarCoord(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codReg:String = dgRegional.selectedItem.CODIGO;
 					var codCoord:String = dgCoord.selectedItem.CODIGO;  
 			    	initConexion();
@@ -229,7 +228,7 @@
 			}
 			
 			public function manejadorEliminarReg(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codReg:String = dgRegional.selectedItem.CODIGO;
 			    	initConexion();
 			    	du.sCursor();
@@ -269,7 +268,7 @@
 								comMttoCoord.init(tipo, codReg, regional, codCoord, coord, codPers);
 							}
 							else
-								Alert.show("Debe seleccionar el registro de Oficina", tituloCoord, 4, null, null, global.iAlert);
+								Alert.show("Debe seleccionar el registro de la Oficina", tituloCoord, 4, null, null, global.iAlert);
 						break;
 					}
 				}
@@ -302,7 +301,7 @@
 								PopUpManager.centerPopUp(comMttoReg);
 							}
 							else
-								Alert.show("Debe seleccionar el registro de la Gerencia Regional", tituloReg, 4, null, null, global.iAlert); 
+								Alert.show("Debe seleccionar el registro de la Región", tituloReg, 4, null, null, global.iAlert); 
 							break;
 					}
 				}
@@ -411,7 +410,6 @@
 			<Data:columns>
 				<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO" width="75"/>
 				<mx:DataGridColumn headerText="NOMBRE" dataField="NOMBRE" width="200"/>
-				<!--<mx:DataGridColumn headerText="CODIGO" dataField="CDGPE" width="75"/>-->
 				<mx:DataGridColumn headerText="RESPONSABLE" dataField="NOMBRE_CL" width="200"/>
 			</Data:columns>
 		</Data:RowColorDataGrid>
@@ -436,7 +434,6 @@
 			<Data:columns>
 				<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO" width="75"/>
 				<mx:DataGridColumn headerText="NOMBRE" dataField="NOMBRE" width="200"/>
-				<!--<mx:DataGridColumn headerText="CODIGO" dataField="CDGPE" width="75"/>-->
 				<mx:DataGridColumn headerText="RESPONSABLE" dataField="NOMBRE_CL" width="200"/>
 			</Data:columns>
 		</Data:RowColorDataGrid>

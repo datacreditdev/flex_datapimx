@@ -21,6 +21,7 @@
 		public var cdgAcred:String;
 		public var ciclo:String;
 		public var tipoAccion:int;
+		
 		private var du:Utils;
 		private var global:Globales;
 		private var wsMS:WebService;	
@@ -42,7 +43,7 @@
 			wsMS.addEventListener(ResultEvent.RESULT, setAccionDispersion);
 			wsMS.setAccionDispersion.send(tipoAccion, cdgAcred, ciclo, cdgAcred, "I", info.cdgMetodo, info.cdgBanco, 
 										  info.cuenta, info.concepto, info.monto, info.fecha, info.cdgMotivo, 
-										  info.cdgFid, info.cdgSup, info.reportado, global.obtenerUsuario()); 			
+										  info.reportado, global.obtenerUsuario()); 			
 		}
 	
 		public function init(cdgAcred:String, acred:String, ciclo:String, monto:Number, fecha:String):void{
@@ -70,7 +71,7 @@
 			if (info.guarda)
 				guardaDispersion();
 			else
-				Alert.show("Debe capturar los datos requeridos",titulo,4,null,null,global.iAlert);
+				Alert.show("Debe capturar los datos requeridos", titulo, 4, null, null, global.iAlert);
 		}
 		
 		private function setAccionDispersion(event:ResultEvent):void{
@@ -80,11 +81,11 @@
 			wsMS.removeEventListener(ResultEvent.RESULT, setAccionDispersion);
 			var res:String = event.result.toString();
 			if (res.substr(0,1) == "1"){
-				Alert.show("Proceso finalizado exitosamente.",titulo,4,null,null,global.iInfo);
+				Alert.show("Proceso finalizado exitosamente.", titulo, 4, null, null, global.iInfo);
 				cerrar();
 			}
 			else
-				Alert.show(res.substr(2,res.length -1),titulo,4,null,null,global.iAlert);		
+				Alert.show(res.substr(2,res.length -1), titulo, 4, null, null, global.iAlert);		
 		}
 	]]>
 	</mx:Script>

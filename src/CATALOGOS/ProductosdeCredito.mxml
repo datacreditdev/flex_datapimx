@@ -179,39 +179,37 @@
 			public function buscarTipoProd(tipo:int):void{
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
-				if (txtCodTipoProd.text != "" || txtTipoProd.text != ""){
-					btnBuscar.setFocus();
+				btnBuscar.setFocus();
+				
+				dgTipoProd.dataProvider = null;
+				du.initWsCat(wsCat);
+				du.sCursor();
+				
+				if(tipo == 1)
+					global.bloquear();
+				
+				du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void{
+					_xmlTipoProd = new XML(evt.result);
 					
-					dgTipoProd.dataProvider = null;
-					du.initWsCat(wsCat);
-					du.sCursor();
+					du.rCursor();
+					du.closeWs(wsCat);
+					global.desbloquear();
 					
-					if(tipo == 1)
-						global.bloquear();
-					
-					du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void{
-						_xmlTipoProd = new XML(evt.result);
+					if (_xmlTipoProd.elements().length() > 0){
+						dgTipoProd.dataProvider = _xmlTipoProd.Table;
 						
-						du.rCursor();
-						du.closeWs(wsCat);
-						global.desbloquear();
-						
-						if (_xmlTipoProd.elements().length() > 0){
-							dgTipoProd.dataProvider = _xmlTipoProd.Table;
-							
-							if(accionTipoProd == 2){
-								dgTipoProd.validateNow();
-								dgTipoProd.verticalScrollPosition = vScroll;
-								dgTipoProd.selectedIndex = indTipoProd;
-								accionTipoProd = 0;
-							}
+						if(accionTipoProd == 2){
+							dgTipoProd.validateNow();
+							dgTipoProd.verticalScrollPosition = vScroll;
+							dgTipoProd.selectedIndex = indTipoProd;
+							accionTipoProd = 0;
 						}
-						seleccionaTipoProd();
-					});
-					params[0] = txtCodTipoProd.text;
-					params[1] = txtTipoProd.text;
-					wsCat.getCatalogoGral.send(20, params);
-				}	
+					}
+					seleccionaTipoProd();
+				});
+				params[0] = txtCodTipoProd.text;
+				params[1] = txtTipoProd.text;
+				wsCat.getCatalogoGral.send(20, params);
 			}
 
 			public function eliminarCiclo():void{

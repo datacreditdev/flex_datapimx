@@ -593,21 +593,7 @@
 							txtRfc.text = info.rfc;
 							txtCurp.text = info.curp;
 							txtIfe.text = info.ife;
-						}		
-						/*else{
-							for(j = 0; j < paisObj.length; j++){   
-								if (paisObj[j].NOMBRE.toString().toUpperCase() == "MEXICO"){
-									cboPais.selectedIndex = j;
-									break;
-								}
-							}
-							for(j = 0; j < paisObj.length; j++){   
-								if (paisObj[j].GENTILICIO.toString().toUpperCase() == "MEXICANO"){
-									cboNac.selectedIndex = j;
-									break;
-								}
-							}
-						}*/
+						}
 					});
 					//MUESTRA LAS ENTIDADES FEDERATIVAS DISPONIBLES
 					wsCat.getCatalogoGral.send(2);	
@@ -670,44 +656,44 @@
 	<mx:FormItem label="Código:" id="codigo" visible="true">
 		<mx:TextInput id="txtCodigo" maxChars="12" editable="false" width="129"/>
 	</mx:FormItem>
-	<mx:FormItem label="Nombres:" id="nombre" visible="true" width="384">
+	<mx:FormItem label="Nombres*:" id="nombre" visible="true" width="390">
 		<mx:Canvas>
 			<mx:TextInput id="txtNombre" width="129" restrict="A-Z;a-z;Ñ;ñ; " focusOut="generaCURP()"/>
 			<mx:TextInput id="txtSegNombre" x="127" width="137" restrict="A-Z;a-z;Ñ;ñ; " focusOut="generaCURP()"/>	
 		</mx:Canvas>
 	</mx:FormItem>
-	<mx:FormItem label="Apellido Paterno:" id="AP" visible="true">
+	<mx:FormItem label="Apellido Paterno*:" id="AP" visible="true">
 		<mx:TextInput id="txtAP" restrict="A-Z;a-z;Ñ;ñ; " focusOut="generaCURP()"/>
 	</mx:FormItem>
 	<mx:FormItem label="Apellido Materno:" id="AM" visible="true">
 		<mx:TextInput id="txtAM" restrict="A-Z;a-z;Ñ;ñ; " focusOut="generaCURP()"/>
 	</mx:FormItem>
-	<mx:FormItem label="Genero:" id="genero" visible="true" width="330">
+	<mx:FormItem label="Genero*:" id="genero" visible="true" width="330">
 		<mx:Canvas>
 			<mx:RadioButtonGroup id="sexo"/>
 			<mx:RadioButton id="rdbFemenino" label="Femenino" value="F" groupName="sexo" focusOut="generaCURP()"/>
 			<mx:RadioButton id="rdbMasculino" label="Masculino" value="M" groupName="sexo" x="80" focusOut="generaCURP()"/>	
 		</mx:Canvas>	
 	</mx:FormItem>
-	<mx:FormItem label="Fecha Nacimiento:" id="fecha" visible="true" width="350">
+	<mx:FormItem label="Fecha Nacimiento*:" id="fecha" visible="true" width="350">
 		<mx:Canvas id="cnvFecha" width="250">
 			<mx:DateField id="txtFecha" width="109" yearNavigationEnabled="true" focusOut="modificarFecha()" editable="true"/>
 			<mx:Label id="formatoFecha" text="(DD/MM/AAAA)" x="117" y="2"/>
 		</mx:Canvas>
 	</mx:FormItem>
-	<mx:FormItem label="País Nacimiento:" id="pais" visible="true" width="290">
+	<mx:FormItem label="País Nacimiento*:" id="pais" visible="true" width="300">
 		<mx:ComboBox id="cboPais" labelField="NOMBRE" width="170"/>
 	</mx:FormItem>
-	<mx:FormItem label="Entidad Nacimiento:" id="entidad" visible="true" width="290">
+	<mx:FormItem label="Entidad Nacimiento*:" id="entidad" visible="true" width="300">
 		<mx:ComboBox id="cboEntidad" labelField="nombre" width="170" focusOut="generaCURP()"/>
 	</mx:FormItem>
-	<mx:FormItem label="Nacionalidad:" id="nacionalidad" visible="true" width="290">
+	<mx:FormItem label="Nacionalidad*:" id="nacionalidad" visible="true" width="300">
 		<mx:ComboBox id="cboNac" labelField="GENTILICIO" width="170"/>
 	</mx:FormItem>
-	<mx:FormItem label="RFC:" id="rfc" visible="true">
+	<mx:FormItem label="RFC*:" id="rfc" visible="true">
 		<mx:TextInput id="txtRfc" focusIn="generaCURP()" editable="false"/>
 	</mx:FormItem>
-	<mx:FormItem label="CURP:" id="curp" visible="true">
+	<mx:FormItem label="CURP*:" id="curp" visible="true">
 		<mx:TextInput id="txtCurp" focusIn="generaCURP()" editable="false"/>
 	</mx:FormItem>
 	<mx:FormItem label="INE:" id="ife" visible="true">
@@ -719,7 +705,7 @@
 			<mx:TextInput id="txtCertFiel" x="25" width="190" restrict="A-Z;a-z;Ñ;ñ;0-9; " editable="false"/>
 		</mx:Canvas>
 	</mx:FormItem>
-	<mx:FormItem label="Estado Civil:" id="edoCivil" visible="true" width="290">
+	<mx:FormItem label="Estado Civil:" id="edoCivil" visible="true" width="300">
 		<mx:Canvas>
 			<mx:ComboBox id="cboEdoCivil" labelField="nombre" width="170"/>
 		</mx:Canvas>	
@@ -727,7 +713,7 @@
 	<mx:FormItem label="Teléfono:" id="telefono" visible="true">
 		<mx:TextInput id="txtTel" restrict="0-9" maxChars="15"/>
 	</mx:FormItem>
-	<mx:FormItem label="Correo:" id="email" visible="true" width="380">
+	<mx:FormItem label="Correo:" id="email" visible="true" width="390">
 		<mx:TextInput id="txtEmail" maxChars="100" width="260"/>
 	</mx:FormItem>
 </mx:Form>

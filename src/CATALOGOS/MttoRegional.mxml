@@ -3,10 +3,10 @@
 	creationPolicy="all" xmlns:Forms="CATALOGOS.Forms.*">
 	
 	<mx:Validator id="codigoV" source="{txtCodigo}" property="text" 
-	invalid="{txtCodigo.setFocus()}" triggerEvent="" requiredFieldError="Código de Gerencia Requerido"/>
+	invalid="{txtCodigo.setFocus()}" triggerEvent="" requiredFieldError="Código de Región Requerido"/>
 	
 	<mx:Validator id="nombreV" source="{txtNombre}" property="text" 
-	invalid="{txtNombre.setFocus()}" triggerEvent="" requiredFieldError="Nombre de Gerencia Requerido"/>
+	invalid="{txtNombre.setFocus()}" triggerEvent="" requiredFieldError="Nombre de Región Requerido"/>
 
 	<mx:Script>
 	<![CDATA[
@@ -32,6 +32,7 @@
 		
 		private var du:Utils;
 		private var global:Globales;
+		
 		public var openEffect:Effect = new WipeDown();
 		public var closeEffect:Effect = new WipeDown();
 		public var wsMS:WebService;	
@@ -72,6 +73,7 @@
 		}
 	
 		public function enviar():void{
+			info = new DatosDir();
 			formDatosDir.enviarDatosDir(info);
 			validaFinal();
 		}
@@ -116,7 +118,7 @@
 			global = new Globales();
 			du = new Utils();
 			 
-			titulo = "Mantenimiento de Gerencias Regionales";
+			titulo = "Mantenimiento de Región";
 			//Codigo que permite ejecutar el efecto de apertura
 			openEffect.duration = 1000;
 			openEffect.play([this]);
@@ -142,12 +144,10 @@
 				}
 				if(tipoAccion == 1){
 					registraInfoReg();
-					txtCodigo.editable = true;
 					txtNombre.editable = true;
 				}
 				else if(tipoAccion == 2){
 					cargaInfoReg(codReg, regional, codPers);
-					txtCodigo.editable = false;
 					txtNombre.editable = false;
 				}
 			});
@@ -191,7 +191,13 @@
 			global.desbloquear();
 			wsMS.removeEventListener(ResultEvent.RESULT, setAccionReg);
 			var res:String = event.result.toString();
+			var codigo:String;
 			if (res.substr(0,1) == "1"){
+				if(tipoAccion == 1){
+					var rSplit:Array = res.toString().split('|');
+					codigo = rSplit[1].toString();
+					Alert.show("Registro exitoso de región con el código - " + codigo, titulo, 4, null, null, global.iInfo);
+				}
 				cerrar();
 			}	
 			else
@@ -208,7 +214,8 @@
 		}
 		
 		public function validaFinal():void{
-			var invalidArray:Array = Validator.validateAll([codigoV, nombreV]);
+			var invalidArray:Array = Validator.validateAll([nombreV]);
+			
 			if (info.guarda == true && invalidArray.length == 0)
 				guardaReg();
 			else
@@ -219,7 +226,7 @@
 	</mx:Script>
 	<mx:Canvas x="15" y="10" width="430" height="100" styleName="canvasMod" id="canvas1">
 		<mx:Label id="lblCodigo" x="62.5" y="10" text="Código:"/>
-		<mx:TextInput id="txtCodigo" editable="false" x="111.5" y="8" width="45" maxChars="3"/>
+		<mx:TextInput id="txtCodigo" x="111.5" y="8" width="45" maxChars="3" editable="false"/>
 		<mx:Label id="lblNombre" x="58.5" y="38" text="Nombre:"/>
 		<mx:TextInput id="txtNombre" editable="false" x="111.5" y="36" width="250" height="24" maxChars="50"/>
 		<mx:Label id="lblGerente" x="56.5" y="68" text="Gerente:"/>

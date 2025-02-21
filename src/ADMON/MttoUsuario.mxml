@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="770" height="600" 
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="770" height="555" 
 	title="Agregar/Modificar Usuario" close="cerrar()" xmlns:control="CONTROL.*" creationPolicy="all">
 			
 	<mx:Script>
@@ -18,7 +18,6 @@
 		import mx.utils.StringUtil;
 		
 		public var UsrInfo:XML = new XML();
-		private var _xmlNivelEsc:XML =  new XML();
 		private var _xmlCoord:XML = new XML();
 		private var _xmlLstCoord:XML = new XML();
 		private var _xmlPerfil:XML = new XML();		
@@ -32,7 +31,6 @@
 		
 		private var	_xmlFiltro:XMLList;
 		
-		public var nivelEscObj:ArrayCollection = new ArrayCollection();
 		public var perfilObj:ArrayCollection = new ArrayCollection();
 		public var puestoObj:ArrayCollection = new ArrayCollection();
 		public var coordObj:ArrayCollection = new ArrayCollection();
@@ -161,69 +159,6 @@
 			coordLstObj = new ArrayCollection(item);
 		}
 		
-		public function formateaNivel():void{
-			var cont:int = _xmlNivelEsc.elements().length();
-			var oItem:Object;
-			var item:Array = new Array;
-			
-			oItem = new Object();
-			oItem.id = "-1";	
-			oItem.nombre = "--Seleccionar--";
-			item.push(oItem);
-			
-			oItem = new Object();
-			oItem.id = "C";	
-			oItem.nombre = "Carrera Corta";
-			item.push(oItem);
-			
-			oItem = new Object();
-			oItem.id = "O";	
-			oItem.nombre = "Doctorado";
-			item.push(oItem);
-			
-			oItem = new Object();
-			oItem.id = "L";	
-			oItem.nombre = "Licenciatura";
-			item.push(oItem);
-			
-			oItem = new Object();
-			oItem.id = "R";	
-			oItem.nombre = "Maestría";
-			item.push(oItem);
-			
-			oItem = new Object();
-			oItem.id = "N";	
-			oItem.nombre = "Ninguna";
-			item.push(oItem);
-			
-			oItem = new Object();
-			oItem.id = "B";	
-			oItem.nombre = "Preparatoria";
-			item.push(oItem);
-			
-			oItem = new Object();
-			oItem.id = "P";	
-			oItem.nombre = "Primaria";
-			item.push(oItem);
-			
-			oItem = new Object();
-			oItem.id = "S";	
-			oItem.nombre = "Secundaria";
-			item.push(oItem);
-			
-			oItem = new Object();
-			oItem.id = "T";	
-			oItem.nombre = "Técnico";
-			item.push(oItem);
-			
-			oItem = new Object();
-			oItem.id = "U";	
-			oItem.nombre = "Técnico Superior";
-			item.push(oItem);
-			
-			nivelEscObj = new ArrayCollection(item);
-		}
-		
 		public function formateaPerfil():void{
 			var cont:int = _xmlPerfil.elements().length();
 			var oItem:Object;
@@ -336,7 +271,6 @@
 			info.usuario = txtUsuario.text;
 			info.pass = txtPwd.text;	
 			info.sexo = sexo.selectedValue != null? sexo.selectedValue.toString(): "";
-			info.cdgNivEsc = cboNivelEsc.selectedItem.id.toString();
 			info.calle = txtCalle.text;	
 			info.telefono = txtTelefono.text;
 			info.cdgEntFed = comEntGrid.obtenerCodigo();
@@ -388,11 +322,9 @@
 			global = new Globales();
 			du = new Utils();
 			
-			formateaNivel();
 			formateaPuesto();
 			
 			cboPuesto.dataProvider = puestoObj;
-			cboNivelEsc.dataProvider = nivelEscObj;
 			
 			du.initWsCat(wsCat);
 			du.sCursor();
@@ -536,12 +468,6 @@
   			info.cdgLoc = UsrInfo[0].CDGLO
   			info.cdgCol = UsrInfo[0].CDGCOL
 			
-			for(i = 0; i < nivelEscObj.length; i++){
-				if(UsrInfo[0].NIVESCOLAR.toString() == nivelEscObj[i].id){
-					cboNivelEsc.selectedIndex = i;
-					break;
-				}
-			}
 			for(i = 0; i < coordObj.length; i++){
 				if(UsrInfo[0].CDGCO == coordObj[i].id.toString()){
 					cboCoord.selectedIndex = i;
@@ -765,31 +691,30 @@
 		}
 		]]>
 	</mx:Script>	
-	<mx:Button id="btnAceptar" icon="@Embed(source='assets/button_ok.png')" click="{guardar()}" x="672" y="528" width="40"/>
-	<mx:Button id="btnCancelar" icon="@Embed(source='assets/Icon-Delete.png')" click="cerrar()" x="720" y="528" width="40"/>
-	<mx:TabNavigator x="10" y="10" width="750" height="507">
+	<mx:Button id="btnAceptar" icon="@Embed(source='assets/button_ok.png')" click="{guardar()}" x="668" y="478" width="40"/>
+	<mx:Button id="btnCancelar" icon="@Embed(source='assets/Icon-Delete.png')" click="cerrar()" x="716" y="478" width="40"/>
+	<mx:TabNavigator x="8" y="10" width="750" height="460">
 		<mx:Canvas label="Datos Generales" width="100%" height="100%">
-			<mx:Canvas x="8" y="10" width="360" height="450" styleName="canvasMod" verticalScrollPolicy="off">	
+			<mx:Canvas x="8" y="10" width="360" height="400" styleName="canvasMod" verticalScrollPolicy="off">	
 				<mx:Label x="30" y="4" id="lblU_ID" visible="false"/>
-				<mx:Label text="Apellido Paterno:" x="32" y="13"/>
+				<mx:Label text="Apellido Paterno*:" x="28" y="12"/>
 				<mx:TextInput width="200" id="txtAPaterno" x="136" y="11" maxChars="20"/>
 				<mx:Label text="Apellido Materno:" x="30" y="43"/>
 				<mx:TextInput width="200" id="txtAMaterno" x="136" y="41" maxChars="20"/>
-				<mx:Label text="Primer Nombre:" x="40" y="73"/>
+				<mx:Label text="Primer Nombre*:" x="36" y="72"/>
 				<mx:TextInput width="200" id="txtNombre" x="136" y="71" maxChars="15"/>
 				<mx:Label text="Segundo Nombre:" x="27" y="103"/>
 				<mx:TextInput width="200" id="txtSegNombre" x="136" y="101" maxChars="15"/>
-				<mx:Label text="Usuario:" x="73" y="133"/>
-				<mx:Label text="Contraseña:" x="54" y="163"/>
-				<mx:Label text="Sexo:" x="85" y="195"/>
+				<mx:Label text="Usuario*:" x="69" y="132"/>
+				<mx:Label text="Contraseña*:" x="50" y="162"/>
+				<mx:Label text="Sexo*:" x="81" y="195"/>
 				<mx:Label text="Municipio:" x="66" y="292"/>
 				<mx:Label text="Localidad:" x="64" y="324"/>
 				<mx:Label text="Colonia:" x="75" y="356"/>	
-				<mx:Label text="Nivel Escolar:" x="48" y="387"/>
 				<mx:Label text="Entidad Federativa:" x="21" y="260" />
 				<mx:Label x="45" y="228" text="Código Postal:"/>
-				<mx:TextInput width="200" id="txtUsuario" x="136" y="131"/>
-				<mx:TextInput width="200" id="txtPwd" x="136" y="161" displayAsPassword="true"/>
+				<mx:TextInput width="200" id="txtUsuario" x="136" y="131" maxChars="6"/>
+				<mx:TextInput width="200" id="txtPwd" x="136" y="161" maxChars="12" displayAsPassword="true"/>
 				<mx:Canvas x="136" y="193" width="200" height="25">
 					<mx:RadioButtonGroup id="sexo"/>
 					<mx:RadioButton id="rdbFemenino" x="0" y="1" label="Femenino" value="F" groupName="sexo"/>
@@ -800,7 +725,6 @@
 				<control:TextGrid id="comMunGrid" x="136" height="24" y="288"/>
 				<control:TextGrid id="comLocGrid" x="136" height="24" y="320"/>
 				<control:TextGrid id="comColGrid" x="136" height="24" y="352"/>
-				<mx:ComboBox id="cboNivelEsc" labelField="nombre" x="136" y="384"/>
 			</mx:Canvas>
 			<mx:Canvas x="376" y="10" width="362" height="320" styleName="canvasMod">
 				<mx:Label x="26" y="108" text="Sucursal base:"/>
@@ -817,7 +741,7 @@
 			</mx:Canvas>
 		</mx:Canvas>
 		<mx:Canvas label="Perfiles" width="100%" height="100%">
-			<mx:DataGrid id="dgPerfil" x="10" y="10" width="726" height="452" editable="true">
+			<mx:DataGrid id="dgPerfil" x="10" y="10" width="726" height="405" editable="true">
 				<mx:columns>
 					<mx:DataGridColumn headerText="ESTATUS" dataField="estatus" textAlign="center" width="60" rendererIsEditor="true"
 						editorDataField="selected"> 

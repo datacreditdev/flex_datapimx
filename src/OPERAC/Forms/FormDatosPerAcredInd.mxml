@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Form xmlns:mx="http://www.adobe.com/2006/mxml" width="430" height="394" creationPolicy="all" 
+<mx:Form xmlns:mx="http://www.adobe.com/2006/mxml" width="430" height="510" creationPolicy="all" 
 	horizontalScrollPolicy="off" verticalScrollPolicy="off">
 	<mx:states>
 		<mx:State name="moral">
@@ -13,7 +13,7 @@
 			<mx:RemoveChild target="{ife}"/>
 			<mx:SetProperty target="{txtCodigo}" name="width" value="100"/>
 			<mx:SetProperty name="width" value="510"/>
-			<mx:SetProperty target="{nombre}" name="label" value="Denominación o Razón Social:"/>
+			<mx:SetProperty target="{nombre}" name="label" value="Denominación o Razón Social*:"/>
 			<mx:SetProperty target="{nombre}" name="width" value="464"/>
 			<mx:SetProperty target="{txtNombre}" name="width" value="290"/>
 			<mx:SetProperty target="{txtNombre}" name="restrict" value="A-Z;a-z;Ñ;ñ;0-9; "/>
@@ -28,7 +28,7 @@
 				</mx:FormItem>
 			</mx:AddChild>
 			<mx:AddChild relativeTo="{fecha}" position="before">
-				<mx:FormItem label="Nombre Comercial:" id="nomCom" visible="true" width="465">
+				<mx:FormItem label="Nombre Comercial*:" id="nomCom" visible="true" width="465">
 					<mx:Canvas>
 						<mx:TextInput id="txtNomCom" width="290" restrict="A-Z;a-z;Ñ;ñ; "/>
 					</mx:Canvas>
@@ -55,29 +55,32 @@
 				</mx:FormItem>
 			</mx:AddChild>
 			<mx:SetProperty target="{fecha}" name="width" value="370"/>
-			<mx:SetProperty target="{fecha}" name="label" value="Fecha Constitución:"/>
+			<mx:SetProperty target="{fecha}" name="label" value="Fecha Constitución*:"/>
 			<mx:AddChild relativeTo="{nomCom}" position="before">
-				<mx:FormItem label="Régimen Capital:" id="figura" visible="true" width="465">
+				<mx:FormItem label="Régimen Capital*:" id="figura" visible="true" width="465">
 					<mx:Canvas>
 						<mx:ComboBox id="cboFigura" labelField="nombre" width="290"/>
 					</mx:Canvas>
 				</mx:FormItem>
 			</mx:AddChild>
 			<mx:SetProperty target="{nacionalidad}" name="width" value="370"/>
-			<mx:AddChild relativeTo="{nacionalidad}" position="after">
+			<!--<mx:AddChild relativeTo="{nacionalidad}" position="after">
 				<mx:FormItem label="Fiel:" id="fiel" visible="true" width="465">
 					<mx:Canvas>
 						<mx:CheckBox id="chkFiel"/>
 						<mx:TextInput id="txtCertFiel" x="25" width="190" restrict="A-Z;a-z;Ñ;ñ;0-9; "/>
 					</mx:Canvas>
 				</mx:FormItem>
-			</mx:AddChild>
+			</mx:AddChild>-->
 			<mx:SetProperty target="{coord}" name="width" value="370"/>
 			<mx:RemoveChild target="{rfc}"/>
 			<mx:AddChild relativeTo="{nombre}" position="before" target="{rfc}"/>
 			<mx:RemoveChild target="{coord}"/>
 			<mx:AddChild relativeTo="{tel1}" position="before" target="{coord}"/>
 			<mx:SetProperty name="height" value="450"/>
+			<mx:RemoveChild target="{edoCivil}"/>
+			<mx:RemoveChild target="{telefono}"/>
+			<mx:RemoveChild target="{email}"/>
 		</mx:State>
 		<mx:State name="fideicomiso" basedOn="moral">
 			<mx:RemoveChild target="{nombre}"/>
@@ -116,6 +119,7 @@
 			<mx:SetProperty target="{nombre}" name="width" value="485"/>
 			<mx:SetProperty target="{txtNombre}" name="width" value="285"/>
 			<mx:SetProperty target="{fecha}" name="width" value="400"/>
+			<mx:SetProperty target="{fecha}" name="label" value="Fecha Constitución*:"/>
 		</mx:State>
 	</mx:states>
 	<mx:transitions>
@@ -186,6 +190,7 @@
 			private var _xmlRepLegal:XML = new XML();
 			
 			public var figObj:ArrayCollection;
+			public var edoCivilObj:ArrayCollection;
 			public var coordObj:ArrayCollection;
 			public var paisObj:ArrayCollection;
 			public var entFedObj:ArrayCollection;
@@ -207,7 +212,7 @@
 				if(tipoPersona == "F"){
 					currentState = "";
 					this.width = 430;
-					this.height = 394; 	
+					this.height = 510;
 				}
 				else if(tipoPersona == "M"){
 					currentState = "moral";
@@ -289,7 +294,11 @@
 							formData.cdgNacEntFed = cboEntidad.selectedItem.id;
 						formData.sexo = sexo.selectedValue ? sexo.selectedValue.toString() : "";
 						formData.curp = txtCurp.text;
-						formData.ife = StringUtil.trim(txtIfe.text); 
+						formData.ife = StringUtil.trim(txtIfe.text);
+						formData.fiel = txtCertFiel.text;
+						formData.edoCivil = cboEdoCivil.selectedItem.codigo;
+						formData.telefono = txtTel.text;
+						formData.email1 = txtEmail.text;
 					}
 					else if(currentState == "moral"){
 						formData.figura = cboFigura.selectedItem.codigo;
@@ -354,6 +363,43 @@
 					item.push(oItem);
 				}
 				entFedObj = new ArrayCollection(item);
+			}
+			
+			private function formatearEdoCivil():void{
+				var oItem:Object;
+				var item:Array = new Array;
+				
+				oItem = new Object();
+				oItem.codigo = "0";	
+				oItem.nombre = "--Seleccionar--";
+				item.push(oItem);
+				
+				oItem = new Object();
+				oItem.codigo = "C";	
+				oItem.nombre = "Casado(a)";
+				item.push(oItem);
+				
+				oItem = new Object();
+				oItem.codigo = "D";	
+				oItem.nombre = "Divorciado(a)";
+				item.push(oItem);
+				
+				oItem = new Object();
+				oItem.codigo = "S";	
+				oItem.nombre = "Soltero(a)";
+				item.push(oItem);
+				
+				oItem = new Object();
+				oItem.codigo = "U";	
+				oItem.nombre = "Unión Libre";
+				item.push(oItem);
+				
+				oItem = new Object();
+				oItem.codigo = "V";	
+				oItem.nombre = "Viudo(a)";
+				item.push(oItem);
+					
+				edoCivilObj = new ArrayCollection(item);
 			}
 			
 			public function formateaFigura():void{
@@ -519,6 +565,8 @@
 								//Formatea el listado de figuras
 								formateaFigura();
 							}
+							
+							formatearEdoCivil();
 					
 							if (info != null){
 								var j:int;
@@ -527,6 +575,12 @@
 								txtNombre.text = info.nombre;
 								txtRfc.text = info.rfc;
 								
+								if(info.fiel != ""){
+									chkFiel.selected = true;
+									txtCertFiel.text = info.fiel;
+									modificarFiel();	
+								}
+							
 								if(currentState == null){
 									txtSegNombre.text = info.segNombre;
 									txtAP.text = info.aPaterno;
@@ -552,6 +606,15 @@
 									} 
 									txtCurp.text = info.curp;
 									txtIfe.text = info.ife;
+									
+									for(j = 0; j < edoCivilObj.length; j++){
+										if (edoCivilObj[j].codigo.toString() == info.edoCivil){
+											cboEdoCivil.selectedIndex = j;
+											break;
+										}
+									}	
+									txtTel.text = info.telefono;
+									txtEmail.text = info.email1;
 								}
 								else if(currentState == "moral"){
 									du.initWsCat(wsCat);
@@ -640,6 +703,15 @@
 					generaCURP();
 			}
 			
+			private function modificarFiel():void{
+				if(chkFiel.selected)
+					txtCertFiel.editable = true;
+				else{
+					txtCertFiel.text = "";
+					txtCertFiel.editable = false;
+				}
+			}
+			
 			private function mostrarFormPers():void{
 				var comBusqPers:MttoBusqPersona = new MttoBusqPersona;
 				comBusqPers = MttoBusqPersona(PopUpManager.createPopUp(this,MttoBusqPersona,true));
@@ -672,52 +744,69 @@
 	<mx:FormItem label="Código:" id="codigo" visible="true">
 		<mx:TextInput id="txtCodigo" maxChars="12" editable="false" width="129"/>
 	</mx:FormItem>
-	<mx:FormItem label="Nombres:" id="nombre" visible="true" width="384">
+	<mx:FormItem label="Nombres*:" id="nombre" visible="true" width="390">
 		<mx:Canvas>
 			<mx:TextInput id="txtNombre" width="129" focusOut="generaCURP()"/>
 			<mx:TextInput id="txtSegNombre" x="127" width="137" restrict="A-Z;a-z;Ñ;ñ; " focusOut="generaCURP()"/>	
 		</mx:Canvas>
 	</mx:FormItem>
-	<mx:FormItem label="Apellido Paterno:" id="AP" visible="true">
+	<mx:FormItem label="Apellido Paterno*:" id="AP" visible="true">
 		<mx:TextInput id="txtAP" restrict="A-Z;a-z;Ñ;ñ; " focusOut="generaCURP()"/>
 	</mx:FormItem>
 	<mx:FormItem label="Apellido Materno:" id="AM" visible="true">
 		<mx:TextInput id="txtAM" restrict="A-Z;a-z;Ñ;ñ; " focusOut="generaCURP()"/>
 	</mx:FormItem>
-	<mx:FormItem label="Genero:" id="genero" visible="true" width="330">
+	<mx:FormItem label="Genero*:" id="genero" visible="true" width="330">
 		<mx:Canvas>
 			<mx:RadioButtonGroup id="sexo"/>
 			<mx:RadioButton id="rdbFemenino" label="Femenino" focusOut="generaCURP()" value="F" groupName="sexo"/>
 			<mx:RadioButton id="rdbMasculino" label="Masculino" x="80" focusOut="generaCURP()" value="M" groupName="sexo"/>	
 		</mx:Canvas>	
 	</mx:FormItem>
-	<mx:FormItem label="Oficina asignada:" id="coord" visible="true" width="290">
+	<mx:FormItem label="Oficina asignada*:" id="coord" visible="true" width="300">
 		<mx:Canvas>
 			<mx:ComboBox id="cboCoord" labelField="nombre" width="170"/>
 		</mx:Canvas>	
 	</mx:FormItem>
-	<mx:FormItem label="Fecha Nacimiento:" id="fecha" visible="true" width="350">
+	<mx:FormItem label="Fecha Nacimiento*:" id="fecha" visible="true" width="350">
 		<mx:Canvas id="cnvFecha" width="250">
 			<mx:DateField id="txtFecha" width="109" yearNavigationEnabled="true" focusOut="modificaFecha()" editable="true"/>
 			<mx:Label id="formatoFecha" text="(DD/MM/AAAA)" x="117" y="2"/>
 		</mx:Canvas>
 	</mx:FormItem>
-	<mx:FormItem label="País Nacimiento:" id="pais" visible="true" width="290">
+	<mx:FormItem label="País Nacimiento*:" id="pais" visible="true" width="300">
 		<mx:ComboBox id="cboPais" labelField="NOMBRE" width="170"/>
 	</mx:FormItem>
-	<mx:FormItem label="Entidad Nacimiento:" id="entidad" visible="true" width="290">
+	<mx:FormItem label="Entidad Nacimiento*:" id="entidad" visible="true" width="300">
 		<mx:ComboBox id="cboEntidad" labelField="nombre" width="170" focusOut="generaCURP()"/>
 	</mx:FormItem>
-	<mx:FormItem label="Nacionalidad:" id="nacionalidad" visible="true" width="290">
+	<mx:FormItem label="Nacionalidad*:" id="nacionalidad" visible="true" width="300">
 		<mx:ComboBox id="cboNac" labelField="GENTILICIO" width="170"/>
 	</mx:FormItem>
-	<mx:FormItem label="RFC:" id="rfc" visible="true">
+	<mx:FormItem label="RFC*:" id="rfc" visible="true">
 		<mx:TextInput id="txtRfc" focusIn="generaCURP()" editable="false"/>
 	</mx:FormItem>
-	<mx:FormItem label="CURP:" id="curp" visible="true">
+	<mx:FormItem label="CURP*:" id="curp" visible="true">
 		<mx:TextInput id="txtCurp" focusIn="generaCURP()" editable="false"/>
 	</mx:FormItem>
 	<mx:FormItem label="INE:" id="ife" visible="true">
 		<mx:TextInput id="txtIfe" restrict="0-9" maxChars="15"/>
+	</mx:FormItem>
+	<mx:FormItem label="Fiel:" id="fiel" visible="true" width="465">
+		<mx:Canvas>
+			<mx:CheckBox id="chkFiel" click="modificarFiel()"/>
+			<mx:TextInput id="txtCertFiel" x="25" width="190" restrict="A-Z;a-z;Ñ;ñ;0-9; " editable="false"/>
+		</mx:Canvas>
+	</mx:FormItem>
+	<mx:FormItem label="Estado Civil:" id="edoCivil" visible="true" width="300">
+		<mx:Canvas>
+			<mx:ComboBox id="cboEdoCivil" labelField="nombre" width="170"/>
+		</mx:Canvas>	
+	</mx:FormItem>
+	<mx:FormItem label="Teléfono:" id="telefono" visible="true">
+		<mx:TextInput id="txtTel" restrict="0-9" maxChars="15"/>
+	</mx:FormItem>
+	<mx:FormItem label="Correo:" id="email" visible="true" width="390">
+		<mx:TextInput id="txtEmail" maxChars="100" width="260"/>
 	</mx:FormItem>
 </mx:Form>

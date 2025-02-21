@@ -89,36 +89,35 @@
 			public function buscarInst(tipo:int):void{
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
-				if (txtCodInst.text != "" || txtInstrumento.text != ""){
-					btnBuscar.setFocus();
-					dgInstrumento.dataProvider = null;
-					du.initWsCat(wsCat);
-					du.sCursor();
-					if(tipo == 1)
-						global.bloquear();
+				
+				btnBuscar.setFocus();
+				dgInstrumento.dataProvider = null;
+				du.initWsCat(wsCat);
+				du.sCursor();
+				if(tipo == 1)
+					global.bloquear();
+					
+				du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void{	
+					_xmlInst = new XML(evt.result);
+					
+					du.rCursor();
+					du.closeWs(wsCat);
+					global.desbloquear();
+					
+					if (_xmlInst.elements().length() > 0){
+						dgInstrumento.dataProvider = _xmlInst.Table;
 						
-					du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void{	
-						_xmlInst = new XML(evt.result);
-						
-						du.rCursor();
-						du.closeWs(wsCat);
-						global.desbloquear();
-						
-						if (_xmlInst.elements().length() > 0){
-							dgInstrumento.dataProvider = _xmlInst.Table;
-							
-							if(accionInst == 2){
-								dgInstrumento.validateNow();
-								dgInstrumento.verticalScrollPosition = vScroll;
-								dgInstrumento.selectedIndex = indInst;
-								this.accionInst = 0;
-							}
+						if(accionInst == 2){
+							dgInstrumento.validateNow();
+							dgInstrumento.verticalScrollPosition = vScroll;
+							dgInstrumento.selectedIndex = indInst;
+							accionInst = 0;
 						}
-					});
-					params[0] = txtCodInst.text;
-					params[1] = txtInstrumento.text;
-					wsCat.getListado.send(28, params);
-				}	
+					}
+				});
+				params[0] = txtCodInst.text;
+				params[1] = txtInstrumento.text;
+				wsCat.getListado.send(28, params);
 			}
 			
 			public function buscarListaTasa(tipo:int):void{
@@ -145,7 +144,7 @@
 							dgTasa.validateNow();
 							dgTasa.verticalScrollPosition = vScroll;
 							dgTasa.selectedIndex = indTasa;
-							this.accionTasa = 0;
+							accionTasa = 0;
 						}
 					}
 					seleccionaTasa();
@@ -165,7 +164,7 @@
 			public function iniVar():void{
 				this.indInst = -1;
 				this.indTasa = -1;
-				this.vScroll = -1;
+				this.vScroll = undefined;
 			}
 			
 			public function initApp():void{
@@ -187,7 +186,7 @@
 			}
 			
 			public function manejadorEliminarTasa(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codInst:String = dgInstrumento.selectedItem.CODIGO;
 					var codTasa:String = dgTasa.selectedItem.CODIGO;  
 			    	initConexion();
@@ -200,7 +199,7 @@
 			}
 			
 			public function manejadorEliminarInst(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codInst:String = dgInstrumento.selectedItem.CODIGO;
 			    	initConexion();
 			    	du.sCursor();

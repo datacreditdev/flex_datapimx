@@ -11,6 +11,7 @@
     	import Data.ExcelExportXls;
     	import Data.Globales;
     	import Data.Utils; 
+    	import flash.external.ExternalInterface;
     	import mx.collections.ArrayCollection;
         import mx.controls.Alert; 
         import mx.controls.dataGridClasses.DataGridColumn;
@@ -18,11 +19,10 @@
         import mx.managers.PopUpManager;
 		import mx.rpc.events.ResultEvent;
 		import mx.rpc.soap.WebService; 
-		import flash.external.ExternalInterface;
-
-      	private var fileReference:FileReference;
+		
       	private var du:Utils;
       	private var global:Globales;
+      	private var fileReference:FileReference;
       	private var sheet:Sheet;
       	private var wsMS:WebService;
       	private var titulo:String;
@@ -31,7 +31,9 @@
         private var arrNombre:Array;
         private var arrCiclo:Array;
         private var arrNoPago:Array;
-        private var arrFecha:Array;
+        private var arrFecIni:Array;
+        private var arrFecFin:Array;
+        private var arrFecPago:Array;
         private var arrImporte:Array;        
         private var arrCapital:Array;
         private var arrInteres:Array;
@@ -88,7 +90,8 @@
 				du.sCursor();
 				global.bloquear();
 				wsMS.addEventListener(ResultEvent.RESULT, setCargaTablaAmort);
-			    wsMS.setCargaTablaAmort.send(txtCodigo.text, txtCiclo.text, arrNoPago, arrFecha, arrImporte, arrCapital, arrInteres, global.obtenerUsuario());
+			    wsMS.setCargaTablaAmort.send(txtCodigo.text, txtCiclo.text, arrNoPago, arrFecIni, arrFecFin, arrFecPago, 
+			    							 arrImporte, arrCapital, arrInteres, global.obtenerUsuario());
         	}
         }
         
@@ -102,7 +105,9 @@
             var max:int;
             
             arrNoPago = new Array;
-            arrFecha = new Array;
+            arrFecIni = new Array;
+            arrFecFin = new Array;
+            arrFecPago = new Array;
 			arrImporte = new Array;
 			arrCapital = new Array;
 			arrInteres = new Array;
@@ -114,7 +119,9 @@
 		    
 			for(var i:int = 0; i < max ; i++){
 			    arrNoPago[i] = info[i].NOPAGO;
-			    arrFecha[i] = info[i].FECHA;
+			    arrFecIni[i] = info[i].FECHA_INICIO;
+			    arrFecFin[i] = info[i].FECHA_FIN;
+			    arrFecPago[i] = info[i].FECHA_PAGO;
 				arrImporte[i] = info[i].IMPORTE;
 				arrCapital[i] = info[i].CAPITAL;
 				arrInteres[i] = info[i].INTERES;
@@ -149,7 +156,7 @@
 	            btnCargar.visible = true;
 	            btnExportar.visible = false;
 	            
-	            var fileData:ByteArray  = fileReference.data;
+	            var fileData:ByteArray = fileReference.data;
 	            var excelFile:ExcelFile = new ExcelFile();
 	            var numFilas:int;
 	            var numCol:int;
@@ -157,7 +164,7 @@
 	            if(fileData != null && fileData.length > 0){
 	            	excelFile.loadFromByteArray(fileData);
 	                var sheet:Sheet = excelFile.sheets[0];
-	                if(sheet!=null){
+	                if(sheet != null){
 	            	    numFilas = sheet.rows;
 	                    numCol = sheet.cols;
 	                    for(var row:int = 1; row < numFilas; row++){
@@ -193,13 +200,17 @@
             if(index == 0)
                 cellObject.NOPAGO = cellValue;
             else if(index == 1)
-                cellObject.FECHA = global.formatearFechaExcel(Number(cellValue));
+                cellObject.FECHA_INICIO = global.formatearFechaExcel(Number(cellValue));
             else if(index == 2)
-                cellObject.IMPORTE = global.formatearDecimalSinSep(cellValue);
+                cellObject.FECHA_FIN = global.formatearFechaExcel(Number(cellValue));
             else if(index == 3)
-                cellObject.CAPITAL = global.formatearDecimalSinSep(cellValue);
+                cellObject.FECHA_PAGO = global.formatearFechaExcel(Number(cellValue));
             else if(index == 4)
-                cellObject.INTERES = global.formatearDecimalSinSep(cellValue);               
+                cellObject.CAPITAL = global.formatearDecimalSinSep(cellValue);
+            else if(index == 5)
+                cellObject.INTERES = global.formatearDecimalSinSep(cellValue);
+            else if(index == 6)
+                cellObject.IMPORTE = global.formatearDecimalSinSep(cellValue);               
         }
         
         private function complete(event:Event):void {
@@ -267,7 +278,7 @@
 			wsMS = null;
 			res = event.result.toString();		
 			if (res.substr(0,1) == "1"){
-				Alert.show("Datos cargados exitosamente.",titulo,4,null,null,global.iInfo);
+				Alert.show("Tabla de Amortización cargada exitosamente.",titulo,4,null,null,global.iInfo);
 				limpiar();
 			}						
 			else
@@ -306,10 +317,12 @@
 		<mx:DataGrid id="dgInfo" x="11.5" y="10" width="600" height="341" horizontalScrollPolicy="auto">
 			<mx:columns>
 				<mx:DataGridColumn headerText="NUMERO PAGO" dataField="NOPAGO" width="110"/>
-				<mx:DataGridColumn headerText="FECHA" dataField="FECHA" width="110"/>
-				<mx:DataGridColumn headerText="IMPORTE" dataField="IMPORTE" width="110" labelFunction="formatearMontoGrid"/>
+				<mx:DataGridColumn headerText="FECHA INICIO" dataField="FECHA_INICIO" width="110"/>
+				<mx:DataGridColumn headerText="FECHA FIN" dataField="FECHA_FIN" width="110"/>
+				<mx:DataGridColumn headerText="FECHA PAGO" dataField="FECHA_PAGO" width="110"/>
 				<mx:DataGridColumn headerText="CAPITAL" dataField="CAPITAL" width="110" labelFunction="formatearMontoGrid"/>
-				<mx:DataGridColumn headerText="INTERES" dataField="INTERES" width="110" labelFunction="formatearMontoGrid"/>			
+				<mx:DataGridColumn headerText="INTERES" dataField="INTERES" width="110" labelFunction="formatearMontoGrid"/>
+				<mx:DataGridColumn headerText="IMPORTE" dataField="IMPORTE" width="110" labelFunction="formatearMontoGrid"/>			
 			</mx:columns>
 		</mx:DataGrid>
 		<mx:Label id="lblResultado" x="48.4" y="358.95" width="526.15" fontStyle="italic" fontWeight="bold" fontSize="12" textAlign="center"/>

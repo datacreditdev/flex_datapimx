@@ -83,7 +83,7 @@
 							dpAcred = _xmlAcred.Table.(ID.toString().substr(0, txtAcred.length).toLowerCase() == txtAcred.text.toLowerCase());
 							if(dpAcred.elements().length() > 0){
 								var id:String = "&id=" + rep;
-								var acred:String = "&acred=" + txtAcred.text;
+								var acred:String = "&codigo=" + txtAcred.text;
 								var ciclo:String = "&ciclo=" + txtCiclo.text;
 								var usuario:String = "&usuario=" + global.obtenerUsuario();
 								var nomUsuario:String = "&nomUsuario=" + Application.application.NOM_U_ID;

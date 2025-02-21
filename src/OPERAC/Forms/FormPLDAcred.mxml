@@ -159,7 +159,7 @@
 			
 			private var du:Utils;
 			private var global:Globales;
-			private var vResult:ValidationResultEvent;
+			
 			private var codPropReal:String;
 			private var codProvRec:String;
 			private var codFideicomit:String;
@@ -958,9 +958,9 @@
 	]]>
 	</mx:Script>
 	
-	<mx:Label id="lblGiro" x="35" y="20" text="Giro, actividad u objeto:"/>
+	<mx:Label id="lblGiro" x="31" y="20" text="Giro, actividad u objeto*:"/>
 	<mx:TextInput id="txtGiro" width="295" x="161" y="19"/>
-	<mx:Label id="lblOrigen" x="48" y="52" text="Origen de Recursos:"/>
+	<mx:Label id="lblOrigen" x="44" y="52" text="Origen de Recursos*:"/>
 	<Data:CustomComboBox id="cboOrigen" labelField="nombre" width="295" x="161" y="49"/>
 	<mx:Label id="lblProvRec" x="45" y="80" text="Proveedor Recursos:"/>
 	<mx:Canvas width="320" x="161" y="81" id="cnvProvRec">
@@ -968,7 +968,7 @@
 		<mx:Button id="btnAgregarProvRec" icon="@Embed(source='assets/add.png')" width="40" x="228" click="mostrarFormPers(1)" y="1"/>
 		<mx:Button id="btnEliminarProvRec" icon="@Embed(source='assets/delete-icon.png')" width="40" x="276" click="confirmarElimProvRec()" y="1"/>
 	</mx:Canvas>
-	<mx:Label id="lblDestino" x="44" y="142" text="Destino de Recursos:"/>
+	<mx:Label id="lblDestino" x="40" y="142" text="Destino de Recursos*:"/>
 	<Data:CustomComboBox id="cboDestino" labelField="nombre" width="295" x="161" y="139"/>
 	<mx:Label id="lblOtroDesRec" x="124" y="172" text="Otro:"/>
 	<mx:TextInput id="txtOtroDesRec" width="232" x="161" y="171"/>

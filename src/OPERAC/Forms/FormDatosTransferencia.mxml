@@ -16,9 +16,6 @@
 	<mx:Validator id="conceptoV" source="{txtConcepto}" property="text" 
 	invalid="{txtConcepto.setFocus()}" triggerEvent="" requiredFieldError="Dato Requerido"/>
 	
-	<mx:Validator id="supV" source="{txtSup}" property="text" 
-	invalid="{txtSup.setFocus()}" triggerEvent="" requiredFieldError="Dato Requerido"/>
-
 	<mx:Script>
 		<![CDATA[
 			import Data.DatosDispersion;
@@ -85,7 +82,7 @@
 			}
 			
 			public function enviaTransferencia(formData:DatosDispersion):void{
-				var invalidArray:Array = Validator.validateAll([conceptoV, montoV, supV]);
+				var invalidArray:Array = Validator.validateAll([conceptoV, montoV]);
 				
 				if(invalidArray.length == 0){	
 					formData.cdgMetodo = "T";
@@ -95,8 +92,6 @@
 					formData.monto = Number(global.formatearNumerico(txtMonto.text));
 					formData.fecha = dtfFecha.text;
 					formData.cdgMotivo = "DE";
-					formData.cdgFid = codFid;
-					formData.cdgSup = codSup;
 					formData.reportado = "N";
 					formData.guarda = true;	
 				}
@@ -121,21 +116,8 @@
 					item.push(oItem);
 				}
 				bancoObj = new ArrayCollection(item);
-			}
+			}	
 			
-			private function mostrarFormSup():void{
-				var comBusqSup:MttoBusqSup = new MttoBusqSup;
-				comBusqSup = MttoBusqSup(PopUpManager.createPopUp(this,MttoBusqSup,true));
-				comBusqSup.addEventListener("enviar", seleccionarSup); 
-				PopUpManager.centerPopUp(comBusqSup);
-			}
-			
-			private function seleccionarSup(evt:Event):void{
-				var comBusqSup:MttoBusqSup = evt.currentTarget as MttoBusqSup;
-				codFid = comBusqSup.obtenerFid();
-				codSup = comBusqSup.obtenerSup();
-				txtSup.text = comBusqSup.obtenerClaveSup();
-			}
 	]]>
 	</mx:Script>
 	<mx:Label id="lblBanco" x="78" y="13" text="Banco:"/>
@@ -148,7 +130,4 @@
 	<mx:TextInput id="txtMonto" width="90" restrict="0-9\.;," maxChars="18" x="125" y="124" focusOut="{global.formatearMonto(event)}"/>
 	<mx:Label id="lblFecha" x="79" y="155" text="Fecha:"/>
 	<mx:DateField id="dtfFecha" width="100" x="125" y="154"/>
-	<mx:Label id="lblSup" x="53" y="185" text="Suplemento:"/>
-	<mx:TextInput id="txtSup" editable="false" width="300" x="125" y="184"/>
-	<mx:Button id="btnSup" x="433" y="183" width="40" icon="@Embed(source='assets/ico_lupa.png')" click="mostrarFormSup()"/>
 </mx:Canvas>

@@ -408,10 +408,10 @@
 	]]>
 	</mx:Script>
 	
-	<mx:FormItem label="Giro, actividad u objeto:" id="giro" visible="true" width="430">
+	<mx:FormItem label="Giro, actividad u objeto*:" id="giro" visible="true" width="440">
 		<mx:TextInput id="txtGiro" width="295"/>
 	</mx:FormItem>
-	<mx:FormItem label="Origen de Recursos:" id="origen" visible="true" width="430">
+	<mx:FormItem label="Origen de Recursos*:" id="origen" visible="true" width="440">
 		<Data:CustomComboBox id="cboOrigen" labelField="nombre" width="295"/>
 	</mx:FormItem>
 	<mx:FormItem label="Proveedor Recursos:" id="provRec" visible="true" width="460" height="50">
@@ -421,7 +421,7 @@
 			<mx:Button id="btnEliminarProvRec" icon="@Embed(source='assets/delete-icon.png')" width="40" x="276" click="confirmarElimProvRec()" y="1"/>
 		</mx:Canvas>	
 	</mx:FormItem>
-	<mx:FormItem label="Destino de Recursos:" id="destino" visible="true" width="430">
+	<mx:FormItem label="Destino de Recursos*:" id="destino" visible="true" width="440">
 		<Data:CustomComboBox id="cboDestino" labelField="nombre" width="295"/>
 	</mx:FormItem>
 	<mx:FormItem label="Otro:" id="otroDesRec" visible="true" width="420">

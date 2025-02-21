@@ -21,12 +21,12 @@
 			import mx.events.FlexEvent;
 			import mx.events.ListEvent;	
 			import mx.events.ValidationResultEvent;
-			import mx.formatters.SwitchSymbolFormatter;
 			import mx.formatters.NumberFormatter;
+			import mx.formatters.SwitchSymbolFormatter;
 			import mx.managers.PopUpManager;
-			import mx.rpc.Fault;
-			import mx.rpc.events.ResultEvent;
 			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.Fault;
 			import mx.rpc.soap.WebService;
 			            
 			[Bindable]
@@ -35,6 +35,7 @@
 			
 			private var du:Utils;
 			private var global:Globales;
+			
 			private var permiso:Permisos;
 			public var titulo:String;
 			public var wsMS:WebService;	
@@ -53,8 +54,9 @@
 			
 			public function activarContPers(band:Boolean):void{
 				txtCodPers.editable = band;
+				txtNombre.editable = band;
 				txtPaterno.editable = band;
-				txtMaterno.editable = band
+				
 				btnBuscar.enabled = band;
 				if(alta == true)
 					btnAgregar.enabled = band;
@@ -75,7 +77,7 @@
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
 				
-				if (txtCodPers.text != "" || txtPaterno.text != "" || txtMaterno.text != ""){
+				if (txtCodPers.text != "" || txtPaterno.text != "" || txtNombre.text != ""){
 					btnBuscar.setFocus();
 					dgPers.dataProvider = null;
 					
@@ -97,15 +99,15 @@
 					});
 					params[0] = global.obtenerUsuario();
 					params[1] = txtCodPers.text;
-					params[2] = txtPaterno.text;
-					params[3] = txtMaterno.text;
+					params[2] = txtNombre.text;
+					params[3] = txtPaterno.text;
 					wsCat.getListado.send(47, params);
 				}
 			}
 
 			public function iniVar():void{
 				this.indPers = -1;
-				this.vScroll = -1;
+				this.vScroll = undefined;
 			}
 			
 			public function initApp():void{
@@ -129,8 +131,8 @@
 			
 			public function limpiarContPers():void{
 				txtCodPers.text = "";
+				txtNombre.text = "";
 				txtPaterno.text = "";
-				txtMaterno.text = "";
 			}
 			
 			public function mostrarFormPers(tipo:int):void{
@@ -236,18 +238,18 @@
 			</Data:RowColorDataGrid>
 		</mx:Canvas>
 		<mx:Label x="18" y="10" text="PERSONAS" width="247" fontSize="12" fontWeight="bold" fontStyle="italic"/>
-		<mx:Canvas x="634" y="39" width="155" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true">
+		<mx:Canvas x="684" y="39" width="155" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true">
 			<mx:Button id="btnBuscar" x="10" y="3" icon="@Embed(source='assets/ico_lupa.png')" click="buscarPersona()" toolTip="Buscar Persona" width="40"/>
 			<mx:Button id="btnAgregar" x="105" y="3" icon="@Embed(source='assets/add.png')" click="mostrarFormPers(1)" toolTip="Registrar Persona" width="40"/>
 			<mx:Button id="btnEditar" x="57" y="3" icon="@Embed(source='assets/edit.png')" enabled="false" click="mostrarFormPers(2)" toolTip="Editar Persona" width="40"/>
 		</mx:Canvas>
-		<mx:Canvas x="18.5" y="39" width="607.5" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true">
-			<mx:Label id="lblCodPers" x="4" y="8" text="Código:" width="53" textAlign="right"/>
-			<mx:Label id="lblPaterno" x="139" y="8" text="Apellido Paterno:" width="100" height="18" textAlign="right"/>
-			<mx:TextInput id="txtPaterno" x="245" y="5" width="110" enter="buscarPersona()" maxChars="50"/>
-			<mx:TextInput id="txtMaterno" x="482" y="5" width="110" enter="buscarPersona()" maxChars="50"/>
+		<mx:Canvas x="18.5" y="39" width="657.5" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true">
+			<mx:Label id="lblCodPers" x="13" y="6" text="Código:" textAlign="right"/>
+			<mx:Label id="lblPaterno" x="424" y="6" text="Apellido Paterno:" height="18" textAlign="right"/>
+			<mx:TextInput id="txtPaterno" x="518" y="5" width="130" enter="buscarPersona()" maxChars="50"/>
 			<mx:TextInput id="txtCodPers" x="62" y="5" width="56" enter="buscarPersona()" maxChars="6" restrict="0-9"/>
-			<mx:Label id="lblMaterno" x="375" y="8" text="Apellido Materno:" width="100" height="18" textAlign="right"/>
+			<mx:Label id="lblNombre" x="137" y="6" text="Nombre/Razón Social:" height="18" textAlign="right"/>
+			<mx:TextInput id="txtNombre" x="256" y="5" width="160" enter="buscarPersona()" maxChars="50"/>
 		</mx:Canvas>
 	</mx:Canvas>
 </mx:Canvas>

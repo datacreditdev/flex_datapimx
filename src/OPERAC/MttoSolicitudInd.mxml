@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="844" 
-	height="390" title="Edición" showCloseButton="true" close="cerrar()" xmlns:Forms="OPERAC.Forms.*">
+	height="420" title="Edición" showCloseButton="true" close="cerrar()" xmlns:Forms="OPERAC.Forms.*">
 	<mx:states>
 		<mx:State name="evaluacion">
-			<mx:AddChild position="lastChild">
-				<mx:Button id="btnTabla" x="10" y="312" label="Tabla Amortización" click="muestraTablaAmort()" visible="true"/>
-			</mx:AddChild>
-			<mx:SetProperty name="height" value="390"/>
 			<mx:AddChild position="lastChild">
 				<mx:Button id="btnConsBuro" x="148" y="312" label="Reporte Crédito" click="consultaBuro()" visible="false"/>
 			</mx:AddChild>
@@ -28,6 +24,7 @@
 	</mx:states>
 	<mx:Script>
 		<![CDATA[
+			import CONTROL.EstadoCuenta;
 			import CONTROL.CtrlTablaAmort;
 			import Data.EventSolic;
 			import Data.DatosSolic;
@@ -78,8 +75,6 @@
 			
 			public var amortObj:ArrayCollection;
 			public var acredObj:ArrayCollection = new ArrayCollection();
-			
-			private var vResult:ValidationResultEvent;
 			
 			private var du:Utils;
 			private var global:Globales;
@@ -172,7 +167,7 @@
 					
 					txtCiclo.text = ciclo;
 				});
-				wsMS.getNvoCicloSolic.send(cdgAcred, tipoCred);		
+				wsMS.getCicloSolic.send(cdgAcred, tipoCred);		
 			}
 			
 			public function cargaInfoSolic(cdgAcred:String, nomAcred:String, ciclo:String, coord:String, nomCoord:String, promotor:String):void{
@@ -241,7 +236,7 @@
 						llenaRegistros();
 					}
 					else
-						Alert.show("Error en la carga de Datos",titulo,4,null,null,global.iAlert);
+						Alert.show("Error en la carga de Datos", titulo, 4, null, null, global.iAlert);
 				});
 				params[0] = cdgAcred;
 				params[1] = ciclo;
@@ -296,8 +291,9 @@
 					formTasasSolic.enviarDatosSolic(info);
 					formRecargosSolic.enviarDatosSolic(info);
 					formEntregaSolic.enviarDatosSolic(info);
-					//formActEcoSolic.enviarDatosSolic(info);
-					//formAvalSolic.enviarDatosSolic(info);
+					formComisionesSolic.enviarDatosSolic(info);
+					formPrelacionSolic.enviarDatosSolic(info);
+					
 					if(validaAutorizado() && validaSolicitado())
 						validaFinal();
 				}
@@ -490,8 +486,8 @@
 				formTasasSolic.init(info, 2, estatus);
 				formRecargosSolic.init(info, 2, estatus);
 				formEntregaSolic.init(info, 2, estatus);
-				//formActEcoSolic.init(cdgAcred, txtAcred.text, info, 2, estatus);
-				//formAvalSolic.init(info, 2, estatus);
+				formComisionesSolic.init(info, 2, estatus);
+				formPrelacionSolic.init(info, 2, estatus);
 			}
 			
 			public function modificaSolic():void{
@@ -523,6 +519,7 @@
 				this.promotor = promotor;
 				txtAcred.text = nomAcred;
 				txtSucursal.text = nomCoord;
+				btnTabla.visible = false;
 				cargaCiclo();
 				info = null;
 				formProdSolicInd.addEventListener("actualiza", actualizaProdCred);
@@ -533,8 +530,8 @@
 				formCalendarioSolic.init(info, 1, estatus);
 				formTasasSolic.init(info, 1, estatus);
 				formEntregaSolic.init(info, 1, estatus);
-				//formActEcoSolic.init(cdgAcred, txtAcred.text, info, 1, estatus);
-				//formAvalSolic.init(info, 1, estatus);
+				formComisionesSolic.init(info, 1, estatus);
+				formPrelacionSolic.init(info, 1, estatus);
 			} 
 			
 			private function setAccionEvSolic(event:ResultEvent):void{
@@ -625,14 +622,6 @@
 					Alert.show("Debe capturar los datos requeridos.",titulo,4,null,null,global.iAlert);
 			}
 			
-			public function validaMonto(event:Event):void{	
-				numVal.source = TextInput(event.currentTarget);
-				vResult = numVal.validate();
-
-				if (vResult.type!=ValidationResultEvent.VALID)
-                	TextInput(event.currentTarget).text = "";
-			}
-			
 			//Funcion que valida que los registros solicitados tengan una cantidad mayor a 0
 			public function validaSolicitado():Boolean{
 				if(info.situacion == 'S' && info.solicitado == 0){
@@ -643,11 +632,7 @@
 			}
 		]]>
 	</mx:Script>
-
-	<mx:NumberValidator id="numVal" property="text" precision="2"
-        allowNegative="true" domain="real" decimalSeparator="." thousandsSeparator="," required="false"/>
-
-	<mx:TabNavigator id="tabNav" width="821" height="251" x="10" y="55" creationPolicy="all">
+	<mx:TabNavigator id="tabNav" width="821" height="283" x="10" y="55" creationPolicy="all">
 		<mx:Canvas label="Producto" width="100%" height="100%">
 			<Forms:FormProductoSolicInd id="formProdSolicInd" x="141" y="31" width="540" height="130"/>
 		</mx:Canvas>
@@ -666,18 +651,15 @@
 		<mx:Canvas label="Entrega" width="100%" height="100%" id="canvas2">	
 			<Forms:FormEntregaSolic id="formEntregaSolic" x="76" y="31"/>
 		</mx:Canvas>
-		<!--<mx:Canvas label="Actividad" width="100%" height="100%" id="cnvActividad">	
-			<Forms:FormActEcoSolic id="formActEcoSolic" x="75"/>
+		<mx:Canvas label="Comisiones" width="100%" height="100%" id="cnvComision">	
+			<Forms:FormComisionesSolic id="formComisionesSolic" x="76" y="8"/>
 		</mx:Canvas>
-		<mx:Canvas label="Aval" width="100%" height="100%" id="cnvAval">	
-			<Forms:FormAvalAcred id="formAvalSolic" x="206" y="57" height="85" width="410"/>
-		</mx:Canvas>-->
-		<!--<mx:Canvas label="Pasivo" width="100%" height="100%" id="cnvPasivo">	
-			<Forms:FormPasivoSolic id="formPasivoSolic" x="206" y="57" height="85" width="410"/>
-		</mx:Canvas>-->
+		<mx:Canvas label="Prelación" width="100%" height="100%" id="cnvPrelacion">	
+			<Forms:FormPrelacionSolic id="formPrelacionSolic" x="219.5" y="9"/>
+		</mx:Canvas>
 	</mx:TabNavigator>
-	<mx:Button id="btnAceptar" x="742" y="313" width="40" icon="@Embed(source='assets/button_ok.png')" click="enviar()"/>
-	<mx:Button id="btnCancelar" x="790" y="313" width="40" icon="@Embed(source='assets/Icon-Delete.png')" click="cerrar()"/>
+	<mx:Button id="btnAceptar" x="742" y="345" width="40" icon="@Embed(source='assets/button_ok.png')" click="enviar()"/>
+	<mx:Button id="btnCancelar" x="790" y="345" width="40" icon="@Embed(source='assets/Icon-Delete.png')" click="cerrar()"/>
 	<mx:Canvas x="62" y="10" width="720" height="37" styleName="canvasMod" id="canvas3">
 		<mx:Label x="22" y="8" text="Acreditado:" id="lblAcred"/>
 		<mx:TextInput id="txtAcred" x="89" y="5" width="238" editable="false"/>
@@ -686,4 +668,5 @@
 		<mx:TextInput x="516" y="5" width="181" id="txtSucursal" editable="false"/>
 		<mx:TextInput x="384" y="5" width="45" id="txtCiclo" editable="false"/>
 	</mx:Canvas>
+	<mx:Button id="btnTabla" x="10" y="345" label="Tabla Amortización" click="muestraTablaAmort()" visible="true"/>
 </mx:TitleWindow>

@@ -183,6 +183,6 @@
 			<mx:TextInput id="txtMultiplos" x="139" y="4" width="40" restrict="0-9" maxChars="2"/>	
 		</mx:Canvas>
 		<mx:Label id="lblDiaPago" text="Día de Pago:" x="30" y="39"/>
-		<mx:NumericStepper id="numDiaEsp" maximum="31" minimum="1" x="103" y="38" height="20"/>
+		<mx:NumericStepper id="numDiaEsp" maximum="31" minimum="0" x="103" y="38" height="20"/>
 	</mx:Canvas>
 </mx:Canvas>
