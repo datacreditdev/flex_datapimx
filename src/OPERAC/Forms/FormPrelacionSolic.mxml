@@ -41,6 +41,9 @@
 			private var indPre:int;
 			private var vScroll:Number;
 			
+			public function activaControles(_xmlControl:XML):void{
+			}
+			
 			private function actualizarPrelacion(event:Event):void{
 				var comArt:MttoArtefacto = event.currentTarget as MttoArtefacto;
 				var nvoReg:String = comArt.dgArtefacto.selectedItem.id;
@@ -71,6 +74,29 @@
 				}
 			}
 			
+			public function cargaParamsProd(_xmlParam:XML):void{
+				var wsCat:WebService = new WebService;
+				var params:Array = new Array;
+				
+				du.initWsCat(wsCat);
+				du.sCursor();
+					
+				du.ejecutaWsMethod(wsCat, function(evt:ResultEvent):void {											
+					_xmlPre = new XML(evt.result.toString());
+					
+					du.rCursor();
+					du.closeWs(wsCat);
+					
+					if (_xmlPre.elements().length() > 0){
+						formateaPrelacion();
+						dgPrelacion.dataProvider = preObj;
+					}	
+				});
+				params[0] = _xmlParam.Table[0].CDGTPC;
+				params[1] = _xmlParam.Table[0].CODIGO;
+				wsCat.getListado.send(46, params);
+			}
+			
 			public function desactivaControles():void{
 				cnvControles.enabled = false;
 			}
@@ -87,20 +113,20 @@
 				var listaPre:ArrayCollection;
 				
 				listaPre = dgPrelacion.dataProvider as ArrayCollection;
-				formData.orden = new Array;
-				formData.artefacto = new Array;
+				formData.ordenPrel = new Array;
+				formData.artefactoPrel = new Array;
 				
 				if(listaPre != null && listaPre.length > 0){	
 					for(var i:int = 0; i < listaPre.length; i++){
-						formData.orden[i] = listaPre[i].orden;
-						formData.artefacto[i] = listaPre[i].codArt;
+						formData.ordenPrel[i] = listaPre[i].orden;
+						formData.artefactoPrel[i] = listaPre[i].codArt;
 					}	
 				}
 				else{
-					formData.orden[0] = "";
-					formData.artefacto[0] = "";
+					formData.ordenPrel[0] = "";
+					formData.artefactoPrel[0] = "";
 				}
-				formData.guardaPre = true;
+				formData.guardaPrel = true;
 				
 				var event:EventSolic = new EventSolic("enviarDatosSolic", formData);
 				dispatchEvent(event);

@@ -31,6 +31,7 @@
 		public var codProd:String;
 		public var prod:String; 
 		public var titulo:String;
+		
 		private var du:Utils;
 		private var global:Globales;
 		
@@ -76,8 +77,6 @@
 			formTasasProd.enviarDatosProd(info);
 			formRecargosProd.enviarDatosProd(info);
 			formEntregaProd.enviarDatosProd(info);
-			//formCondicionesProd.enviarDatosProd(info);
-			//formCapIntProd.enviarDatosProd(info);
 			formComisiones.enviarDatosProd(info);
 			formPrelacion.enviarDatosProd(info);
 			validaFinal();
@@ -184,8 +183,6 @@
 			formTasasProd.init(info, tipoAccion);
 			formRecargosProd.init(info, tipoAccion);
 			formEntregaProd.init(info, tipoAccion);
-			//formCondicionesProd.init(info, tipoAccion);
-			//formCapIntProd.init(info, tipoAccion);
 			formComisiones.init(info, tipoAccion);
 			formPrelacion.init(info,tipoAccion);
 		}
@@ -202,8 +199,6 @@
 			formTasasProd.init(info, tipoAccion);
 			formRecargosProd.init(info, tipoAccion);
 			formEntregaProd.init(info, tipoAccion);
-			//formCondicionesProd.init(info, tipoAccion);
-			//formCapIntProd.init(info, tipoAccion);
 			formComisiones.init(info, tipoAccion);
 			formPrelacion.init(info, tipoAccion);
 		}
@@ -269,14 +264,6 @@
 			<Forms:FormEntregaProd id="formEntregaProd" x="89.5" y="0">
 			</Forms:FormEntregaProd>
 		</mx:Canvas>
-		<!--<mx:Canvas label="Condiciones" width="100%" height="100%">
-			<Forms:FormCondicionesProd id="formCondicionesProd" x="89.5" y="0">
-			</Forms:FormCondicionesProd>
-		</mx:Canvas>-->
-		<!--<mx:Canvas label="Capital" width="100%" height="100%">
-			<Forms:FormCapitalInteresProd id="formCapIntProd" x="74.5" y="10">
-			</Forms:FormCapitalInteresProd>
-		</mx:Canvas>-->
 		<mx:Canvas label="Comisiones" width="100%" height="100%">
 			<Forms:FormComisiones id="formComisiones" x="14.5" y="10">
 			</Forms:FormComisiones>

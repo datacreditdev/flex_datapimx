@@ -385,9 +385,9 @@
 					else
 						Alert.show(res.substr(2,res.length - 1),titulo,4,null,null,global.iAlert);
 				});
-				wsMS.getInfoFondeo.send(tipoAccion, orgFond, lineaCred, disp, importe, montoMax, fecIni, fecFin,
-									    sexo, region, coord, entFed, munic, localidad, global.obtenerUsuario(),
-									    fecSaldo);
+				wsMS.setIniciaFondeo.send(tipoAccion, orgFond, lineaCred, disp, importe, montoMax, fecIni, fecFin,
+									      sexo, region, coord, entFed, munic, localidad, global.obtenerUsuario(),
+									      fecSaldo);
 			}
 		}
 		

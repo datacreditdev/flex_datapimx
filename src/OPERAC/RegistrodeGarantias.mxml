@@ -309,8 +309,7 @@
 			</Data:RowColorDataGrid>
 		</mx:Canvas>
 		<mx:Label x="18.5" y="308" text="GARANTÍAS DEL ACREDITADO" width="247" fontSize="12" fontWeight="bold" fontStyle="italic"/>
-		<mx:Image x="739" y="286" width="43" height="43" source="assets/notepad.png"/>
-		<mx:Canvas x="578" y="286" width="153" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true" id="canvas0">
+		<mx:Canvas x="629" y="292" width="153" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true" id="canvas0">
 			<mx:Button id="btnAgregarGtia" x="103" y="3" icon="@Embed(source='assets/add.png')" enabled="false" click="mostrarFormGarantia(1)" toolTip="Agregar Garantía" width="40"/>
 			<mx:Button id="btnEditarGtia" x="58" y="3" icon="@Embed(source='assets/edit.png')" enabled="false" click="mostrarFormGarantia(2)" toolTip="Editar Garantía" width="40"/>
 			<mx:Button id="btnDatosGtia" x="10" y="3" icon="@Embed(source='assets/folder.png')" click="buscarListaGarantia(1)" enabled="false" toolTip="Garantías del Acreditado" width="40"/>

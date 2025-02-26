@@ -53,6 +53,7 @@
 			public var tipoAccion:int;
 			public var estatus:String;
 			public var texto:String;
+			
 			private var du:Utils;
 			private var global:Globales;
 			
@@ -151,8 +152,8 @@
 				
 				this.tipoAccion = tipoAccion;
 				this.estatus = estatus;
-				global = new Globales();
 				du = new Utils();
+				global = new Globales();
 				
 				if (info != null){
 					datos = info;	

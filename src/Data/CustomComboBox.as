@@ -32,16 +32,16 @@ package Data
 		override protected function commitProperties():void{
 			super.commitProperties();
  
-			if (_showError == false && errorString){//
+			if (_showError == false && errorString){
 				setBackgroundErrorSkin();
-			}//
+			}
 			if (errorString){
 				setBackgroundErrorSkin();
 			}
 			else{
-				if(errorString && errorString.length != 0){//
+				if(errorString && errorString.length != 0){
 		    		errorString = '';
-		    	}//
+		    	}
 	        	setBackgroundSkin();
 			}
 		}

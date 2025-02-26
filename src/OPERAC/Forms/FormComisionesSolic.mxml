@@ -40,6 +40,9 @@
 			private var indCom:int;
 			private var vScroll:Number;
 			
+			public function activaControles(_xmlControl:XML):void{
+			}
+			
 			private function actualizarComision(event:Event):void{
 				dgComision.dataProvider = null;
 				dgComision.dataProvider = comObj;
@@ -54,6 +57,29 @@
 				cnvControles.enabled = false;
 			}
 			
+			public function cargaParamsProd(_xmlParam:XML):void{
+				var wsCat:WebService = new WebService;
+				var params:Array = new Array;
+				
+				du.initWsCat(wsCat);
+				du.sCursor();
+					
+				du.ejecutaWsMethod(wsCat, function(evt:ResultEvent):void {											
+					_xmlCom = new XML(evt.result.toString());
+					
+					du.rCursor();
+					du.closeWs(wsCat);
+					
+					if (_xmlCom.elements().length() > 0){
+						formateaComision();
+						dgComision.dataProvider = comObj;
+					}	
+				});
+				params[0] = _xmlParam.Table[0].CDGTPC;
+				params[1] = _xmlParam.Table[0].CODIGO;
+				wsCat.getListado.send(43, params);
+			}
+			
 			private function eliminarComision():void{
 				var indice:int = dgComision.selectedIndex;
 				comObj.removeItemAt(indice);
@@ -66,27 +92,27 @@
 				var listaCom:ArrayCollection;
 				
 				listaCom = dgComision.dataProvider as ArrayCollection;
-				formData.tipoMov = new Array;
+				formData.tipoMovCom = new Array;
 				formData.montoCom = new Array;
 				formData.porcCom = new Array;
-				formData.tipoCargo = new Array;	
-				formData.opcional = new Array;
+				formData.tipoCargoCom = new Array;	
+				formData.opcCom = new Array;
 				
 				if(listaCom != null && listaCom.length > 0){	
 					for(var i:int = 0; i < listaCom.length; i++){
-						formData.tipoMov[i] = listaCom[i].tipoMov;
+						formData.tipoMovCom[i] = listaCom[i].tipoMov;
 						formData.montoCom[i] = global.formatearNumerico(listaCom[i].monto);
 						formData.porcCom[i] = listaCom[i].porc;
-						formData.tipoCargo[i] = listaCom[i].formaAfec;
-						formData.opcional[i] = listaCom[i].opcional;
+						formData.tipoCargoCom[i] = listaCom[i].formaAfec;
+						formData.opcCom[i] = listaCom[i].opcional;
 					}	
 				}
 				else{
-					formData.tipoMov[0] = "";
+					formData.tipoMovCom[0] = "";
 					formData.montoCom[0] = "";
 					formData.porcCom[0] = "";
-					formData.tipoCargo[0] = "";
-					formData.opcional[0] = "";
+					formData.tipoCargoCom[0] = "";
+					formData.opcCom[0] = "";
 				}
 				formData.guardaCom = true;
 				
@@ -146,10 +172,10 @@
 						du.rCursor();
 						du.closeWs(wsCat);
 							
-						if (_xmlCom.elements().length() > 0)
+						if (_xmlCom.elements().length() > 0){
 							formateaComision();
-						dgComision.dataProvider = comObj;
-						selecComision();
+							dgComision.dataProvider = comObj;
+						}
 						
 						if(info.situacion == 'A' || info.situacion == 'R' || info.situacion == 'T' || 
 						   info.situacion == 'E' || info.situacion == 'L' || estatus == "evaluacion"){

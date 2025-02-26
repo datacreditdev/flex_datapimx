@@ -30,11 +30,8 @@
 			import mx.rpc.events.FaultEvent;
 			import mx.rpc.events.ResultEvent;
 			import mx.rpc.soap.WebService;
-			import mx.validators.Validator;
 			
 			private var _xmlMoneda:XML =  new XML();
-			
-			private var vResult:ValidationResultEvent;
 			
 			public var monedaObj:ArrayCollection = new ArrayCollection();
 			
@@ -108,8 +105,9 @@
 				
 				this.tipoAccion = tipoAccion;
 				this.estatus = estatus;
-				global = new Globales();
+				
 				du = new Utils();
+				global = new Globales();
 						
 				var fec:Date;
 				var fecEnt:Date; 
@@ -140,8 +138,7 @@
 								fechaSolic.enabled = false;
 							}
 							else if(info.situacion == 'S' && tipoAccion == 2 && estatus == 'evaluacion'){
-								txtSolicitado.editable = false;
-								txtAutorizado.editable = true;		
+								txtSolicitado.editable = false;	
 							}
 							
 							if(info.situacion == 'A' || info.situacion == 'R' || estatus == "evaluacion"){

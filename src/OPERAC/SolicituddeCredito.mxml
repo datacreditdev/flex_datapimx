@@ -303,7 +303,7 @@
 									edicion = true;
 								}
 								break;	
-							/*case "B":
+							case "B":
 								borrado = true;
 								break;
 							case "I":
@@ -311,7 +311,7 @@
 								break;
 							case "E":
 								edicion = true;
-								break;*/
+								break;
 						}
 					}
 					du.rCursor();
@@ -384,7 +384,6 @@
 					<mx:DataGridColumn headerText="ACREDITADO" dataField="NOMBRE_CL" width="250"/>
 					<mx:DataGridColumn headerText="OFICINA" dataField="COORD" width="80"/>
 					<mx:DataGridColumn headerText="NOMBRE OFICINA" dataField="NOMCO" width="170"/>
-					<!--<mx:DataGridColumn headerText="EJECUTIVO" dataField="ASESOR" width="100"/>-->
 					<mx:DataGridColumn headerText="NOMBRE EJECUTIVO" dataField="NOMASESOR" width="200"/>
 				</Data:columns>
 			</Data:RowColorDataGrid>
@@ -426,7 +425,6 @@
 		<mx:Label x="18.5" y="465" text="GARANTÍA" width="247" fontSize="12" fontWeight="bold" fontStyle="italic" visible="false"/>
 		<mx:Canvas x="722" y="449" width="60" height="37" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="false">
 			<mx:Button id="btnDatosAcred" x="9" y="3" icon="@Embed(source='assets/folder.png')" enabled="false" toolTip="Garantías del Acreditado" width="40"/>
-			<!--click="buscarListaAcredSolic(1)"-->
 		</mx:Canvas>
 		<mx:Canvas id="cnvDetalle2" x="18.5" y="494" width="763.5" height="146" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="false" verticalScrollPolicy="off">
 			<Data:RowColorDataGrid id="dgGarantia" x="10" y="10" width="741.5" height="124" sortableColumns="false" 

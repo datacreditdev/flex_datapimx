@@ -65,6 +65,10 @@ package Data
 			this.urlCC = xmlCC.toString();
 		}
 		
+		/*public function adaptarTitulo(titulo:String, texto:String):String{
+			
+		}*/
+		
 		public function bloquear():void{
 			Application.application.bloquear();
 		}

@@ -24,7 +24,6 @@
 	</mx:states>
 	<mx:Script>
 		<![CDATA[
-			import CONTROL.EstadoCuenta;
 			import CONTROL.CtrlTablaAmort;
 			import Data.EventSolic;
 			import Data.DatosSolic;
@@ -53,11 +52,12 @@
 			import mx.utils.ObjectUtil;
 			
 			[Bindable]
-			private var _xmlControl:XML =  new XML();
+			private var _xmlControl:XML = new XML();
 			[Bindable]
 			private var info:DatosSolic;
-			private var _xmlSolic:XML =  new XML();
-			private var _xmlPres:XML =  new XML();
+			private var _xmlSolic:XML = new XML();
+			private var _xmlCred:XML = new XML();
+			private var _xmlBloqueo:XML = new XML();
 			
 			public var comMttoDatosSolic:MttoDatosSolic;
 			
@@ -80,7 +80,7 @@
 			private var global:Globales;
 			private var wsMS:WebService;
 			private var wsCC:WebService;
-			public var bandMod:Boolean;	
+			public var bandMod:Boolean
 			public var tipoAccion:int;
 			public var indAcred:int;
 			public var coord:String;
@@ -139,13 +139,17 @@
 							formCalendarioSolic.activaControles(_xmlControl);
 							formTasasSolic.activaControles(_xmlControl);
 							formRecargosSolic.activaControles(_xmlControl);
-							formEntregaSolic.activaControles(_xmlControl);						
+							formEntregaSolic.activaControles(_xmlControl);
+							formComisionesSolic.activaControles(_xmlControl);
+							formPrelacionSolic.activaControles(_xmlControl);					
 							if(tipo == 1){
 								formDatosGralSolic.cargaParamsProd(_xmlControl);
 								formCalendarioSolic.cargaParamsProd(_xmlControl);
 								formTasasSolic.cargaParamsProd(_xmlControl);	
 								formRecargosSolic.cargaParamsProd(_xmlControl);
 								formEntregaSolic.cargaParamsProd(_xmlControl);
+								formComisionesSolic.cargaParamsProd(_xmlControl);
+								formPrelacionSolic.cargaParamsProd(_xmlControl);
 							}
 						}
 					} 	
@@ -153,6 +157,34 @@
 				params[0] = tipoProd;
 				params[1] = prodCred;
 				wsCat.getInfoGeneral.send(12, params);
+			}
+			
+			private function bloquearSolicitud():void{
+				var accion:String = currentState == null? "S": "D";
+				
+				initConexion();
+				du.sCursor();
+					
+				du.ejecutaWsMethod(wsMS,function(evt:ResultEvent):void {											
+					var res:String = evt.result.toString();
+					
+					du.rCursor();
+					du.closeWs(wsMS);
+					
+					if(res.substr(0, 1) == "1"){
+						if(accion == "S"){
+							Alert.show("Solicitud bloqueada exitosamente.", titulo, 4, null, null, global.iInfo);
+							bandMod = false;
+						}
+						else if(accion == "D")
+							Alert.show("Solicitud desbloqueada exitosamente.", titulo, 4, null, null, global.iInfo);
+						btnBloquear.visible = false;
+					}
+					else
+						Alert.show(res.substr(2, res.length - 1),titulo, 4, null, null, global.iAlert);
+					
+				});
+				wsMS.setBloqueaSolic.send(info.cdgAcred, info.ciclo, "I", accion);
 			}
 			
 			private function cargaCiclo():void{
@@ -199,29 +231,44 @@
 					du.closeWs(wsCat);
 					
 					if (_xmlSolic.elements().length() > 0){
+						if(_xmlSolic.Table[0].SITUACION == 'S'){
+							if(currentState == null){
+								if(_xmlSolic.Table[0].BLOQUEO == 'S'){
+									bandMod = false;
+									Alert.show("No es posible modificar la solicitud debido a que se encuentra bloqueada.",titulo,4,null,null,global.iAlert);
+								}
+								else
+									btnBloquear.visible = true;
+							}
+							else if(currentState == 'evaluacion'){
+								if(_xmlSolic.Table[0].BLOQUEO == 'S'){
+									btnBloquear.visible = true;
+									btnBloquear.label = "Desbloquear Solicitud";
+								}	
+							}
+						}
 						//SI LA SOLICITUD FUE RECHAZADA NO PERMITE MODIFICAR EL REGISTRO
-						if(_xmlSolic.Table[0].SITUACION == 'R'){
+						else if(_xmlSolic.Table[0].SITUACION == 'R'){
 							bandMod = false;
 							Alert.show("No es posible modificar la información. La solicitud ya fue Rechazada.",titulo,4,null,null,global.iAlert);
 						}
-						
 						//SI LA SOLICITUD FUE AUTORIZADA NO ES POSIBLE EDITARLA
-						if(_xmlSolic.Table[0].SITUACION == 'A' && currentState == null){
-							bandMod = false;
-						}
-						
-						//SI LA SOLICITUD FUE AUTORIZADA PUEDE SER MODIFICADA POR MESA DE CONTROL
-						//ANTES DE QUE SEA AUTORIZADA POR TESORERIA
-						if(_xmlSolic.Table[0].SITUACION == 'A' && currentState == 'evaluacion'){
+						else if(_xmlSolic.Table[0].SITUACION == 'A'){
 							du.initWsCat(wsCat);
 							du.sCursor();
 					
 							du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
-								_xmlPres = new XML(evt.result);
+								_xmlCred = new XML(evt.result);
 								
-								if(_xmlPres.elements().length() == 0){
+								if(_xmlCred.elements().length() == 0){
 									bandMod = false;
 									Alert.show("No es posible modificar la información. La solicitud ya fue Autorizada.",titulo,4,null,null,global.iAlert);
+								}
+								else{
+									if(currentState == null){
+										bandMod = false;
+										Alert.show("No es posible modificar la información. La solicitud ya fue Autorizada.",titulo,4,null,null,global.iAlert);	
+									}
 								}
 								du.rCursor();
 								du.closeWs(wsCat);
@@ -229,7 +276,7 @@
 							params[0] = cdgAcred;
 							params[1] = ciclo;
 							params[2] = "";
-							//Consulta la tabla de prestamo para verificar que la situacion sea autorizado
+							//Consulta la tabla de credito para verificar que la situacion se ha autorizado
 							wsCat.getInfoAcred.send(22, params);
 						}
 						//cargaTablaAmort();
@@ -283,7 +330,10 @@
 			public function enviar():void{
 				info = new DatosSolic();
 				
-				if(_xmlSolic == "" || _xmlSolic.Table[0].SITUACION == 'S' || bandMod == true){
+				//Alert.show(bandMod.toString());
+				
+				//if((_xmlSolic == "" || _xmlSolic.Table[0].SITUACION == 'S') && bandMod == true){
+				if(bandMod){
 					//eventos enviar de los formularios incluidos
 					formProdSolicInd.enviarDatosSolic(info);
 					formDatosGralSolic.enviarDatosSolic(info);
@@ -376,7 +426,8 @@
 													 global.obtenerUsuario(), info.formaEntre, info.nombreCheq, info.cdgCb, info.tipoDes, 
 													 info.multPerio, info.diaEsp, coord, promotor, info.tasaFija, acred, montos, proyInv, emplGenH, emplGenM, 
 													 emplSostH, emplSostM, info.calle, info.cdgLugarEntFed, info.cdgLugarMun, info.cdgLugarLoc, info.cdgLugarCol,
-													 info.horario, info.reunion, info.autorCrr, info.secuencia, info.aval, info.naturaleza);
+													 info.horario, info.reunion, info.autorCrr, info.secuencia, info.aval, info.naturaleza, info.tipoMovCom,
+													 info.montoCom, info.porcCom, info.tipoCargoCom, info.opcCom, info.ordenPrel, info.artefactoPrel);
 					}
 					//Servicio invocado en la etapa de evaluacion de la solicitud
 					else if(currentState == 'evaluacion'){
@@ -389,7 +440,8 @@
 											   		global.obtenerUsuario(), info.formaEntre, info.nombreCheq, info.multPerio, info.diaEsp, coord, promotor, 
 											   		info.tasaFija, acred, montos, proyInv, situacionAcred, rechazo, cantAutorAcred, info.calle, info.cdgLugarEntFed,
 											  	 	info.cdgLugarMun, info.cdgLugarLoc, info.cdgLugarCol, info.horario, info.reunion, info.autorCrr, info.secuencia,
-											  	 	info.aval, info.naturaleza);
+											  	 	info.aval, info.naturaleza, info.tipoMovCom, info.montoCom, info.porcCom, info.tipoCargoCom, info.opcCom,
+											  	 	info.ordenPrel, info.artefactoPrel);
 					}
 				}
 			}
@@ -397,8 +449,8 @@
 			public function init():void{
 				openEffect.duration = 500;
 				openEffect.play([this]);
-				global = new Globales(); 
 				du = new Utils();
+				global = new Globales(); 
 				amortObj = new ArrayCollection;
 			    titulo = "Mantenimiento de Solicitud";
 			    this.tipoCred = "I";
@@ -422,6 +474,10 @@
 				
 				if(currentState != null)
 					estatus = currentState.toString();
+					
+				info.cdgAcred = _xmlSolic.Table[0].CDGCL;
+				info.ciclo = _xmlSolic.Table[0].CICLO;
+					
 				//Datos de producto de la solicitud
 				info.cdgTipoProd = _xmlSolic.Table[0].CDGTPC;
 				info.cdgProdCred = _xmlSolic.Table[0].CDGPCR;
@@ -510,11 +566,12 @@
 				tipoAccion = 1;
 				init();
 				var estatus:String;
+				
 				if (currentState != null)
 					estatus = currentState.toString();
+					
 				var fecSolic:String = global.formatearFecha(global.obtenerFechaSistema());
 				this.coord = coord;
-				//ASIGNACION DE CODIGO DE ACREDITADO
 				this.cdgAcred = cdgAcred;
 				this.promotor = promotor;
 				txtAcred.text = nomAcred;
@@ -669,4 +726,5 @@
 		<mx:TextInput x="384" y="5" width="45" id="txtCiclo" editable="false"/>
 	</mx:Canvas>
 	<mx:Button id="btnTabla" x="10" y="345" label="Tabla Amortización" click="muestraTablaAmort()" visible="true"/>
+	<mx:Button id="btnBloquear" x="148" y="345" label="Bloquear Solicitud" click="bloquearSolicitud()" visible="false"/>
 </mx:TitleWindow>

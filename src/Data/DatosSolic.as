@@ -122,17 +122,17 @@ package Data
 		public var guardaAval:Boolean;
 		
 		/*Variables que hacen referencia a las Comisiones Personalizadas de la Solicitud*/
-		public var tipoMov:Array;
+		public var tipoMovCom:Array;
 		public var montoCom:Array;
 		public var porcCom:Array;
-		public var tipoCargo:Array;
-		public var opcional:Array;
+		public var tipoCargoCom:Array;
+		public var opcCom:Array;
 		public var guardaCom:Boolean;
 		
 		/*Variables que hacen referencia a la Prelacion de Pagos de la Solicitud*/
-		public var orden:Array;
-		public var artefacto:Array;
-		public var guardaPre:Boolean;
+		public var ordenPrel:Array;
+		public var artefactoPrel:Array;
+		public var guardaPrel:Boolean;
 		
 		public function DatosSolic()
 		{

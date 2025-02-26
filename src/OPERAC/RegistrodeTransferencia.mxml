@@ -28,6 +28,7 @@
 			public var _xmlAcred:XML = new XML();            
 			
 			public var titulo:String;
+			
 			private var du:Utils;
 			private var global:Globales;
 			private var fecha:String;
