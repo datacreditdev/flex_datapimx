@@ -218,15 +218,15 @@
 			}
 
 			public function eliminarActividad():void{
-				Alert.show("¿Desea eliminar la Actividad Económica seleccionada?", tituloAct, Alert.YES|Alert.NO,null, manejadorEliminarActividad,global.iQuest);
+				du.mostrarMensaje("¿Desea eliminar la Actividad Económica seleccionada?", tituloAct, Alert.YES|Alert.NO,null, manejadorEliminarActividad,global.iQuest);
 			}
 			
 			public function eliminarGiro():void{
-				Alert.show("¿Desea eliminar el Giro seleccionado?", tituloGiro, Alert.YES|Alert.NO,null, manejadorEliminarGiro,global.iQuest);
+				du.mostrarMensaje("¿Desea eliminar el Giro seleccionado?", tituloGiro, Alert.YES|Alert.NO,null, manejadorEliminarGiro,global.iQuest);
 			}
 			
 			public function eliminarSector():void{
-				Alert.show("¿Desea eliminar el Sector seleccionado?", tituloSec, Alert.YES|Alert.NO,null, manejadorEliminarSector,global.iQuest);
+				du.mostrarMensaje("¿Desea eliminar el Sector seleccionado?", tituloSec, Alert.YES|Alert.NO,null, manejadorEliminarSector,global.iQuest);
 			}
 			
 			public function iniVar():void{
@@ -322,7 +322,7 @@
 								PopUpManager.centerPopUp(comMttoAct);
 							}
 							else
-								Alert.show("Debe seleccionar el registro de Actividad Económica",tituloAct,4,null,null,global.iAlert);
+								du.mostrarMensaje("Debe seleccionar el registro de Actividad Económica",tituloAct,4,null,null,global.iAlert);
 						break;
 					}
 				}
@@ -357,7 +357,7 @@
 								PopUpManager.centerPopUp(comMttoGiro);	
 							}
 							else
-								Alert.show("Debe seleccionar el registro de Giro",tituloGiro,4,null,null,global.iAlert);
+								du.mostrarMensaje("Debe seleccionar el registro de Giro",tituloGiro,4,null,null,global.iAlert);
 						break;
 					}
 				}
@@ -389,7 +389,7 @@
 								PopUpManager.centerPopUp(comMttoSec);	
 							}
 							else
-								Alert.show("Debe seleccionar el registro del Sector",tituloSec,4,null,null,global.iAlert); 
+								du.mostrarMensaje("Debe seleccionar el registro del Sector",tituloSec,4,null,null,global.iAlert); 
 							break;
 					}
 				}
@@ -486,7 +486,7 @@
 				if (res.substr(0,1) == "1")
 					buscarListaActividad(1);
 				else
-					Alert.show(res.substr(2,res.length-1),tituloAct,4,null,null,global.iAlert);
+					du.mostrarMensaje(res.substr(2,res.length-1),tituloAct,4,null,null,global.iAlert);
 			}
 			
 			private function setAccionGiro(event:ResultEvent):void{
@@ -498,7 +498,7 @@
 				if (res.substr(0,1) == "1")
 					buscarListaGiro(1);
 				else
-					Alert.show(res.substr(2,res.length-1), tituloGiro,4,null,null,global.iAlert);
+					du.mostrarMensaje(res.substr(2,res.length-1), tituloGiro,4,null,null,global.iAlert);
 			}
 
 			private function setAccionSector(event:ResultEvent):void{
@@ -508,10 +508,10 @@
 				wsMS.removeEventListener(ResultEvent.RESULT, setAccionSector);
 				var res:String = new String(event.result);
 				if (res.substr(0,1) == "1")
-					//Alert.show("Grupo Eliminado","Mantenimiento de Grupo",4,null,null,global.iInfo);
+					//du.mostrarMensaje("Grupo Eliminado","Mantenimiento de Grupo",4,null,null,global.iInfo);
 					buscarSector(1);
 				else
-					Alert.show(res.substr(2,res.length-1), tituloSec,4,null,null,global.iAlert);
+					du.mostrarMensaje(res.substr(2,res.length-1), tituloSec,4,null,null,global.iAlert);
 			}
 		]]>
 	</mx:Script>

@@ -41,6 +41,7 @@
 			
 			public var wsMS:WebService;	
 			public var titulo:String;
+			
 			private var du:Utils;
 			private var global:Globales;
 			private var permiso:Permisos;
@@ -213,15 +214,15 @@
 			}
 
 			public function eliminarCiclo():void{
-				Alert.show("¿Desea eliminar el Ciclo seleccionado?", titulo, Alert.YES|Alert.NO,null, manejadorEliminarCiclo,global.iQuest);
+				du.mostrarMensaje("¿Desea eliminar el Ciclo seleccionado?", titulo, Alert.YES|Alert.NO, null, manejadorEliminarCiclo, global.iQuest);
 			}
 			
 			public function eliminarProd():void{
-				Alert.show("¿Desea eliminar el Producto seleccionado?", titulo, Alert.YES|Alert.NO,null, manejadorEliminarProd,global.iQuest);
+				du.mostrarMensaje("¿Desea eliminar el Producto seleccionado?", titulo, Alert.YES|Alert.NO, null, manejadorEliminarProd, global.iQuest);
 			}
 			
 			public function eliminarTipoProd():void{
-				Alert.show("¿Desea eliminar el Tipo de Producto seleccionado?", titulo, Alert.YES|Alert.NO,null, manejadorEliminarTipoProd,global.iQuest);
+				du.mostrarMensaje("¿Desea eliminar el Tipo de Producto seleccionado?", titulo, Alert.YES|Alert.NO, null, manejadorEliminarTipoProd, global.iQuest);
 			}
 			
 			private function formatearMontoGrid(item:Object, column:DataGridColumn):String{
@@ -294,70 +295,66 @@
 			public function mostrarFormCiclo(tipo:int):void{
 				//tipo = 1 NUEVO REGISTRO
 				//tipo = 2 MODIFICA REGISTRO
-				if (edicion == true){
-					var codTipoProd:String = dgTipoProd.selectedItem.CODIGO;
-					var codProd:String = dgProducto.selectedItem.CODIGO;
-					var comMttoCiclo:MttoCiclo = new MttoCiclo();
-					switch(tipo){
-						case 1: 
-							comMttoCiclo = MttoCiclo(PopUpManager.createPopUp(this,MttoCiclo,true)); 
-							comMttoCiclo.addEventListener(Event.REMOVED_FROM_STAGE, actualizarCiclo);
-							comMttoCiclo.init(tipo, codTipoProd, codProd);
-							PopUpManager.centerPopUp(comMttoCiclo);
-							break;
-						case 2: 
-							if (dgCiclo.selectedIndex >= 0){
-								accionCiclo = tipo;
-								comMttoCiclo = MttoCiclo(PopUpManager.createPopUp(this,MttoCiclo,true)); 
-								var ciclo:String = dgCiclo.selectedItem.CICLO;
-								var indice:int = dgCiclo.selectedIndex;
-								iniVar();
-								this.indCiclo = indice;
-								this.vScroll = dgCiclo.verticalScrollPosition;
-								comMttoCiclo.addEventListener(Event.REMOVED_FROM_STAGE, actualizarCiclo);
-								comMttoCiclo.init(tipo, codTipoProd, codProd, ciclo);
-								PopUpManager.centerPopUp(comMttoCiclo);
-							}
-							else
-								Alert.show("Debe seleccionar el registro de Ciclo",titulo,4,null,null,global.iAlert);
+				var codTipoProd:String = dgTipoProd.selectedItem.CODIGO;
+				var codProd:String = dgProducto.selectedItem.CODIGO;
+				var comMttoCiclo:MttoCiclo = new MttoCiclo();
+				switch(tipo){
+					case 1: 
+						comMttoCiclo = MttoCiclo(PopUpManager.createPopUp(this,MttoCiclo,true)); 
+						comMttoCiclo.addEventListener(Event.REMOVED_FROM_STAGE, actualizarCiclo);
+						comMttoCiclo.init(tipo, codTipoProd, codProd);
+						PopUpManager.centerPopUp(comMttoCiclo);
 						break;
-					}
+					case 2: 
+						if (dgCiclo.selectedIndex >= 0){
+							accionCiclo = tipo;
+							comMttoCiclo = MttoCiclo(PopUpManager.createPopUp(this,MttoCiclo,true)); 
+							var ciclo:String = dgCiclo.selectedItem.CICLO;
+							var indice:int = dgCiclo.selectedIndex;
+							iniVar();
+							this.indCiclo = indice;
+							this.vScroll = dgCiclo.verticalScrollPosition;
+							comMttoCiclo.addEventListener(Event.REMOVED_FROM_STAGE, actualizarCiclo);
+							comMttoCiclo.init(tipo, codTipoProd, codProd, ciclo);
+							PopUpManager.centerPopUp(comMttoCiclo);
+						}
+						else
+							du.mostrarMensaje("Debe seleccionar el registro de Ciclo",titulo,4,null,null,global.iAlert);
+					break;
 				}
 			}
 			
 			public function mostrarFormProd(tipo:int):void{
 				//tipo = 1 NUEVO REGISTRO
 				//tipo = 2 MODIFICA REGISTRO
-				if (edicion == true){
-					var codTPC:String = dgTipoProd.selectedItem.CODIGO;
-					var comMttoProd:MttoProdCred = new MttoProdCred();
-					switch(tipo){
-						case 1: 
-							comMttoProd = MttoProdCred(PopUpManager.createPopUp(this,MttoProdCred,true)); 
-							comMttoProd.addEventListener(Event.REMOVED_FROM_STAGE, actualizarProd);
-							comMttoProd.registraInfoProd(codTPC);
-							PopUpManager.centerPopUp(comMttoProd);
-							comMttoProd.init();
-							break;
-						case 2: 
-							if (dgProducto.selectedIndex >= 0){
-								accionProd = tipo;
-								comMttoProd = MttoProdCred(PopUpManager.createPopUp(this,MttoProdCred,true)); 
-								var codProd:String = dgProducto.selectedItem.CODIGO;
-								var prod:String = dgProducto.selectedItem.NOMBRE;
-								var indice:int = dgProducto.selectedIndex;
-								iniVar();
-								this.indProd = indice;
-								this.vScroll = dgProducto.verticalScrollPosition;
-								comMttoProd.addEventListener(Event.REMOVED_FROM_STAGE, actualizarProd);
-								comMttoProd.init();
-								comMttoProd.cargaInfoProd(codTPC, codProd, prod);
-								PopUpManager.centerPopUp(comMttoProd);
-							}
-							else
-								Alert.show("Debe seleccionar el registro de Producto de Crédito",titulo,4,null,null,global.iAlert);
+				var codTPC:String = dgTipoProd.selectedItem.CODIGO;
+				var comMttoProd:MttoProdCred = new MttoProdCred();
+				switch(tipo){
+					case 1: 
+						comMttoProd = MttoProdCred(PopUpManager.createPopUp(this,MttoProdCred,true)); 
+						comMttoProd.addEventListener(Event.REMOVED_FROM_STAGE, actualizarProd);
+						comMttoProd.registraInfoProd(codTPC);
+						PopUpManager.centerPopUp(comMttoProd);
+						comMttoProd.init();
 						break;
-					}
+					case 2: 
+						if (dgProducto.selectedIndex >= 0){
+							accionProd = tipo;
+							comMttoProd = MttoProdCred(PopUpManager.createPopUp(this,MttoProdCred,true)); 
+							var codProd:String = dgProducto.selectedItem.CODIGO;
+							var prod:String = dgProducto.selectedItem.NOMBRE;
+							var indice:int = dgProducto.selectedIndex;
+							iniVar();
+							this.indProd = indice;
+							this.vScroll = dgProducto.verticalScrollPosition;
+							comMttoProd.addEventListener(Event.REMOVED_FROM_STAGE, actualizarProd);
+							comMttoProd.init();
+							comMttoProd.cargaInfoProd(codTPC, codProd, prod);
+							PopUpManager.centerPopUp(comMttoProd);
+						}
+						else
+							du.mostrarMensaje("Debe seleccionar el registro de Producto de Crédito",titulo,4,null,null,global.iAlert);
+					break;
 				}
 			}
 			
@@ -366,32 +363,31 @@
 				//tipo = 2 MODIFICA REGISTRO
 				var comMttoTipoProd:MttoTipoProd = new MttoTipoProd();
 				comMttoTipoProd = MttoTipoProd(PopUpManager.createPopUp(this,MttoTipoProd,true)); 
-				if(edicion == true){
-					switch(tipo){
-						case 1: 
+				
+				switch(tipo){
+					case 1: 
+						comMttoTipoProd.addEventListener(Event.REMOVED_FROM_STAGE, actualizarTipoProd);
+						comMttoTipoProd.registraInfoProd();
+						PopUpManager.centerPopUp(comMttoTipoProd);
+						comMttoTipoProd.init();
+						break;
+					case 2: 
+						if (dgTipoProd.selectedIndex >= 0){
+							accionTipoProd = tipo;
+							var codTipoProd:String = dgTipoProd.selectedItem.CODIGO;
+							var tipoProd:String = dgTipoProd.selectedItem.NOMBRE;
+							var indice:int = dgTipoProd.selectedIndex;
+							iniVar();
+							this.indTipoProd = indice;
+							this.vScroll = dgTipoProd.verticalScrollPosition;
 							comMttoTipoProd.addEventListener(Event.REMOVED_FROM_STAGE, actualizarTipoProd);
-							comMttoTipoProd.registraInfoProd();
-							PopUpManager.centerPopUp(comMttoTipoProd);
 							comMttoTipoProd.init();
-							break;
-						case 2: 
-							if (dgTipoProd.selectedIndex >= 0){
-								accionTipoProd = tipo;
-								var codTipoProd:String = dgTipoProd.selectedItem.CODIGO;
-								var tipoProd:String = dgTipoProd.selectedItem.NOMBRE;
-								var indice:int = dgTipoProd.selectedIndex;
-								iniVar();
-								this.indTipoProd = indice;
-								this.vScroll = dgTipoProd.verticalScrollPosition;
-								comMttoTipoProd.addEventListener(Event.REMOVED_FROM_STAGE, actualizarTipoProd);
-								comMttoTipoProd.init();
-								comMttoTipoProd.cargaInfoTipoProd(codTipoProd, tipoProd);	
-								PopUpManager.centerPopUp(comMttoTipoProd);
-							}
-							else
-								Alert.show("Debe seleccionar el registro de la Gerencia Regional",titulo,4,null,null,global.iAlert); 
-							break;
-					}
+							comMttoTipoProd.cargaInfoTipoProd(codTipoProd, tipoProd);	
+							PopUpManager.centerPopUp(comMttoTipoProd);
+						}
+						else
+							du.mostrarMensaje("Debe seleccionar el registro de la Gerencia Regional",titulo,4,null,null,global.iAlert); 
+						break;
 				}
 			}
 			
@@ -417,11 +413,8 @@
 						switch(dPermisos.Table[i].OPCION.toString()){
 							case "C":
 								consulta = true;
-								borrado = true;
-								alta = true;
-								edicion = true;
 								break;	
-							/*case "B":
+							case "B":
 								borrado = true;
 								break;
 							case "I":
@@ -429,7 +422,7 @@
 								break;
 							case "E":
 								edicion = true;
-								break;	*/			
+								break;			
 						}
 					}
 					btnAgregar.enabled = alta;	
@@ -486,7 +479,7 @@
 				if (res.substr(0,1) == "1")
 					buscarListaProd(1);
 				else
-					Alert.show(res.substr(2,res.length-1), titulo, 4, null, null, global.iAlert);
+					du.mostrarMensaje(res.substr(2,res.length-1), titulo, 4, null, null, global.iAlert);
 			}
 
 			private function setAccionTipoProd(event:ResultEvent):void{
@@ -498,7 +491,7 @@
 				if (res.substr(0,1) == "1")
 					buscarTipoProd(1);
 				else
-					Alert.show("Error en el proceso: " + res, titulo, 4, null, null, global.iAlert);
+					du.mostrarMensaje("Error en el proceso: " + res, titulo, 4, null, null, global.iAlert);
 			}
 			
 			private function setEliminaCiclo(event:ResultEvent):void{
@@ -510,7 +503,7 @@
 				if (res.substr(0,1) == "1")
 					buscarListaCiclo(1);
 				else
-					Alert.show(res.substr(2,res.length-1), titulo, 4, null, null, global.iAlert);
+					du.mostrarMensaje(res.substr(2,res.length-1), titulo, 4, null, null, global.iAlert);
 			}
 			
 			private function setEliminaProd(event:ResultEvent):void{
@@ -522,7 +515,7 @@
 				if (res.substr(0,1) == "1")
 					buscarListaProd(1);
 				else
-					Alert.show(res.substr(2,res.length-1), titulo, 4, null, null, global.iAlert);
+					du.mostrarMensaje(res.substr(2,res.length-1), titulo, 4, null, null, global.iAlert);
 			}
 		]]>
 	</mx:Script>
@@ -562,8 +555,7 @@
 					<mx:DataGridColumn headerText="VIGENCIA" dataField="VIGENCIA" width="80"/>
 					<mx:DataGridColumn headerText="PERIODICIDAD" dataField="PERIO" width="90"/>
 					<!--<mx:DataGridColumn headerText="PLAZO" dataField="PLAZO" width="50"/>
-					<<mx:DataGridColumn headerText="TASA" dataField="TASA" width="50"/>-->
-					
+					<<mx:DataGridColumn headerText="TASA" dataField="TASA" width="50"/>-->		
 				</Data:columns>
 			</Data:RowColorDataGrid>
 		</mx:Canvas>

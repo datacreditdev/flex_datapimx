@@ -25,7 +25,7 @@
 		[Bindable]
 		private var info:DatosInstBancaria;
 		[Bindable]
-		private var _xmlIB:XML =  new XML();
+		private var _xmlIB:XML = new XML();
 		
 		public var openEffect:Effect = new WipeDown();
 		public var closeEffect:Effect = new WipeDown();
@@ -58,7 +58,7 @@
 		public function enviar():void{
 			info = new DatosInstBancaria();
 				
-			var invalidArray:Array = Validator.validateAll([codigoV, nombreV]);
+			var invalidArray:Array = Validator.validateAll([nombreV]);
 				
 			if(invalidArray.length == 0){	
 				info.cdgIB = txtCodigo.text;
@@ -107,8 +107,7 @@
 			this.title = "Nuevo";
 			info = null;
 			
-			txtCodigo.setFocus();
-			txtCodigo.editable = true;
+			txtNombre.setFocus();
 		}
 		
 		private function setAccionInstBancaria(event:ResultEvent):void{
@@ -117,11 +116,19 @@
 			global.desbloquear();
 			wsMS.removeEventListener(ResultEvent.RESULT, setAccionInstBancaria);
 			var res:String = event.result.toString();
+			var codigo:String;
 			if (res.substr(0,1) == "1"){
+				if(tipoAccion == 1){
+					var rSplit:Array = res.toString().split('|');
+					codigo = rSplit[1].toString();
+					du.mostrarMensaje("Registro exitoso de institución bancaria con el código - " + codigo, titulo, 4, null, null, global.iInfo);
+				}	
+				else
+					du.mostrarMensaje("Proceso finalizado exitosamente.", titulo, 4, null, null, global.iInfo);
 				cerrar();
 			}	
 			else
-				Alert.show(res.substr(2,res.length -1),titulo,4,null,null,global.iAlert);		
+				du.mostrarMensaje(res.substr(2,res.length -1),titulo,4,null,null,global.iAlert);		
 		}
 		
 		public function terminarEfecto(event:EffectEvent):void{
@@ -137,7 +144,7 @@
 			if (info.guarda == true)
 				guardaInstBancaria();
 			else
-				Alert.show("Debe capturar los datos requeridos",titulo,4,null,null,global.iAlert);
+				du.mostrarMensaje("Debe capturar los datos requeridos",titulo,4,null,null,global.iAlert);
 		}
 		
 		]]>
@@ -145,7 +152,7 @@
 	<mx:Canvas x="10" y="10" width="338" height="80" styleName="canvasMod">
 		<mx:Label id="lblCodigo" x="36.75" y="12" text="Código:"/>
 		<mx:Label id="lblNombre" x="36.75" y="44" text="Nombre:"/>
-		<mx:TextInput id="txtCodigo" x="85.75" y="10" width="50" maxChars="4"/>
+		<mx:TextInput id="txtCodigo" x="85.75" y="10" width="50" maxChars="4" editable="false"/>
 		<mx:TextInput id="txtNombre" x="85.75" y="42" width="213.5" maxChars="50"/>
 	</mx:Canvas>
 	<mx:Button id="btnAceptar" x="260" y="98" icon="@Embed(source='assets/button_ok.png')" click="enviar()" width="40"/>

@@ -205,7 +205,7 @@
 								comMttoGtia.init(acred, nomAcred, tipo);
 							}
 							else
-								Alert.show("Debe seleccionar el registro de Solicitud","Mantenimiento de Solicitud",4,null,null,global.iAlert); 
+								du.mostrarMensaje("Debe seleccionar el registro de Solicitud","Mantenimiento de Solicitud",4,null,null,global.iAlert); 
 							break;
 					}
 				}

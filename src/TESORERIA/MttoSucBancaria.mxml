@@ -28,16 +28,17 @@
 		[Bindable]
 		private var info:DatosSucBancaria;
 		private var _xmlSB:XML =  new XML();
-		private var _xmlColonia:XML =  new XML();
-		private var _xmlDir:XML =  new XML();
-		private var _xmlEntidad:XML =  new XML();
-		private var _xmlMunicipio:XML =  new XML();
-		private var _xmlLocalidad:XML =  new XML();
+		private var _xmlColonia:XML = new XML();
+		private var _xmlDir:XML = new XML();
+		private var _xmlEntidad:XML = new XML();
+		private var _xmlMunicipio:XML = new XML();
+		private var _xmlLocalidad:XML = new XML();
 		
 		private var _xmlFiltro:XMLList;	
 		
 		private var du:Utils;
 		private var global:Globales;
+		
 		public var openEffect:Effect = new WipeDown();
 		public var closeEffect:Effect = new WipeDown();
 		public var wsMS:WebService;	
@@ -136,7 +137,7 @@
 		}
 	
 		public function enviar():void{
-			var invalidArray:Array = Validator.validateAll([sucBancV, nombreV]);
+			var invalidArray:Array = Validator.validateAll([nombreV]);
 				
 			if(invalidArray.length == 0){	
 				info.cdgSB = txtCodSB.text;
@@ -328,24 +329,7 @@
 			this.title = "Nuevo";
 			info.cdgIB = codIB;
 			
-			txtCodSB.setFocus();
-			
-			du.initWsCat(wsCat);
-			du.sCursor();
-				
-			du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
-				var _xmlCod:XML = new XML(evt.result.toString());
-				
-				du.rCursor();
-				du.closeWs(wsCat);
-				wsCat = null;
-					
-				if(_xmlCod.elements().length() > 0){
-					txtCodSB.text = _xmlCod.Table[0].CDGSB;
-				}
-			});
-			params[0] = codIB;
-			wsCat.getInfoRegistro.send(20, params);
+			txtNombre.setFocus();
 		}
 		
 		public function selecColonia(event:Event):void{
@@ -401,11 +385,19 @@
 			global.desbloquear();
 			wsMS.removeEventListener(ResultEvent.RESULT, setAccionSucBancaria);
 			var res:String = event.result.toString();
+			var codigo:String;
 			if (res.substr(0,1) == "1"){
+				if(tipoAccion == 1){
+					var rSplit:Array = res.toString().split('|');
+					codigo = rSplit[1].toString();
+					du.mostrarMensaje("Registro exitoso de sucursal bancaria con el código - " + codigo, titulo, 4, null, null, global.iInfo);
+				}	
+				else
+					du.mostrarMensaje("Proceso finalizado exitosamente.", titulo, 4, null, null, global.iInfo);
 				cerrar();
 			}	
 			else
-				Alert.show(res.substr(2,res.length -1),titulo,4,null,null,global.iAlert);		
+				du.mostrarMensaje(res.substr(2,res.length - 1),titulo,4,null,null,global.iAlert);		
 		}
 		
 		public function terminarEfecto(event:EffectEvent):void{
@@ -421,7 +413,7 @@
 			if (info.guarda == true)
 				guardaSucBancaria();
 			else
-				Alert.show("Debe capturar los datos requeridos",titulo,4,null,null,global.iAlert);
+				du.mostrarMensaje("Debe capturar los datos requeridos",titulo,4,null,null,global.iAlert);
 		}
 		
 		private function verifEntFed(event:Event):void{
@@ -457,7 +449,7 @@
 		<mx:TextInput id="txtIB" x="178.5" y="7" width="220.5" editable="false"/>
 	</mx:Canvas>
 	<mx:Canvas id="cnvCont" x="21" y="58" width="420" height="145" styleName="canvasMod">
-		<mx:Label id="lblNombre" x="67.5" y="44" text="Nombre:"/>
+		<mx:Label id="lblNombre" x="63.5" y="43" text="Nombre*:"/>
 		<mx:TextInput id="txtNombre" x="120.5" y="42" maxChars="50" width="230"/>
 		<mx:Label id="lblSB" x="71.5" y="12" text="Código:"/>
 		<mx:TextInput id="txtCodSB" x="120.5" y="10" width="50" maxChars="4" editable="false"/>

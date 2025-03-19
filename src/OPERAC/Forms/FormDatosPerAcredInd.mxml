@@ -19,7 +19,7 @@
 			<mx:SetProperty target="{txtNombre}" name="restrict" value="A-Z;a-z;Ñ;ñ;0-9; "/>
 			<mx:SetProperty target="{txtRfc}" name="editable" value="true"/>
 			<mx:AddChild position="lastChild">
-				<mx:FormItem label="Representante Legal:" id="repLegal" visible="true" width="485" height="50">
+				<mx:FormItem label="Representante Legal:" id="repLegal" visible="true" width="490" height="50">
 					<mx:Canvas>
 						<mx:List id="lstRepLegal" width="220" height="50" labelField="nombre"/>	
 						<mx:Button id="btnAgregarRepLegal" icon="@Embed(source='assets/add.png')" width="40" x="228" click="mostrarFormPers()" y="1"/>
@@ -239,10 +239,10 @@
 			
 			private function confirmarElimRepLegal():void{
 				if(lstRepLegal.selectedIndex < 0){
-					Alert.show("Debe seleccionar un registro.","Representante Legal",4,null,null,du.iAlert);
+					du.mostrarMensaje("Debe seleccionar un registro.","Representante Legal",4,null,null,du.iAlert);
 					return;
 				}				
-				Alert.show("¿Desea eliminar el registro seleccionado?","Representante Legal",3,null,eliminarRepLegal,du.iQuest,4);
+				du.mostrarMensaje("¿Desea eliminar el registro seleccionado?","Representante Legal",3,null,eliminarRepLegal,du.iQuest,4);
 			}
 			
 			private function eliminarRepLegal(evt:CloseEvent):void{

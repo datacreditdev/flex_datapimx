@@ -111,6 +111,7 @@
 				
 				var codIB:String = dgIB.selectedItem.CODIGO;
 				var codSB:String = dgSB.selectedItem.CODIGO;
+				
 				dgCB.dataProvider = null;
 				du.initWsCat(wsCat);
 				du.sCursor();
@@ -214,28 +215,27 @@
 			}
 
 			public function eliminarCB():void{
-				Alert.show("¿Desea eliminar la Cuenta Bancaria seleccionada?", tituloCB, Alert.YES|Alert.NO,null, manejadorEliminarCB,global.iQuest);
+				du.mostrarMensaje("¿Desea eliminar la Cuenta Bancaria seleccionada?", tituloCB, Alert.YES|Alert.NO,null, manejadorEliminarCB,global.iQuest);
 			}
 			
 			public function eliminarSB():void{
-				Alert.show("¿Desea eliminar la Sucursal Bancaria seleccionada?", tituloSB, Alert.YES|Alert.NO,null, manejadorEliminarSB,global.iQuest);
+				du.mostrarMensaje("¿Desea eliminar la Sucursal Bancaria seleccionada?", tituloSB, Alert.YES|Alert.NO,null, manejadorEliminarSB,global.iQuest);
 			}
 			
 			public function eliminarIB():void{
-				Alert.show("¿Desea eliminar la Institución Bancaria seleccionada?", tituloIB, Alert.YES|Alert.NO,null, manejadorEliminarIB,global.iQuest);
+				du.mostrarMensaje("¿Desea eliminar la Institución Bancaria seleccionada?", tituloIB, Alert.YES|Alert.NO,null, manejadorEliminarIB,global.iQuest);
 			}
 			
 			public function iniVar():void{
 				this.indIB = -1;
 				this.indSB = -1;
 				this.indCB = -1;
-				this.vScroll = -1;
+				this.vScroll = undefined;
 			}
 			
 			public function initApp():void{
 				global = new Globales();
 				du = new Utils();
-				wsMS = new WebService();
 				tituloIB = "Mantenimiento de Institución Bancaria";
 				tituloSB = "Mantenimiento de Sucursal Bancaria";
 				tituloCB = "Mantenimiento de Cuenta Bancaria";
@@ -253,7 +253,7 @@
 			}
 			
 			public function manejadorEliminarCB(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codIB:String = dgIB.selectedItem.CODIGO;
 					var codSB:String = dgSB.selectedItem.CODIGO;  
 					var codCB:String = dgCB.selectedItem.CODIGO;
@@ -267,7 +267,7 @@
 			}
 			
 			public function manejadorEliminarSB(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codIB:String = dgIB.selectedItem.CODIGO;
 					var codSB:String = dgSB.selectedItem.CODIGO;  
 			    	initConexion();
@@ -280,7 +280,7 @@
 			}
 			
 			public function manejadorEliminarIB(e:CloseEvent):void{
-				if(e.detail==Alert.YES){
+				if(e.detail == Alert.YES){
 					var codIB:String = dgIB.selectedItem.CODIGO;
 			    	initConexion();
 			    	du.sCursor();
@@ -293,72 +293,68 @@
 			
 			public function mostrarFormCB(tipo:int):void{
 				//tipo = 1 NUEVO REGISTRO
-				//tipo = 2 MODIFICA REGISTRO
-				if (edicion == true){
-					var codIB:String = dgIB.selectedItem.CODIGO;
-					var instBanc:String = dgIB.selectedItem.NOMBRE;
-					var codSB:String = dgSB.selectedItem.CODIGO;
-					var sucBanc:String = dgSB.selectedItem.NOMBRE;
-					var comMttoCtaBancaria:MttoCtaBancaria = new MttoCtaBancaria();
-					switch(tipo){
-						case 1: 
-							comMttoCtaBancaria = MttoCtaBancaria(PopUpManager.createPopUp(this,MttoCtaBancaria,true)); 
-							comMttoCtaBancaria.addEventListener(Event.REMOVED_FROM_STAGE, actualizarCB);
-							comMttoCtaBancaria.init(tipo, codIB, instBanc, codSB, sucBanc);
-							PopUpManager.centerPopUp(comMttoCtaBancaria);
-							break;
-						case 2: 
-							if (dgCB.selectedIndex >= 0){
-								accionCB = tipo;
-								comMttoCtaBancaria = MttoCtaBancaria(PopUpManager.createPopUp(this,MttoCtaBancaria,true)); 
-								var codCB:String = dgCB.selectedItem.CODIGO;
-								var indice:int = dgCB.selectedIndex;
-								iniVar();
-								this.indCB = indice;
-								this.vScroll = dgCB.verticalScrollPosition;
-								comMttoCtaBancaria.addEventListener(Event.REMOVED_FROM_STAGE, actualizarCB);
-								comMttoCtaBancaria.init(tipo, codIB, instBanc, codSB, sucBanc, codCB);
-								PopUpManager.centerPopUp(comMttoCtaBancaria);
-							}
-							else
-								Alert.show("Debe seleccionar el registro de la Cuenta Bancaria",tituloCB,4,null,null,global.iAlert);
+				//tipo = 2 MODIFICA REGISTRO	
+				var codIB:String = dgIB.selectedItem.CODIGO;
+				var instBanc:String = dgIB.selectedItem.NOMBRE;
+				var codSB:String = dgSB.selectedItem.CODIGO;
+				var sucBanc:String = dgSB.selectedItem.NOMBRE;
+				var comMttoCtaBancaria:MttoCtaBancaria = new MttoCtaBancaria();
+				switch(tipo){
+					case 1: 
+						comMttoCtaBancaria = MttoCtaBancaria(PopUpManager.createPopUp(this,MttoCtaBancaria,true)); 
+						comMttoCtaBancaria.addEventListener(Event.REMOVED_FROM_STAGE, actualizarCB);
+						comMttoCtaBancaria.init(tipo, codIB, instBanc, codSB, sucBanc);
+						PopUpManager.centerPopUp(comMttoCtaBancaria);
 						break;
-					}
+					case 2: 
+						if (dgCB.selectedIndex >= 0){
+							accionCB = tipo;
+							comMttoCtaBancaria = MttoCtaBancaria(PopUpManager.createPopUp(this,MttoCtaBancaria,true)); 
+							var codCB:String = dgCB.selectedItem.CODIGO;
+							var indice:int = dgCB.selectedIndex;
+							iniVar();
+							this.indCB = indice;
+							this.vScroll = dgCB.verticalScrollPosition;
+							comMttoCtaBancaria.addEventListener(Event.REMOVED_FROM_STAGE, actualizarCB);
+							comMttoCtaBancaria.init(tipo, codIB, instBanc, codSB, sucBanc, codCB);
+							PopUpManager.centerPopUp(comMttoCtaBancaria);
+						}
+						else
+							du.mostrarMensaje("Debe seleccionar el registro de la Cuenta Bancaria", tituloCB, 4, null, null, global.iAlert);
+					break;
 				}
 			}
 			
 			public function mostrarFormSB(tipo:int):void{
 				//tipo = 1 NUEVO REGISTRO
 				//tipo = 2 MODIFICA REGISTRO
-				if (edicion == true){
-					var codIB:String = dgIB.selectedItem.CODIGO;
-					var instBanc:String = dgIB.selectedItem.NOMBRE;
-					var comMttoSB:MttoSucBancaria = new MttoSucBancaria();
-					switch(tipo){
-						case 1: 
-							comMttoSB = MttoSucBancaria(PopUpManager.createPopUp(this,MttoSucBancaria,true)); 
-							comMttoSB.addEventListener(Event.REMOVED_FROM_STAGE, actualizarSB);
-							comMttoSB.init(tipo, codIB, instBanc);
-							PopUpManager.centerPopUp(comMttoSB);
-							break;
-						case 2: 
-							if (dgSB.selectedIndex >= 0){
-								accionSB = tipo;
-								comMttoSB = MttoSucBancaria(PopUpManager.createPopUp(this,MttoSucBancaria,true)); 
-								var codSB:String = dgSB.selectedItem.CODIGO;
-								var sucBanc:String = dgSB.selectedItem.NOMBRE;
-								var indice:int = dgSB.selectedIndex;
-								iniVar();
-								this.indSB = indice;
-								this.vScroll = dgSB.verticalScrollPosition;
-								comMttoSB.addEventListener(Event.REMOVED_FROM_STAGE, actualizarSB);
-								comMttoSB.init(tipo, codIB, instBanc, codSB);
-								PopUpManager.centerPopUp(comMttoSB);
-							}
-							else
-								Alert.show("Debe seleccionar el registro de la Sucursal Bancaria",tituloSB,4,null,null,global.iAlert);
+				var codIB:String = dgIB.selectedItem.CODIGO;
+				var instBanc:String = dgIB.selectedItem.NOMBRE;
+				var comMttoSB:MttoSucBancaria = new MttoSucBancaria();
+				switch(tipo){
+					case 1: 
+						comMttoSB = MttoSucBancaria(PopUpManager.createPopUp(this,MttoSucBancaria,true)); 
+						comMttoSB.addEventListener(Event.REMOVED_FROM_STAGE, actualizarSB);
+						comMttoSB.init(tipo, codIB, instBanc);
+						PopUpManager.centerPopUp(comMttoSB);
 						break;
-					}
+					case 2: 
+						if (dgSB.selectedIndex >= 0){
+							accionSB = tipo;
+							comMttoSB = MttoSucBancaria(PopUpManager.createPopUp(this,MttoSucBancaria,true)); 
+							var codSB:String = dgSB.selectedItem.CODIGO;
+							var sucBanc:String = dgSB.selectedItem.NOMBRE;
+							var indice:int = dgSB.selectedIndex;
+							iniVar();
+							this.indSB = indice;
+							this.vScroll = dgSB.verticalScrollPosition;
+							comMttoSB.addEventListener(Event.REMOVED_FROM_STAGE, actualizarSB);
+							comMttoSB.init(tipo, codIB, instBanc, codSB);
+							PopUpManager.centerPopUp(comMttoSB);
+						}
+						else
+							du.mostrarMensaje("Debe seleccionar el registro de la Sucursal Bancaria", tituloSB, 4, null, null, global.iAlert);
+					break;
 				}
 			}
 			
@@ -367,53 +363,54 @@
 				//tipo = 2 MODIFICA REGISTRO
 				var comMttoIB:MttoInstBancaria = new MttoInstBancaria();
 				comMttoIB = MttoInstBancaria(PopUpManager.createPopUp(this,MttoInstBancaria,true)); 
-				if(edicion == true){
-					switch(tipo){
-						case 1: 
+				
+				switch(tipo){
+					case 1: 
+						comMttoIB.addEventListener(Event.REMOVED_FROM_STAGE, actualizarIB);
+						comMttoIB.init();
+						comMttoIB.registraInfoInstBancaria();
+						PopUpManager.centerPopUp(comMttoIB);
+						break;
+					case 2: 
+						if (dgIB.selectedIndex >= 0){
+							accionIB = tipo;
+							var codIB:String = dgIB.selectedItem.CODIGO;
+							var instBanc:String = dgIB.selectedItem.NOMBRE;
+							var indice:int = dgIB.selectedIndex;
+							iniVar();
+							this.indIB = indice;
+							this.vScroll = dgIB.verticalScrollPosition;
 							comMttoIB.addEventListener(Event.REMOVED_FROM_STAGE, actualizarIB);
-							comMttoIB.init();
-							comMttoIB.registraInfoInstBancaria();
-							PopUpManager.centerPopUp(comMttoIB);
-							break;
-						case 2: 
-							if (dgIB.selectedIndex >= 0){
-								accionIB = tipo;
-								var codIB:String = dgIB.selectedItem.CODIGO;
-								var instBanc:String = dgIB.selectedItem.NOMBRE;
-								var indice:int = dgIB.selectedIndex;
-								iniVar();
-								this.indIB = indice;
-								this.vScroll = dgIB.verticalScrollPosition;
-								comMttoIB.addEventListener(Event.REMOVED_FROM_STAGE, actualizarIB);
-								comMttoIB.init();	
-								comMttoIB.cargaInfoInstBancaria(codIB, instBanc);
-								PopUpManager.centerPopUp(comMttoIB);	
-							}
-							else
-								Alert.show("Debe seleccionar el registro de la Institución Bancaria",tituloIB,4,null,null,global.iAlert); 
-							break;
-					}
+							comMttoIB.init();	
+							comMttoIB.cargaInfoInstBancaria(codIB, instBanc);
+							PopUpManager.centerPopUp(comMttoIB);	
+						}
+						else
+							du.mostrarMensaje("Debe seleccionar el registro de la Institución Bancaria", tituloIB, 4, null, null, global.iAlert); 
+						break;
 				}
 			}
 			
 			public function permisos():void{
 				var mod_id:String = global.obtenerModulo();
 				var perfil_id:String = global.obtenerCadPerfil();
+				var wsMS:WebService = new WebService;
 				var Params:Array;
 				var cont:int;
 				
-				wsMS = du.initWs(wsMS);
+				du.initWs(wsMS);
 				du.sCursor();
 					
-				du.ejecutaWsMethod(wsMS,function(evt:ResultEvent):void {											
+				du.ejecutaWsMethod(wsMS,function(evt:ResultEvent):void{											
 					dPermisos = new XML(evt.result.toString());
+					
+					du.rCursor();
+					du.closeWs(wsMS);	
 						
 					cont = dPermisos.elements().length();
 					
-					for(var i:int = 0; i < cont; i++)
-					{
-						switch(dPermisos.Table[i].OPCION.toString())
-						{
+					for(var i:int = 0; i < cont; i++){
+						switch(dPermisos.Table[i].OPCION.toString()){
 							case "C":
 								consulta = true;
 								break;	
@@ -428,9 +425,7 @@
 								break;				
 						}
 					}
-					btnAgregar.enabled = alta;
-					du.rCursor();
-					du.closeWs(wsMS);					
+					btnAgregar.enabled = alta;				
 				});
 				Params = new Array();
 				Params[0] = perfil_id;
@@ -484,7 +479,7 @@
 				if (res.substr(0,1) == "1")
 					buscarListaCB(1);
 				else
-					Alert.show(res.substr(2,res.length-1),tituloCB,4,null,null,global.iAlert);
+					du.mostrarMensaje(res.substr(2,res.length-1),tituloCB,4,null,null,global.iAlert);
 			}
 			
 			private function setAccionSucBancaria(event:ResultEvent):void{
@@ -496,7 +491,7 @@
 				if (res.substr(0,1) == "1")
 					buscarListaSB(1);
 				else
-					Alert.show(res.substr(2,res.length-1), tituloSB,4,null,null,global.iAlert);
+					du.mostrarMensaje(res.substr(2,res.length-1), tituloSB,4,null,null,global.iAlert);
 			}
 
 			private function setAccionInstBancaria(event:ResultEvent):void{
@@ -508,7 +503,7 @@
 				if (res.substr(0,1) == "1")
 					buscarIB(1);
 				else
-					Alert.show(res.substr(2,res.length-1), tituloIB,4,null,null,global.iAlert);
+					du.mostrarMensaje(res.substr(2,res.length-1), tituloIB,4,null,null,global.iAlert);
 			}
 		]]>
 	</mx:Script>

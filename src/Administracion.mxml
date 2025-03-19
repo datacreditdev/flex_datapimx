@@ -58,7 +58,7 @@
 				</mx:LinkButton>
 			</mx:AddChild>
 			<mx:AddChild relativeTo="{canvas2}" position="lastChild">
-				<mx:Image id="imgSup" x="1" y="0" source="assets/logoMini.png" width="128.8" height="45" horizontalAlign="left"/>	
+				<mx:Image id="imgSup" x="1" y="0" source="assets/logoMiniEst.png" width="128.8" height="45" horizontalAlign="left"/>	
 			</mx:AddChild>
 			<mx:SetProperty target="{imgSup}" name="alpha" value="1.0"/>
 		</mx:State>
@@ -107,7 +107,7 @@
 					<mx:TextInput id="txtUsr" x="312.5" y="369" width="150" color="#000000" keyDown="keyListener(event)" fontSize="12" textAlign="center"/>
 					<mx:Label id="lblPass" x="313.5" y="397" text="Contraseña:" fontFamily="Arial" fontSize="12" textAlign="center" width="150"/>
 					<mx:TextInput id="txtPwd" x="313.5" y="417" width="150" color="#000000" displayAsPassword="true" keyDown="keyListener(event)" maxChars="12" fontSize="12" textAlign="center"/>
-					<mx:Image id="imgLogin" source="assets/logoLogin.png" scaleContent="true" x="82.7" y="120" horizontalAlign="center" verticalAlign="center" visible="true" width="645.6" height="227.2"/>
+					<mx:Image id="imgLogin" source="assets/logoLoginEst.png" scaleContent="true" x="82.7" y="120" horizontalAlign="center" verticalAlign="center" visible="true" width="645.6" height="227.2"/>
 				</mx:Canvas>
 			</mx:Canvas>
 		</mx:VDividedBox>
@@ -197,13 +197,11 @@
         
         public var Last_Mod_Id:String;
 		public var ws:WebService;
-		public var wsCat:WebService;
-		public var wsMS:WebService;
 		public var tituloUsuario:String;
 		public var tituloAcceso:String;
+		
 		private var du:Utils;
-		private var global:Globales
-          
+		private var global:Globales  
         private var dp:XML;
         private var modulo:Modulo;
         private var loading:pLoading;
@@ -212,10 +210,13 @@
         public function actualizaPwd():void{
 			if(validaMod()){
 				var Params:Array;
-				ws = du.initWs(ws);
+				du.initWs(ws);
 				du.sCursor();
 				du.ejecutaWsMethod(ws,function(event:ResultEvent):void{
 					var res:String = event.result.toString();
+					
+					du.rCursor();
+					du.closeWs(ws);
 					
 					if(res.substr(0,1) == "1"){
 						txtPwdAnt.text = "";
@@ -225,13 +226,10 @@
 						txtUsr.text = "";
 						txtPwd.text = "";
 						txtUsr.setFocus();
-						Alert.show("Proceso finalizado exitosamente.",tituloUsuario,4,null,null,global.iInfo);
+						du.mostrarMensaje("Proceso finalizado exitosamente.",tituloUsuario,4,null,null,global.iInfo);
 					}
 					else
-						Alert.show(res.substr(2, res.length - 1),tituloUsuario,4,null,null,global.iAlert);
-																			
-					du.rCursor();
-					du.closeWs(ws);												
+						du.mostrarMensaje(res.substr(2, res.length - 1),tituloUsuario,4,null,null,global.iAlert);								
 					});
 				Params = new Array();
 				Params[0] = U_ID;
@@ -250,21 +248,16 @@
 			PopUpManager.removePopUp(loading)	
 		}
 		
-		private function initApp():void{				
-			httpService.url = "Config.xml";
-            httpService.send();
-            txtUsr.setFocus();
+		private function initApp():void{
             global = new Globales();
             ws = new WebService();
-            wsMS = new WebService();
+            txtUsr.setFocus();
+            
+            httpService.url = "Config.xml";
+            httpService.send();
+            
             tituloAcceso = "Acceso al Sistema";
             tituloUsuario = "Mantenimiento de Usuario";
-		}
-		
-		public function initConexion():void{				
-			wsMS = new WebService();
-			wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-			wsMS.loadWSDL();
 		}	
 		
 		//----------------------ARCHIVO DE CONFIGURACIÓN---------------------------
@@ -274,39 +267,42 @@
         }
 
         private function httpService_result(evt:ResultEvent):void {                                
-            wsStr = new XML(evt.result.toString());
-            du = new Utils();                          
+            wsStr = new XML(evt.result.toString()); 
+            du = new Utils();                   
         }
-       
+        
 		private function loginUsuario():void{
 			var Params:Array;
 			
 			btnLogin.setFocus();								
+			
 			if (txtUsr.text == ''){
-				du.showMsg("Se requiere el nombre de usuario");
+				du.mostrarMensaje("Se requiere el nombre de usuario.", tituloAcceso, 4, null, null, global.iError);
 				btnLogin.setFocus();									
 				return;
 			}
 			if (txtPwd.text == ''){
-				du.showMsg("Se requiere el password");
+				du.mostrarMensaje("Se requiere el password.", tituloAcceso, 4, null, null, global.iError);
 				btnLogin.setFocus();
 				return;
 			}	
 			
 			bloquear();				
-			ws = du.initWs(ws);
+			du.initWs(ws);
 			du.sCursor();
 			
-			du.ejecutaWsMethod(ws, function(event:ResultEvent):void {
-				dp = new XML(event.result.toString());	
+			du.ejecutaWsMethod(ws, function(event:ResultEvent):void{
+				dp = new XML(event.result.toString());
+					
 				du.rCursor();	
 				du.closeWs(ws);				
+				
 				if (dp.elements().length() == 0){
 					desbloquear();
-					Alert.okLabel = "Aceptar";
-					Alert.show("Usuario y/o contraseña incorrectos.",tituloAcceso,4,null,null,global.iAlert);
+					du.mostrarMensaje("Datos de Usuario y/o contraseña incorrectos.", tituloAcceso, 4, null, null, global.iAlert);
 					return;													
-				}else{							
+				}
+				else{							
 					try{							
 						usrInfo =  new XML(event.result.toString());	
 						var rSplit:Array = event.result.toString().split('|');
@@ -317,8 +313,7 @@
 						}													
 					}catch(err:Error){
 						desbloquear();
-						Alert.okLabel = "Aceptar";
-						Alert.show(err.toString(),tituloAcceso,4,null,null,global.iAlert);
+						du.mostrarMensaje(err.toString(),tituloAcceso,4,null,null,global.iAlert);
 					}
 					
 					U_ID = usrInfo.Table[0].CODIGO;
@@ -332,8 +327,8 @@
 						Application.application.currentState = "Actualiza";
 						txtPwdAnt.setFocus();
 						var ingreso:String = _Ult_Acceso_Fecha != null? "\n\nÚltimo acceso al sistema " + global.formatearFecha(_Ult_Acceso_Fecha)+ "." : "";
-						var est:String = "\n\nIntroduzca una contraseña de 8 a 12 caracteres, que como mínimo tenga una letra y un número. Dicha contraseña no debe iniciar con un valor numérico";
-						Alert.show("Es necesario modificar la contraseña debido a que ha superado el periodo de vigencia." + ingreso + est,tituloUsuario,4,null,null,global.iAlert);								
+						var est:String = "\n\nIntroduzca una contraseña de 8 a 12 caracteres, que como mínimo tenga una letra y un número. Dicha contraseña no debe iniciar con un valor numérico.";
+						du.mostrarMensaje("Es necesario modificar la contraseña debido a que ha superado el periodo de vigencia." + ingreso + est, tituloUsuario, 4, null, null, global.iAlert);								
 						return;	
 					}
 					
@@ -372,39 +367,41 @@
 					MainWindow.addChild(mod);			 			
 				}					
 				
-				ws = du.initWs(ws);
+				du.initWs(ws);
 				du.sCursor();
 				
-				du.ejecutaWsMethod(ws,function(evt:ResultEvent):void {											
+				du.ejecutaWsMethod(ws,function(evt:ResultEvent):void{											
 					dMainMenu = new XML(evt.result.toString());
+					
 					du.rCursor();
 					du.closeWs(ws);
 					
-						mainMenu.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false));
+					mainMenu.dispatchEvent(new MouseEvent(MouseEvent.CLICK, true, false));
+				
+					var wsCat:WebService = new WebService;
 					
-						wsCat = new WebService;
-						du.initWsCat(wsCat);
-						du.sCursor();
+					du.initWsCat(wsCat);
+					du.sCursor();
+					
+					du.ejecutaWsMethod(wsCat,function(event:ResultEvent):void{
+						_xmlReg = new XML(event.result.toString());				
 						
 						du.ejecutaWsMethod(wsCat,function(event:ResultEvent):void{
-							_xmlReg = new XML(event.result.toString());				
+							_xmlSuc = new XML(event.result.toString());				
 							
-							du.ejecutaWsMethod(wsCat,function(event:ResultEvent):void{
-								_xmlSuc = new XML(event.result.toString());				
-								
-								du.rCursor();
-								du.closeWs(wsCat);
-								desbloquear();	
-							});
-							//Método para extraer las sucursales disponibles para el usuario
-							Params = new Array;
-							Params[0] = U_ID;
-							wsCat.getCatalogoUsuario.send(2, Params); 
+							du.rCursor();
+							du.closeWs(wsCat);
+							desbloquear();	
 						});
-						//Método para extraer las regiones disponibles para el usuario
+						//Método para extraer las sucursales disponibles para el usuario
 						Params = new Array;
 						Params[0] = U_ID;
-						wsCat.getCatalogoUsuario.send(1, Params); 
+						wsCat.getCatalogoUsuario.send(2, Params); 
+					});
+					//Método para extraer las regiones disponibles para el usuario
+					Params = new Array;
+					Params[0] = U_ID;
+					wsCat.getCatalogoUsuario.send(1, Params); 
 				});
 				Params = new Array();
 				Params[0] = cadPerfil;
@@ -448,7 +445,8 @@
 					MainWindow.addChild(mod);			
 				}
 				Last_Mod_Id = _Mod_Id;
-				ws = du.initWs(ws);
+				
+				du.initWs(ws);
 				du.sCursor();
 				
 				du.ejecutaWsMethod(ws,function(event:ResultEvent):void{
@@ -498,6 +496,7 @@
        	private function salir():void{
 			var Params:Array = new Array();
 			var t:Timer = new Timer(500, 1);
+			
 			if(SESSION_ID == 0)
 				return;
 				
@@ -516,7 +515,7 @@
 		private function GuardarBitacora():void{
 			var Params:Array = new Array();
 			
-			ws = du.initWs(ws);
+			du.initWs(ws);
 			du.sCursor();
 			
 			du.ejecutaWsMethod(ws,function(event:ResultEvent):void{												
@@ -551,7 +550,7 @@
 					if(this.currentState == 'LogedIn'){
 						ocultaPdf();
 						systemManager.removeEventListener(FlexEvent.IDLE, userIdle);
-						Alert.show("Tiempo de sesión expirado.","Sesión",4,null,finSesion,global.iInfo);
+						du.mostrarMensaje("Tiempo de sesión expirado.","Sesión",4,null,finSesion,global.iInfo);
 					}
 				}
 			}
@@ -563,28 +562,28 @@
 		
 		private function validaMod():Boolean{
 			if(txtPwdAnt.text == ""){
-				Alert.show("Debe capturar la contraseña anterior.",tituloUsuario,4,null,null,global.iAlert);
+				du.mostrarMensaje("Debe capturar la contraseña anterior.",tituloUsuario,4,null,null,global.iAlert);
 				return false;
 			}
 			if(txtPwdNuevo.text == ""){
-				Alert.show("Debe capturar la nueva contraseña.",tituloUsuario,4,null,null,global.iAlert);
+				du.mostrarMensaje("Debe capturar la nueva contraseña.",tituloUsuario,4,null,null,global.iAlert);
 				return false;
 			}
 			if(txtConfPwd.text == ""){
-				Alert.show("Debe capturar la confirmación de contraseña.",tituloUsuario,4,null,null,global.iAlert);
+				du.mostrarMensaje("Debe capturar la confirmación de contraseña.",tituloUsuario,4,null,null,global.iAlert);
 				return false;
 			}
 			if(txtPwdNuevo.text != txtConfPwd.text){
-				Alert.show("La nueva contraseña no coincide con su confirmación.",tituloUsuario,4,null,null,global.iAlert);
+				du.mostrarMensaje("La nueva contraseña no coincide con su confirmación.",tituloUsuario,4,null,null,global.iAlert);
 				return false;
 			}
 			if(txtPwdNuevo.text == txtPwdAnt.text){
-				Alert.show("Debe capturar una nueva contraseña diferente de la anterior.",tituloUsuario,4,null,null,global.iAlert);
+				du.mostrarMensaje("Debe capturar una nueva contraseña diferente de la anterior.",tituloUsuario,4,null,null,global.iAlert);
 				return false;
 			}
 			var arrayResult:Array = Validator.validateAll([vPass]);
             if(arrayResult.length > 0){
-                Alert.show("Formato de la nueva contraseña incorrecto.\n\nIntroduzca una contraseña de 8 a 12 caracteres, que como mínimo tenga una letra y un número. Dicha contraseña no debe iniciar con un valor numérico",tituloUsuario,4,null,null,global.iAlert);
+                du.mostrarMensaje("Formato de la nueva contraseña incorrecto.\n\nIntroduzca una contraseña de 8 a 12 caracteres, que como mínimo tenga una letra y un número. Dicha contraseña no debe iniciar con un valor numérico",tituloUsuario,4,null,null,global.iAlert);
                 return false;
             }
 			return true;

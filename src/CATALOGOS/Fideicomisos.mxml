@@ -152,11 +152,11 @@
 			}
 
 			private function eliminarSup():void{
-				Alert.show("¿Desea eliminar el Suplemento seleccionado?", tituloSuplemento, Alert.YES|Alert.NO,null, manejadorEliminarSup,global.iQuest);
+				du.mostrarMensaje("¿Desea eliminar el Suplemento seleccionado?", tituloSuplemento, Alert.YES|Alert.NO,null, manejadorEliminarSup,global.iQuest);
 			}
 			
 			private function eliminarFid():void{
-				Alert.show("¿Desea eliminar el Fideicomiso seleccionado?", tituloFideicomiso, Alert.YES|Alert.NO,null, manejadorEliminarFid,global.iQuest);
+				du.mostrarMensaje("¿Desea eliminar el Fideicomiso seleccionado?", tituloFideicomiso, Alert.YES|Alert.NO,null, manejadorEliminarFid,global.iQuest);
 			}
 			
 			public function iniVar():void{
@@ -238,7 +238,7 @@
 								
 							}
 							else
-								Alert.show("Debe seleccionar el registro del Suplemento",tituloSuplemento,4,null,null,global.iAlert);
+								du.mostrarMensaje("Debe seleccionar el registro del Suplemento",tituloSuplemento,4,null,null,global.iAlert);
 						break;
 					}
 				}
@@ -270,7 +270,7 @@
 								PopUpManager.centerPopUp(comMttoFid);	
 							}
 							else
-								Alert.show("Debe seleccionar el registro del Fideicomiso",tituloFideicomiso,4,null,null,global.iAlert); 
+								du.mostrarMensaje("Debe seleccionar el registro del Fideicomiso",tituloFideicomiso,4,null,null,global.iAlert); 
 							break;
 					}
 				}
@@ -349,7 +349,7 @@
 				if (res.substr(0,1) == "1")
 					buscarListaSup(1);
 				else
-					Alert.show(res.substr(2,res.length-1), tituloSuplemento,4,null,null,global.iAlert);
+					du.mostrarMensaje(res.substr(2,res.length-1), tituloSuplemento,4,null,null,global.iAlert);
 			}
 
 			private function setAccionFid(event:ResultEvent):void{
@@ -361,7 +361,7 @@
 				if (res.substr(0,1) == "1")
 					buscarFid(1);
 				else
-					Alert.show(res.substr(2,res.length-1), tituloFideicomiso,4,null,null,global.iAlert);
+					du.mostrarMensaje(res.substr(2,res.length-1), tituloFideicomiso,4,null,null,global.iAlert);
 			}
 		]]>
 	</mx:Script>

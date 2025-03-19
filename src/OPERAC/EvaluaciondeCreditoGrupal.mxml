@@ -233,7 +233,7 @@
 								comMttoSolic.cargaInfoSolic(grupo, nomGrupo, ciclo, munic, coord, promotor);
 							}
 							else
-								Alert.show("Debe seleccionar el registro de Solicitud", titulo, 4, null, null, global.iAlert); 
+								du.mostrarMensaje("Debe seleccionar el registro de Solicitud", titulo, 4, null, null, global.iAlert); 
 							break;
 					}
 				}

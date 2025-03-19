@@ -30,7 +30,6 @@
 			import mx.rpc.events.ResultEvent;
 			import mx.rpc.soap.WebService;
 			import mx.validators.Validator;
-			import OPERAC.MttoBusqSup;
 			
 			private var du:Utils;
 			private var global:Globales;
@@ -39,8 +38,6 @@
 			private var codSup:String;
 			
 			public var _xmlBanco:XML = new XML();
-			
-			private var vResult:ValidationResultEvent;
 			
 			public var bancoObj:ArrayCollection = new ArrayCollection();
 			
@@ -82,7 +79,7 @@
 			}
 			
 			public function enviaTransferencia(formData:DatosDispersion):void{
-				var invalidArray:Array = Validator.validateAll([conceptoV, montoV]);
+				var invalidArray:Array = Validator.validateAll([conceptoV, montoV, referenciaV]);
 				
 				if(invalidArray.length == 0){	
 					formData.cdgMetodo = "T";

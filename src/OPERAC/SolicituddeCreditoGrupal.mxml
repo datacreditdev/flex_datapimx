@@ -199,10 +199,10 @@
 			public function eliminarSolic():void{
 				var indSolic:int = dgSolic.selectedIndex;
 				if(_xmlSolic.Table[indSolic].SITUACION == 'S'){
-					Alert.show("¿Desea eliminar la solicitud seleccionada?", titulo, Alert.YES|Alert.NO,null, manejadorEliminarSolic,global.iQuest);
+					du.mostrarMensaje("¿Desea eliminar la solicitud seleccionada?", titulo, Alert.YES|Alert.NO,null, manejadorEliminarSolic,global.iQuest);
 				}
 				else
-					Alert.show("No es posible eliminar la solicitud.\n\nVerifique la situación que presenta la misma", titulo, 4,null,null,global.iInfo);
+					du.mostrarMensaje("No es posible eliminar la solicitud.\n\nVerifique la situación que presenta la misma", titulo, 4,null,null,global.iInfo);
 				
 			}
 			
@@ -283,7 +283,7 @@
 									comMttoSolic.registraInfoSolic(grupo, nomGrupo, munic, coord, promotor);
 								}
 								else
-									Alert.show(res.substr(2,res.length -1), titulo, 4, null, null, global.iAlert);
+									du.mostrarMensaje(res.substr(2,res.length -1), titulo, 4, null, null, global.iAlert);
 							});
 							wsMS.getValidaSituacionSolic.send(grupo);	//Método que valida que no exista mas de una solicitud en proceso							
 							break;
@@ -302,7 +302,7 @@
 								comMttoSolic.cargaInfoSolic(grupo, nomGrupo, ciclo, munic, coord, promotor);
 							}
 							else
-								Alert.show("Debe seleccionar el registro de Solicitud", titulo, 4, null, null, global.iAlert); 
+								du.mostrarMensaje("Debe seleccionar el registro de Solicitud", titulo, 4, null, null, global.iAlert); 
 							break;
 					}
 				}
@@ -394,7 +394,7 @@
 				if (res.substr(0,1) == "1")
 					buscarListaSolic(1);
 				else
-					Alert.show(res.substr(2,res.length-1), titulo, 4, null, null, global.iAlert);
+					du.mostrarMensaje(res.substr(2,res.length-1), titulo, 4, null, null, global.iAlert);
 			}
 			
 			public function validaSituacionSolic(grupo:String):void{

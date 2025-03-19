@@ -38,8 +38,9 @@
 			[Bindable]
 			public var dpCoord:XMLList = new XMLList();		
 			
-			public var wsMS:WebService = new WebService();	
-			public var du:Utils;
+			public var wsMS:WebService;
+			
+			private var du:Utils;
 			private var global:Globales;
 			private var permiso:Permisos;
 			
@@ -114,6 +115,7 @@
 				dgRegional.dataProvider = null;
 				du.initWsCat(wsCat);
 				du.sCursor();
+				
 				if(tipo == 1)
 					global.bloquear();
 					
@@ -176,11 +178,11 @@
 			}
 
 			public function eliminarCoord():void{
-				Alert.show("¿Desea eliminar la Oficina seleccionada?", tituloCoord, Alert.YES|Alert.NO,null, manejadorEliminarCoord,global.iQuest);
+				du.mostrarMensaje("¿Desea eliminar la Oficina seleccionada?", tituloCoord, Alert.YES|Alert.NO, null, manejadorEliminarCoord, global.iQuest);
 			}
 			
 			public function eliminarReg():void{
-				Alert.show("¿Desea eliminar la Región seleccionada?", tituloReg, Alert.YES|Alert.NO,null, manejadorEliminarReg,global.iQuest);
+				du.mostrarMensaje("¿Desea eliminar la Región seleccionada?", tituloReg, Alert.YES|Alert.NO, null, manejadorEliminarReg, global.iQuest);
 			}
 			
 			public function iniVar():void{
@@ -193,7 +195,7 @@
 				du = new Utils();
 				global = new Globales();
 				permiso = new Permisos();
-				tituloReg = "Mantenimiento de Gerencia Regional";
+				tituloReg = "Mantenimiento de Región";
 				tituloCoord = "Mantenimiento de Oficina";
 								
 				alta = false;
@@ -241,36 +243,34 @@
 			public function mostrarFormCoord(tipo:int):void{
 				//tipo = 1 NUEVO REGISTRO
 				//tipo = 2 MODIFICA REGISTRO
-				if (edicion == true){
-					var codReg:String = dgRegional.selectedItem.CODIGO;
-					var regional:String = dgRegional.selectedItem.NOMBRE;
-					var comMttoCoord:MttoCoordinacion = new MttoCoordinacion();
-					switch(tipo){
-						case 1: 
+				var codReg:String = dgRegional.selectedItem.CODIGO;
+				var regional:String = dgRegional.selectedItem.NOMBRE;
+				var comMttoCoord:MttoCoordinacion = new MttoCoordinacion();
+				switch(tipo){
+					case 1: 
+						comMttoCoord = MttoCoordinacion(PopUpManager.createPopUp(this,MttoCoordinacion,true)); 
+						comMttoCoord.addEventListener(Event.REMOVED_FROM_STAGE, actualizarCoord);
+						PopUpManager.centerPopUp(comMttoCoord);
+						comMttoCoord.init(tipo, codReg, regional,"","","");
+						break;
+					case 2: 
+						if (dgCoord.selectedIndex >= 0){
+							accionCoord = tipo;
 							comMttoCoord = MttoCoordinacion(PopUpManager.createPopUp(this,MttoCoordinacion,true)); 
+							var codCoord:String = dgCoord.selectedItem.CODIGO;
+							var coord:String = dgCoord.selectedItem.NOMBRE;
+							var codPers:String = dgCoord.selectedItem.CDGPE;
+							var indice:int = dgCoord.selectedIndex;
+							iniVar();
+							this.indCoord = indice;
+							this.vScroll = dgCoord.verticalScrollPosition;
 							comMttoCoord.addEventListener(Event.REMOVED_FROM_STAGE, actualizarCoord);
 							PopUpManager.centerPopUp(comMttoCoord);
-							comMttoCoord.init(tipo, codReg, regional,"","","");
-							break;
-						case 2: 
-							if (dgCoord.selectedIndex >= 0){
-								accionCoord = tipo;
-								comMttoCoord = MttoCoordinacion(PopUpManager.createPopUp(this,MttoCoordinacion,true)); 
-								var codCoord:String = dgCoord.selectedItem.CODIGO;
-								var coord:String = dgCoord.selectedItem.NOMBRE;
-								var codPers:String = dgCoord.selectedItem.CDGPE;
-								var indice:int = dgCoord.selectedIndex;
-								iniVar();
-								this.indCoord = indice;
-								this.vScroll = dgCoord.verticalScrollPosition;
-								comMttoCoord.addEventListener(Event.REMOVED_FROM_STAGE, actualizarCoord);
-								PopUpManager.centerPopUp(comMttoCoord);
-								comMttoCoord.init(tipo, codReg, regional, codCoord, coord, codPers);
-							}
-							else
-								Alert.show("Debe seleccionar el registro de la Oficina", tituloCoord, 4, null, null, global.iAlert);
-						break;
-					}
+							comMttoCoord.init(tipo, codReg, regional, codCoord, coord, codPers);
+						}
+						else
+							du.mostrarMensaje("Debe seleccionar el registro de la Oficina", tituloCoord, 4, null, null, global.iAlert);
+					break;
 				}
 			}
 			
@@ -279,45 +279,48 @@
 				//tipo = 2 MODIFICA REGISTRO
 				var comMttoReg:MttoRegional = new MttoRegional();
 				comMttoReg = MttoRegional(PopUpManager.createPopUp(this,MttoRegional,true)); 
-				if(edicion == true){
-					switch(tipo){
-						case 1: 
-							comMttoReg.init(tipo,"","","");
-							comMttoReg.addEventListener(Event.REMOVED_FROM_STAGE, actualizarReg);
+				
+				switch(tipo){
+					case 1: 
+						comMttoReg.init(tipo, "", "", "");
+						comMttoReg.addEventListener(Event.REMOVED_FROM_STAGE, actualizarReg);
+						PopUpManager.centerPopUp(comMttoReg);
+						break;
+					case 2: 
+						if (dgRegional.selectedIndex >= 0){
+							accionReg = tipo;
+							var codReg:String = dgRegional.selectedItem.CODIGO;
+							var regional:String = dgRegional.selectedItem.NOMBRE;
+							var codPers:String = dgRegional.selectedItem.CDGPE;
+							var indice:int = dgRegional.selectedIndex;
+							iniVar();
+							this.indReg = indice;
+							this.vScroll = dgRegional.verticalScrollPosition;
+							comMttoReg.init(tipo, codReg, regional, codPers);
+							comMttoReg.addEventListener(Event.REMOVED_FROM_STAGE, actualizarReg);	
 							PopUpManager.centerPopUp(comMttoReg);
-							break;
-						case 2: 
-							if (dgRegional.selectedIndex >= 0){
-								accionReg = tipo;
-								var codReg:String = dgRegional.selectedItem.CODIGO;
-								var regional:String = dgRegional.selectedItem.NOMBRE;
-								var codPers:String = dgRegional.selectedItem.CDGPE;
-								var indice:int = dgRegional.selectedIndex;
-								iniVar();
-								this.indReg = indice;
-								this.vScroll = dgRegional.verticalScrollPosition;
-								comMttoReg.init(tipo, codReg, regional, codPers);
-								comMttoReg.addEventListener(Event.REMOVED_FROM_STAGE, actualizarReg);	
-								PopUpManager.centerPopUp(comMttoReg);
-							}
-							else
-								Alert.show("Debe seleccionar el registro de la Región", tituloReg, 4, null, null, global.iAlert); 
-							break;
-					}
+						}
+						else
+							du.mostrarMensaje("Debe seleccionar el registro de la Región", tituloReg, 4, null, null, global.iAlert); 
+						break;
 				}
 			}
 			
 			public function permisos():void{
 				var mod_id:String = global.obtenerModulo();
 				var perfil_id:String = global.obtenerCadPerfil();
+				var wsMS:WebService = new WebService;
 				var Params:Array;
 				var cont:int;
 				
-				wsMS = du.initWs(wsMS);
+				du.initWs(wsMS);
 				du.sCursor();
 					
 				du.ejecutaWsMethod(wsMS,function(evt:ResultEvent):void {											
 					dPermisos = new XML(evt.result.toString());
+					
+					du.rCursor();
+					du.closeWs(wsMS);
 						
 					cont = dPermisos.elements().length();
 					
@@ -325,13 +328,13 @@
 						switch(dPermisos.Table[i].OPCION.toString()){
 							case "C":
 								consulta = true;
-								if (permiso.permisosRegionales(global.obtenerArrayPerfil())){
+								/*if (permiso.permisosRegionales(global.obtenerArrayPerfil())){
 									borrado = true;
 									alta = true;
 									edicion = true;
-								}
+								}*/
 								break;	
-							/*case "B":
+							case "B":
 								borrado = true;
 								break;
 							case "I":
@@ -339,12 +342,10 @@
 								break;
 							case "E":
 								edicion = true;
-								break;	*/			
-				}
+								break;			
+						}		
 					}
-					btnAgregar.enabled = alta;
-					du.rCursor();
-					du.closeWs(wsMS);					
+					btnAgregar.enabled = alta;								
 				});
 				Params = new Array();
 				Params[0] = perfil_id;
@@ -384,7 +385,7 @@
 				if (res.substr(0,1) == "1")
 					buscarListaCoord(1);
 				else
-					Alert.show(res.substr(2,res.length-1), tituloCoord, 4, null, null, global.iAlert);
+					du.mostrarMensaje(res.substr(2,res.length-1), tituloCoord, 4, null, null, global.iAlert);
 			}
 
 			private function setAccionReg(event:ResultEvent):void{
@@ -396,7 +397,7 @@
 				if (res.substr(0,1) == "1")
 					buscarReg(1);
 				else
-					Alert.show("Error en el proceso: " + res, tituloReg, 4, null, null, global.iAlert);
+					du.mostrarMensaje("Error en el proceso: " + res, tituloReg, 4, null, null, global.iAlert);
 			}
 			
 		]]>

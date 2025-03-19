@@ -24,6 +24,7 @@
 	</mx:states>
 	<mx:Script>
 		<![CDATA[
+			import CONTROL.CtrlVisorDoc;
 			import CONTROL.CtrlTablaAmort;
 			import Data.EventSolic;
 			import Data.DatosSolic;
@@ -56,8 +57,10 @@
 			[Bindable]
 			private var info:DatosSolic;
 			private var _xmlSolic:XML = new XML();
+			private var _xmlAcred:XML = new XML();
 			private var _xmlCred:XML = new XML();
 			private var _xmlBloqueo:XML = new XML();
+			private var _xmlRepo:XML = new XML();
 			
 			public var comMttoDatosSolic:MttoDatosSolic;
 			
@@ -159,8 +162,8 @@
 				wsCat.getInfoGeneral.send(12, params);
 			}
 			
-			private function bloquearSolicitud():void{
-				var accion:String = currentState == null? "S": "D";
+			private function bloquearSolic():void{
+				var accion:String = currentState == null? "S": "N";
 				
 				initConexion();
 				du.sCursor();
@@ -173,18 +176,18 @@
 					
 					if(res.substr(0, 1) == "1"){
 						if(accion == "S"){
-							Alert.show("Solicitud bloqueada exitosamente.", titulo, 4, null, null, global.iInfo);
+							du.mostrarMensaje("Solicitud bloqueada exitosamente.", titulo, 4, null, null, global.iInfo);
 							bandMod = false;
 						}
-						else if(accion == "D")
-							Alert.show("Solicitud desbloqueada exitosamente.", titulo, 4, null, null, global.iInfo);
-						btnBloquear.visible = false;
+						else if(accion == "N")
+							du.mostrarMensaje("Solicitud desbloqueada exitosamente.", titulo, 4, null, null, global.iInfo);
+						btnBloquearSolic.visible = false;
 					}
 					else
-						Alert.show(res.substr(2, res.length - 1),titulo, 4, null, null, global.iAlert);
+						du.mostrarMensaje(res.substr(2, res.length - 1),titulo, 4, null, null, global.iAlert);
 					
 				});
-				wsMS.setBloqueaSolic.send(info.cdgAcred, info.ciclo, "I", accion);
+				wsMS.setBloqueaSolic.send(info.cdgAcred, info.ciclo, "I", accion, global.obtenerUsuario());
 			}
 			
 			private function cargaCiclo():void{
@@ -217,6 +220,9 @@
 				txtCiclo.text = ciclo;
 				txtSucursal.text = nomCoord;
 				
+				btnTabla.visible = true;
+				btnDoc.visible = true;
+				
 				if(currentState == 'evaluacion')
 					//selecciona la pestaña Datos Generales si la solicitud se encuentra en proceso de evaluacion
 					tabNav.selectedIndex = 1;
@@ -235,22 +241,41 @@
 							if(currentState == null){
 								if(_xmlSolic.Table[0].BLOQUEO == 'S'){
 									bandMod = false;
-									Alert.show("No es posible modificar la solicitud debido a que se encuentra bloqueada.",titulo,4,null,null,global.iAlert);
+									du.mostrarMensaje("No es posible modificar la solicitud debido a que se encuentra\nbloqueada.",titulo,4,null,null,global.iAlert);
 								}
 								else
-									btnBloquear.visible = true;
+									btnBloquearSolic.visible = true;
 							}
 							else if(currentState == 'evaluacion'){
 								if(_xmlSolic.Table[0].BLOQUEO == 'S'){
-									btnBloquear.visible = true;
-									btnBloquear.label = "Desbloquear Solicitud";
+									btnBloquearSolic.visible = true;
+									btnBloquearSolic.label = "Desbloquear Solicitud";
+									btnBloquearAcred.x = 446;
 								}	
+								
+								du.initWsCat(wsCat);
+								du.sCursor();
+					
+								du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
+									_xmlAcred = new XML(evt.result);
+									
+									du.rCursor();
+									du.closeWs(wsCat);
+									
+									if(_xmlAcred.elements().length() > 0)
+										if(_xmlAcred.Table[0].BLOQUEO == "S")
+											btnBloquearAcred.visible = true;
+									
+								});
+								params[0] = cdgAcred;
+								//Consulta la tabla de acreditado para verificar su situación
+								wsCat.getInfoAcred.send(1, params);
 							}
 						}
 						//SI LA SOLICITUD FUE RECHAZADA NO PERMITE MODIFICAR EL REGISTRO
 						else if(_xmlSolic.Table[0].SITUACION == 'R'){
 							bandMod = false;
-							Alert.show("No es posible modificar la información. La solicitud ya fue Rechazada.",titulo,4,null,null,global.iAlert);
+							du.mostrarMensaje("No es posible modificar la información. La solicitud ya fue\nRechazada.",titulo,4,null,null,global.iAlert);
 						}
 						//SI LA SOLICITUD FUE AUTORIZADA NO ES POSIBLE EDITARLA
 						else if(_xmlSolic.Table[0].SITUACION == 'A'){
@@ -260,18 +285,19 @@
 							du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
 								_xmlCred = new XML(evt.result);
 								
+								du.rCursor();
+								du.closeWs(wsCat);
+								
 								if(_xmlCred.elements().length() == 0){
 									bandMod = false;
-									Alert.show("No es posible modificar la información. La solicitud ya fue Autorizada.",titulo,4,null,null,global.iAlert);
+									du.mostrarMensaje("No es posible modificar la información. La solicitud ya fue\nAutorizada.",titulo,4,null,null,global.iAlert);
 								}
 								else{
 									if(currentState == null){
 										bandMod = false;
-										Alert.show("No es posible modificar la información. La solicitud ya fue Autorizada.",titulo,4,null,null,global.iAlert);	
+										du.mostrarMensaje("No es posible modificar la información. La solicitud ya fue\nAutorizada.",titulo,4,null,null,global.iAlert);	
 									}
 								}
-								du.rCursor();
-								du.closeWs(wsCat);
 							});
 							params[0] = cdgAcred;
 							params[1] = ciclo;
@@ -279,11 +305,10 @@
 							//Consulta la tabla de credito para verificar que la situacion se ha autorizado
 							wsCat.getInfoAcred.send(22, params);
 						}
-						//cargaTablaAmort();
 						llenaRegistros();
 					}
 					else
-						Alert.show("Error en la carga de Datos", titulo, 4, null, null, global.iAlert);
+						du.mostrarMensaje("Error en la carga de Datos", titulo, 4, null, null, global.iAlert);
 				});
 				params[0] = cdgAcred;
 				params[1] = ciclo;
@@ -321,18 +346,37 @@
 						pdfE.cargaPdf(consulta);
 					}
 					else{
-						Alert.show(res,titulo,4,null,null,global.iAlert);
+						du.mostrarMensaje(res,titulo,4,null,null,global.iAlert);
 					}
 				});
 				wsCC.getEjecutaConsulta.send("C", acred, "I", global.obtenerUsuario());
 			}
 			
+			private function desbloquearAcred():void{
+				var accion:String = "N";
+				
+				initConexion();
+				du.sCursor();
+					
+				du.ejecutaWsMethod(wsMS,function(evt:ResultEvent):void {											
+					var res:String = evt.result.toString();
+					
+					du.rCursor();
+					du.closeWs(wsMS);
+					
+					if(res.substr(0, 1) == "1"){
+						du.mostrarMensaje("Acreditado desbloqueado exitosamente.", titulo, 4, null, null, global.iInfo);
+						btnBloquearAcred.visible = false;
+					}
+					else
+						du.mostrarMensaje(res.substr(2, res.length - 1),titulo, 4, null, null, global.iAlert);
+				});
+				wsMS.setBloqueaAcred.send(info.cdgAcred, accion, global.obtenerUsuario());
+			}
+			
 			public function enviar():void{
 				info = new DatosSolic();
 				
-				//Alert.show(bandMod.toString());
-				
-				//if((_xmlSolic == "" || _xmlSolic.Table[0].SITUACION == 'S') && bandMod == true){
 				if(bandMod){
 					//eventos enviar de los formularios incluidos
 					formProdSolicInd.enviarDatosSolic(info);
@@ -348,7 +392,7 @@
 						validaFinal();
 				}
 				else
-					Alert.show("No es posible modificar el registro de la solicitud.",titulo,4,null,null,global.iAlert);
+					du.mostrarMensaje("No es posible modificar el registro de la solicitud.",titulo,4,null,null,global.iAlert);
 			}
 			
 			//funcion que da formato a la informacion que sera almacenada
@@ -375,9 +419,9 @@
 					montos[i] = cantSolic;
 				else{
 					if(cantSolic < montoMin)
-						Alert.show("El acreditado no alcanza el monto mínimo permitido",titulo,4,null,null,global.iAlert);
+						du.mostrarMensaje("El acreditado no alcanza el monto mínimo permitido",titulo,4,null,null,global.iAlert);
 					else if(cantSolic > montoMax)
-						Alert.show("El acreditado supera el monto máximo permitido",titulo,4,null,null,global.iAlert);
+						du.mostrarMensaje("El acreditado supera el monto máximo permitido",titulo,4,null,null,global.iAlert);
 					return false;					
 				} 
 				//Asignaciones en la etapa de registro de la solicitud
@@ -394,9 +438,9 @@
 						cantAutorAcred[i] = cantAutor;
 					else{
 						if(cantAutor < montoMin)
-							Alert.show("El acreditado no alcanza el monto mínimo permitido",titulo,4,null,null,global.iAlert);
+							du.mostrarMensaje("El acreditado no alcanza el monto mínimo permitido",titulo,4,null,null,global.iAlert);
 						else if(cantAutor > montoMax)
-							Alert.show("El acreditado supera el monto máximo permitido",titulo,4,null,null,global.iAlert);
+							du.mostrarMensaje("El acreditado supera el monto máximo permitido",titulo,4,null,null,global.iAlert);
 						return false;
 					} 
 					//Asigna la situacion de la solicitud a cada cliente
@@ -550,7 +594,36 @@
 				if(formDatosGralSolic.situacion.selectedValue == 'S')
 					enviar();
 				else
-					Alert.show("No es posible guardar los cambios realizados en la solicitud.\n\nModifique la situación seleccionada actualmente.",titulo,4,null,null,global.iAlert);
+					du.mostrarMensaje("No es posible guardar los cambios realizados en la solicitud.\n\nModifique la situación seleccionada actualmente.",titulo,4,null,null,global.iAlert);
+			}
+			
+			private function mostrarDocumentos():void{
+				var wsCat:WebService = new WebService;
+				var params:Array = new Array;
+				var obj:DisplayObject = this.parent;
+				
+				du.initWsCat(wsCat);
+				du.sCursor();
+				
+				du.ejecutaWsMethod(wsCat, function(evt:ResultEvent):void{
+					_xmlRepo = new XML(evt.result);
+					
+					du.closeWs(wsCat);
+					du.rCursor();
+					
+					if(_xmlRepo.elements().length() > 0){
+						var comVisor:CtrlVisorDoc = new CtrlVisorDoc();
+						
+						comVisor = CtrlVisorDoc(PopUpManager.createPopUp(obj,CtrlVisorDoc,false));
+						comVisor.init(info.cdgAcred, _xmlRepo, info.ciclo);
+						PopUpManager.centerPopUp(comVisor);
+					}
+					else
+						du.mostrarMensaje("No se encontraron documentos relacionados con\nla solicitud.", titulo, 4, null, null, global.iAlert);				
+				});
+				params[0] = info.cdgAcred;
+				params[1] = info.ciclo;
+				wsCat.getInfoRegistro.send(49, params);
 			}
 			
 			private function muestraTablaAmort(editable:Boolean = false):void{
@@ -564,6 +637,7 @@
 			
 			public function registraInfoSolic(cdgAcred:String, nomAcred:String, coord:String, nomCoord:String, promotor:String):void{
 				tipoAccion = 1;
+				bandMod = true;
 				init();
 				var estatus:String;
 				
@@ -576,7 +650,6 @@
 				this.promotor = promotor;
 				txtAcred.text = nomAcred;
 				txtSucursal.text = nomCoord;
-				btnTabla.visible = false;
 				cargaCiclo();
 				info = null;
 				formProdSolicInd.addEventListener("actualiza", actualizaProdCred);
@@ -635,7 +708,7 @@
 							wsMail.setEnviaEmailEvaluacion.send(emailDest,"Evaluación de Crédito",resultado);
 						}
 						else
-							Alert.show("No se ha encontrado la Evaluación del Área de Crédito",titulo,4,null,null,global.iAlert);
+							du.mostrarMensaje("No se ha encontrado la Evaluación del Área de Crédito",titulo,4,null,null,global.iAlert);
 					});
 					params[0] = this.cdgAcred;
 					params[1] = this.ciclo;
@@ -643,7 +716,7 @@
 					wsCat.getInfoGeneral.send(8, params);*/
 				}
 				else
-					Alert.show(res.substr(2,res.length -1),titulo,4,null,null,global.iAlert);		
+					du.mostrarMensaje(res.substr(2,res.length -1),titulo,4,null,null,global.iAlert);		
 			}
 			
 			private function setAccionSolic(event:ResultEvent):void{
@@ -655,13 +728,13 @@
 				if (res.substr(0,1) == "1")
 					cerrar();
 				else
-					Alert.show(res.substr(2,res.length -1),titulo,4,null,null,global.iAlert);		
+					du.mostrarMensaje(res.substr(2,res.length -1),titulo,4,null,null,global.iAlert);		
 			}
 			
 			//Funcion que valida que los registros autorizados tengan una cantidad mayor a 0
 			public function validaAutorizado():Boolean{
 				if(info.situacion == 'A' && info.autorizado == 0){
-					Alert.show("El préstamo del acreditado fue autorizado sin monto.\n\nVerifique la información capturada.",titulo,4,null,null,global.iAlert);
+					du.mostrarMensaje("El préstamo del acreditado fue autorizado sin monto.\n\nVerifique la información capturada.",titulo,4,null,null,global.iAlert);
 					return false;
 				}
 				return true;
@@ -676,13 +749,13 @@
 					info.guardaRecargos == true && info.guardaEntre == true)
 					guardaSolic();
 				else
-					Alert.show("Debe capturar los datos requeridos.",titulo,4,null,null,global.iAlert);
+					du.mostrarMensaje("Debe capturar los datos requeridos.", titulo, 4, null, null, global.iAlert);
 			}
 			
 			//Funcion que valida que los registros solicitados tengan una cantidad mayor a 0
 			public function validaSolicitado():Boolean{
 				if(info.situacion == 'S' && info.solicitado == 0){
-					Alert.show("La solicitud del acreditado fue registrada sin monto.\n\nVerifique la información capturada.",titulo,4,null,null,global.iAlert);
+					du.mostrarMensaje("La solicitud del acreditado fue registrada sin monto.\n\nVerifique la información capturada.", titulo, 4, null, null, global.iAlert);
 					return false;
 				}
 				return true;
@@ -725,6 +798,8 @@
 		<mx:TextInput x="516" y="5" width="181" id="txtSucursal" editable="false"/>
 		<mx:TextInput x="384" y="5" width="45" id="txtCiclo" editable="false"/>
 	</mx:Canvas>
-	<mx:Button id="btnTabla" x="10" y="345" label="Tabla Amortización" click="muestraTablaAmort()" visible="true"/>
-	<mx:Button id="btnBloquear" x="148" y="345" label="Bloquear Solicitud" click="bloquearSolicitud()" visible="false"/>
+	<mx:Button id="btnTabla" x="10" y="345" label="Tabla Amortización" click="muestraTablaAmort()" visible="false"/>
+	<mx:Button id="btnDoc" x="148" y="345" label="Ver Documentación" visible="false" click="mostrarDocumentos()"/>
+	<mx:Button id="btnBloquearSolic" x="290" y="345" label="Bloquear Solicitud" click="bloquearSolic()" visible="false"/>
+	<mx:Button id="btnBloquearAcred" x="424" y="345" label="Desbloquear Acreditado" click="desbloquearAcred()" visible="false"/>
 </mx:TitleWindow>

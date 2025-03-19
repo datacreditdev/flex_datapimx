@@ -205,32 +205,31 @@
 				var munic:String;
 				var indAcred:int;
 				var ciclo:String;
-				if(edicion == true){
-					var comMttoPrn:MttoPrestamoInd = new MttoPrestamoInd();
-					//indAcred = dgAcred.selectedIndex;
-					acred = dgAcred.selectedItem.CODIGO;
-					nomAcred = dgAcred.selectedItem.NOMBRE_CL;
-					coord = dgAcred.selectedItem.CDGCO;
-					nomCoord = dgAcred.selectedItem.NOMCO;
-					promotor = dgAcred.selectedItem.CDGPRPE;
-					munic = dgAcred.selectedItem.MUNIC;
-					switch(tipo){
-						case 2: 
-							if (dgCred.selectedIndex >= 0){
-								accionSolic = tipo;					
-								comMttoPrn = MttoPrestamoInd(PopUpManager.createPopUp(this,MttoPrestamoInd,true));  
-								comMttoPrn.addEventListener(Event.REMOVED_FROM_STAGE, actualizarPrn);
-								PopUpManager.centerPopUp(comMttoPrn);
-								iniVar();
-								this.vScroll = dgCred.verticalScrollPosition;		
-								this.indSolic = dgCred.selectedIndex;
-								ciclo = dgCred.selectedItem.CICLO;
-								comMttoPrn.cargaInfoPrn(acred, nomAcred, ciclo, munic, coord, nomCoord, promotor);
-							}
-							else
-								Alert.show("Debe seleccionar el registro de Crédito", titulo, 4, null, null, global.iAlert); 
-							break;
-					}
+				
+				var comMttoPrn:MttoPrestamoInd = new MttoPrestamoInd();
+				//indAcred = dgAcred.selectedIndex;
+				acred = dgAcred.selectedItem.CODIGO;
+				nomAcred = dgAcred.selectedItem.NOMBRE_CL;
+				coord = dgAcred.selectedItem.CDGCO;
+				nomCoord = dgAcred.selectedItem.NOMCO;
+				promotor = dgAcred.selectedItem.CDGPRPE;
+				munic = dgAcred.selectedItem.MUNIC;
+				switch(tipo){
+					case 2: 
+						if (dgCred.selectedIndex >= 0){
+							accionSolic = tipo;					
+							comMttoPrn = MttoPrestamoInd(PopUpManager.createPopUp(this,MttoPrestamoInd,true));  
+							comMttoPrn.addEventListener(Event.REMOVED_FROM_STAGE, actualizarPrn);
+							PopUpManager.centerPopUp(comMttoPrn);
+							iniVar();
+							this.vScroll = dgCred.verticalScrollPosition;		
+							this.indSolic = dgCred.selectedIndex;
+							ciclo = dgCred.selectedItem.CICLO;
+							comMttoPrn.cargaInfoPrn(acred, nomAcred, ciclo, munic, coord, nomCoord, promotor);
+						}
+						else
+							du.mostrarMensaje("Debe seleccionar el registro de Crédito", titulo, 4, null, null, global.iAlert); 
+						break;
 				}
 			}
 			
@@ -246,6 +245,9 @@
 					
 				du.ejecutaWsMethod(ws,function(evt:ResultEvent):void {											
 					dPermisos = new XML(evt.result.toString());
+					
+					du.rCursor();
+					du.closeWs(ws);	
 						
 					cont = dPermisos.elements().length();
 					
@@ -253,13 +255,8 @@
 						switch(dPermisos.Table[i].OPCION.toString()){
 							case "C":
 								consulta = true;
-								if (permiso.permisosModSolic(global.obtenerArrayPerfil())){
-									borrado = true;
-									alta = true;
-									edicion = true;
-								}
 								break;	
-							/*case "B":
+							case "B":
 								borrado = true;
 								break;
 							case "I":
@@ -267,11 +264,9 @@
 								break;
 							case "E":
 								edicion = true;
-								break;*/
+								break;
 						}
-					}
-					du.rCursor();
-					du.closeWs(ws);					
+					}	
 				});
 				Params = new Array();
 				Params[0] = perfil_id;

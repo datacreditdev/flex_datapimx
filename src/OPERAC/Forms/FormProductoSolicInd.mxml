@@ -60,6 +60,7 @@
 			public var tipoAccion:int;
 			public var coord:String;
 			public var tipo:String;
+			
 			private var du:Utils;
 			private var global:Globales;
 			
@@ -110,8 +111,7 @@
 					try{
 						callback(e);
 					}catch(err:Error){
-						Alert.okLabel = "Aceptar";
-						Alert.show(err.toString());
+						du.mostrarMensaje(err.toString(), "Error", 4, null, null, global.iError);
 					}	
 					this.removeEventListener(listener);	
 				};
@@ -211,8 +211,9 @@
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
 				
-				global = new Globales();
 				du = new Utils();
+				global = new Globales();
+				
 				this.tipoAccion = tipoAccion;
 				this.coord = coord;
 				this.tipo = tipo;

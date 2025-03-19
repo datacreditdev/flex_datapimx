@@ -123,7 +123,7 @@
 					comMttoAcredInd.cargaInfoAcred(acred);
 				}
 				else
-					Alert.show("Debe seleccionar el registro de Acreditado","Mantenimiento de Acreditado",4,null,null,global.iAlert);	
+					du.mostrarMensaje("Debe seleccionar el registro de Acreditado","Mantenimiento de Acreditado",4,null,null,global.iAlert);	
 			}
 		]]>
 	</mx:Script>

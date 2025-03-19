@@ -15,7 +15,7 @@
 		[Event(name="enviar", type="enviar")]
 	</mx:Metadata>
     
-	<!--Componente que permite mostrar los documentos de un acreditado-->
+	<!--Componente que permite mostrar los documentos de un acreditado o una solicitud-->
 	<mx:Script>
 		<![CDATA[
 			import Data.Globales;
@@ -41,6 +41,7 @@
 			private var du:Utils;
 			private var global:Globales;
 			private var codigo:String;
+			private var ciclo:String;
 			private var titulo:String;
 			private var comVisorDet:CtrlVisorDocDet;
 			
@@ -70,12 +71,13 @@
 				repoObj = new ArrayCollection(item);
 			}
 			
-			public function init(codigo:String, _xmlRepo:XML):void{				
+			public function init(codigo:String, _xmlRepo:XML, ciclo:String = null):void{				
 				global = new Globales();
 				du = new Utils();
 				
 				this.title = "Expediente";
 				this.codigo = codigo;
+				this.ciclo = ciclo;
 				this._xmlRepo = _xmlRepo;
 				
 				this.height = Application.application.height - 25;
@@ -85,15 +87,20 @@
 					cboRepo.dataProvider = repoObj;
 				}
 				else
-					Alert.show("No se encontraron expedientes relacionados con el acreditado.",titulo,4,null,null,global.iAlert);
+					if(this.ciclo == null)
+						du.mostrarMensaje("No se encontraron expedientes relacionados con\nel acreditado.",titulo,4,null,null,global.iAlert);
+					else
+						du.mostrarMensaje("No se encontraron expedientes relacionados con\nla solicitud.",titulo,4,null,null,global.iAlert);
 			}
 			
 			private function muestraDocumentos():void{
 				if(cboRepo.selectedIndex > 0){
 					var repo:String = cboRepo.selectedItem.id;
 					this.currentState = "vista";
+					//this.height = Application.application.height - 25;
+					//this.y = 5;
 					comVisorDet = new CtrlVisorDocDet();
-					comVisorDet.init(codigo, repo);
+					comVisorDet.init(codigo, repo, ciclo);
 					cnvContenedor.addChild(comVisorDet);
 				}
 			}

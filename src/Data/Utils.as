@@ -2,8 +2,11 @@ package Data
 {
 	import CONTROL.pLoading;
 	
+	import flash.display.Sprite;
+	
 	import mx.controls.Alert;
 	import mx.core.Application;
+	import mx.events.CloseEvent;
 	import mx.managers.CursorManager;
 	import mx.managers.PopUpManager;
 	import mx.rpc.events.FaultEvent;
@@ -102,7 +105,7 @@ package Data
 		
 		public function ejecutaWsMethod(ws:WebService, callback:Function):WebService{												
 			var listener:Function = function(event:ResultEvent):void{								
-				ws.removeEventListener(ResultEvent.RESULT,listener);
+				ws.removeEventListener(ResultEvent.RESULT, listener);
 				try{
 					xmlResult = new XML(event.result.toString());
 				}catch(err:Error){
@@ -113,8 +116,60 @@ package Data
 				callback(event);
 				ws.removeEventListener(ResultEvent.RESULT, listener);		
 			};
-			ws.addEventListener(ResultEvent.RESULT,listener);															
+			ws.addEventListener(ResultEvent.RESULT, listener);															
 			return ws;						
+		}
+		
+		public function mostrarMensaje(texto:String, titulo:String, flag:uint, parent:Sprite, callback:Function, iconClass:Class, defaultButton:uint = 4):void{
+			var ind:int;
+			var cadena:String;
+			var mensaje:String;
+			var arr:Array = texto.split("\n\n");
+			var maxLong:int = 0;
+			
+			/*for (var i:int = 0; i < arr.length; i++){
+				ind = 0;
+				mensaje = "";
+				
+				while(ind < arr[i].toString().length){					
+					cadena = "";	
+					cadena += arr[i].toString().substr(ind, 50)
+					
+					if(cadena.length > maxLong)
+			        	maxLong = cadena.length;
+			        	
+			        mensaje += cadena;
+			        
+			        ind += 50;
+				}
+			}*/
+			
+			for (var i:int = 0; i < arr.length; i++){
+				if(arr[i].toString().length > maxLong)
+		        	maxLong = arr[i].toString().length;
+			}
+			
+			if(maxLong > 80)
+				maxLong = 10;			
+			else{
+				if(titulo.length > maxLong){
+					if((titulo.length - maxLong) > 10)
+						maxLong = 0;
+					else
+						maxLong = 10;
+				}
+				else
+					maxLong = (maxLong - titulo.length) + 10;
+			}
+							
+			for (var j:int = 0; j < maxLong; j++){
+			    titulo += " ";
+			}
+
+			var listener:Function = function(event:CloseEvent):void{
+				callback(event);
+			};
+			Alert.show(texto, titulo, flag, parent, listener, iconClass, defaultButton);
 		}
 		
 		public function closeWs(ws:WebService):WebService{

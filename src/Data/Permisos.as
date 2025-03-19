@@ -1,12 +1,10 @@
-package Data
-{
+package Data{
 	import mx.collections.ArrayCollection;
 	import mx.controls.Alert;
 	import mx.controls.DateField;
-	import mx.core.Application;
 	
 	public class Permisos
-	{			
+	{				
 		public function Permisos(){	
 		}
 		

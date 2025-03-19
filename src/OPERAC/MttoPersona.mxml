@@ -47,15 +47,17 @@
 			
 			private var du:Utils;
 			private var global:Globales;
+			
 			public var wsMS:WebService;	
 			public var tipoAccion:int;
-			public var band:Boolean;
+			public var bandMod:Boolean;
 			public var pers:String;
 			public var titulo:String;
 			
 			public function cargaInfoPersona(pers:String):void{
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
+				
 				tipoAccion = 2;
 				this.title = "Edición";
 				this.pers = pers;
@@ -72,10 +74,15 @@
 					du.rCursor();
 					global.desbloquear();
 					
-					if (_xmlPers.elements().length() > 0)
+					if (_xmlPers.elements().length() > 0){
+						if(_xmlPers.Table[0].BLOQUEO == "S"){
+							bandMod = false;
+							du.mostrarMensaje("No es posible modificar el registro de la persona debido a que se encuentra bloqueado.",titulo, 4, null, null, global.iAlert);
+						}
 						llenaRegistros();
+					}
 					else
-						Alert.show("Error en la carga de Datos",titulo,4,null,null,global.iAlert);
+						du.mostrarMensaje("Error en la carga de Datos",titulo,4,null,null,global.iAlert);
 				});
 				params[0] = pers;
 				wsCat.getInfoRegistro.send(31, params);
@@ -98,15 +105,19 @@
 			private function enviar():void{
 				info = new DatosPersona();
 				
-				if(validarInfo()){
-					info.tipoPers = cboTipoPers.selectedItem.id;
-					formDatosPers.enviarDatosPersona(info);
-					formDirPers.enviarDatosPersona(info);
-					formDirNegPers.enviarDatosPersona(info);
-					formKYCPers.enviarDatosPersona(info);
-					formPLDPers.enviarDatosPersona(info);
-					validaFinal();
+				if(bandMod){
+					if(validarInfo()){
+						info.tipoPers = cboTipoPers.selectedItem.id;
+						formDatosPers.enviarDatosPersona(info);
+						formDirPers.enviarDatosPersona(info);
+						formDirNegPers.enviarDatosPersona(info);
+						formKYCPers.enviarDatosPersona(info);
+						formPLDPers.enviarDatosPersona(info);
+						validaFinal();
+					}
 				}
+				else
+					du.mostrarMensaje("No es posible modificar el registro de persona.", titulo, 4, null, null, global.iAlert);
 			}
 			
 			private function formateaTipoPers():void{
@@ -248,7 +259,7 @@
 				}
 				
 				modificaEstatus();
-				
+		
 				formDatosPers.init(info, currentState);
 				formDirPers.init(info);
 				formDirNegPers.init(info);
@@ -280,6 +291,7 @@
 			
 			public function registraInfoPersona():void{
 				tipoAccion = 1;
+				bandMod = true;
 				info = null;
 				formDatosPers.init(info, currentState);
 				formDirPers.init(info);
@@ -302,14 +314,14 @@
 					if(tipoAccion == 1){
 						var rSplit:Array = res.toString().split('|');
 						codigo = rSplit[1].toString();
-						Alert.show("Registro exitoso de persona con el código - " + codigo,titulo,4,null,null,global.iInfo);
+						du.mostrarMensaje("Registro exitoso de persona con el código - " + codigo,titulo,4,null,null,global.iInfo);
 					}	
 					else
-						Alert.show("Proceso finalizado exitosamente.",titulo,4,null,null,global.iInfo);
+						du.mostrarMensaje("Proceso finalizado exitosamente.",titulo,4,null,null,global.iInfo);
 					cerrar();
 				}	
 				else
-					Alert.show(res.substr(2,res.length -1),titulo,4,null,null,global.iAlert);		
+					du.mostrarMensaje(res.substr(2,res.length -1),titulo,4,null,null,global.iAlert);		
 			}
 			
 			private function validaDatosPersona(event:EventPersona):void{
@@ -318,7 +330,7 @@
 			
 			private function validarInfo():Boolean{
 				if(cboTipoPers.selectedIndex == 0){
-					Alert.show("Debe seleccionar el Tipo de Persona.",titulo,4,null,null,global.iAlert);
+					du.mostrarMensaje("Debe seleccionar el Tipo de Persona.",titulo,4,null,null,global.iAlert);
 					return false;
 				}
 				return true;
@@ -329,7 +341,7 @@
 					guardaPersona();
 				}
 				else
-					Alert.show("Debe capturar los datos requeridos",titulo,4,null,null,global.iAlert);
+					du.mostrarMensaje("Debe capturar los datos requeridos",titulo,4,null,null,global.iAlert);
 			}
 
 		]]>

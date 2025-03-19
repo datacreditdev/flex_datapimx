@@ -185,7 +185,7 @@
 				var fecIni:String = global.formatearFechaYYYYMMDD(dtfInicio.selectedDate);
 				var fecSol:String = global.formatearFechaYYYYMMDD(dtfSolicitud.selectedDate);
 				if (fecIni < fecAct){
-					Alert.show("La fecha de entrega debe ser igual o posterior a la fecha actual","Mantenimiento de Solicitud",4,null,null,global.iAlert);
+					du.mostrarMensaje("La fecha de entrega debe ser igual o posterior a la fecha actual","Mantenimiento de Solicitud",4,null,null,global.iAlert);
 					if(fecAct > fecSol)
 						dtfInicio.selectedDate = global.obtenerFechaSistema();
 					else
@@ -193,7 +193,7 @@
 				}
 				else{
 					if(fecIni < fecSol){	
-						Alert.show("La fecha de entrega debe ser igual o posterior a la fecha de solicitud","Mantenimiento de Solicitud",4,null,null,global.iAlert);
+						du.mostrarMensaje("La fecha de entrega debe ser igual o posterior a la fecha de solicitud","Mantenimiento de Solicitud",4,null,null,global.iAlert);
 						dtfInicio.selectedDate = dtfSolicitud.selectedDate;
 					}
 				}

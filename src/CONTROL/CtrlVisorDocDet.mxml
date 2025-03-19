@@ -2,10 +2,9 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" 
 	xmlns:CONTROL="CONTROL.*" creationPolicy="all">
 	
-	<!--Componente que permite mostrar los documentos de un acreditado-->
+	<!--Componente que permite mostrar los documentos de un acreditado o una solicitud-->
 	<mx:Script>
 		<![CDATA[
-			import mx.controls.Label;
 			import Data.Globales;
 			import Data.ImageCreator;
 			import Data.Utils;
@@ -14,6 +13,7 @@
 			import mx.controls.Alert;
 			import mx.controls.Button;
 			import mx.controls.Image;
+			import mx.controls.Label;
 			import mx.core.Application;
 			import mx.core.IFlexDisplayObject;
 			import mx.effects.easing.Elastic;
@@ -28,6 +28,7 @@
 			private var du:Utils;
 			private var global:Globales;
 			private var codigo:String;
+			private var ciclo:String;
 			private var titulo:String;
 			
 			public function cerrar():void{
@@ -35,11 +36,12 @@
 					comFormPdf.ocultarPdf();	
 			}
 			
-			public function init(codigo:String, repo:String):void{				
+			public function init(codigo:String, repo:String, ciclo:String = null):void{				
 				global = new Globales();
 				du = new Utils();
 				
 				this.codigo = codigo;
+				this.ciclo = ciclo;
 				
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
@@ -118,10 +120,14 @@
 						}
 					}
 					else
-						Alert.show("No se encontraron documentos relacionados con el acreditado.",titulo,4,null,null,global.iAlert);		
+						if(ciclo == null)
+							du.mostrarMensaje("No se encontraron documentos relacionados con\nel acreditado.",titulo,4,null,null,global.iAlert);
+						else
+							du.mostrarMensaje("No se encontraron documentos relacionados con\nla solicitud.",titulo,4,null,null,global.iAlert);		
 				});
 				params[0] = codigo;
 				params[1] = repo;
+				params[2] = ciclo;
 				wsCat.getInfoRegistro.send(33, params);
 				
 			}
@@ -143,7 +149,7 @@
 				var carpeta:String = Image(event.currentTarget).id;
 				var archivo:String = Image(event.currentTarget).name;
 				var urlPdf:String = global.urlDocs + carpeta + "/" + archivo + ".pdf"
-				//Alert.show(urlPdf);
+				//du.mostrarMensaje(urlPdf);
 				imagen.visible = false;
 				comFormPdf.visible = true;
 				comFormPdf.muestraPdf(urlPdf);

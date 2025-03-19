@@ -75,7 +75,7 @@
 							calculaNuevoSaldo();
 						}		
 						else
-							Alert.show("No se ha encontrado información.\n\nVerifique los datos capturados.",titulo,4,null,null,global.iAlert);
+							du.mostrarMensaje("No se ha encontrado información.\n\nVerifique los datos capturados.",titulo,4,null,null,global.iAlert);
 					});
 					params[0] = codigo;
 					params[1] = tipoCred;
@@ -83,7 +83,7 @@
 					wsCat.getInfoGeneral.send(10, params);
 				}	
 				else
-					Alert.show("Debe capturar el código y ciclo.",titulo,4,null,null,global.iAlert);
+					du.mostrarMensaje("Debe capturar el código y ciclo.",titulo,4,null,null,global.iAlert);
 			}
 			
 			public function calculaNuevoSaldo():void{
@@ -127,11 +127,11 @@
 						du.closeWs(wsMS);
 							
 						if(res.substr(0,1) == "1"){	
-							Alert.show("Proceso finalizado exitosamente.",titulo,4,null,null,global.iInfo);
+							du.mostrarMensaje("Proceso finalizado exitosamente.",titulo,4,null,null,global.iInfo);
 							limpiar();
 						}
 						else
-							Alert.show(res.substr(2,res.length-1),titulo,4,null,null,global.iAlert);
+							du.mostrarMensaje(res.substr(2,res.length-1),titulo,4,null,null,global.iAlert);
 					}); 
 					wsMS.setRegistroAjuste.send(codigo, ciclo, tipoCred, fecha, capital, interes, moratorios, justifica, observaciones, 
 												global.obtenerUsuario());
@@ -189,7 +189,7 @@
 						cboJustifica.dataProvider = justObj;
 					}
 					else{
-						Alert.show("Error en la carga de Datos",titulo,4,null,null,global.iAlert);
+						du.mostrarMensaje("Error en la carga de Datos",titulo,4,null,null,global.iAlert);
 					}
 				});
 				params[0] = "D";
@@ -227,17 +227,17 @@
 			
 			public function valida():Boolean{
 				if(dtfFecha.text == ""){
-					Alert.show("Debe capturar la fecha del ajuste.",titulo,4,null,null,global.iAlert);
+					du.mostrarMensaje("Debe capturar la fecha del ajuste.",titulo,4,null,null,global.iAlert);
 					return false;
 				}
 				if((txtCapital.text == "" || txtCapital.text == "-" || Number(txtCapital.text) == 0) &&
 				   (txtInteres.text == "" || txtInteres.text == "-" || Number(txtInteres.text) == 0) &&
 				   (txtMora.text == "" || txtMora.text == "-" || Number(txtMora.text) == 0)){
-					Alert.show("Debe capturar información válida al menos en alguno de los campos correspondientes.",titulo,4,null,null,global.iAlert);
+					du.mostrarMensaje("Debe capturar información válida al menos en alguno de los campos correspondientes.",titulo,4,null,null,global.iAlert);
 					return false;
 				}
 				if(cboJustifica.selectedIndex <= 0){
-					Alert.show("Debe seleccionar alguna opción de justificación de los registros.",titulo,4,null,null,global.iAlert);
+					du.mostrarMensaje("Debe seleccionar alguna opción de justificación de los registros.",titulo,4,null,null,global.iAlert);
 					return false;
 				}
 				return true;

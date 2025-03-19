@@ -40,7 +40,7 @@ package Data
 		public var frm_48:ReimpresiondeOrdenesdePago;
 		public var frm_49:ImpresiondeBurodeCredito;
 		public var frm_50:AdministraciondeOrdenesdePago;
-		public var frm_51:RegistrodeAcreditados;
+		public var frm_51:Acreditados;
 		public var frm_52:ExcepcionesGL;
 		public var frm_53:Prestamos;
 		public var frm_54:CausasdeRechazo;
@@ -93,13 +93,13 @@ package Data
 		public var frm_115:CorreccionesIndividuales;
 		public var frm_116:CuentasBancarias;
 		public var frm_117:OperacionesRelevantes;
-		public var frm_118:RegistrodeGarantias;
+		public var frm_118:Garantias;
 		public var frm_119:CreditoRevolvente;
 		public var frm_120:EvaluaciondeDisposicionRevolvente;
 		public var frm_121:EntregadeDisposicionRevolvente;
 		public var frm_122:SolicituddeDisposicionRevolvente;
 		public var frm_123:ImpresiondeChequesdeDisposicion;
-		public var frm_124:RegistrodePersonasPFyPM;
+		public var frm_124:PersonasPFyPM;
 		public var frm_125:AjustesdeComisionySeguro;
 		public var frm_126:AnalisisdeAlertas;
 		public var frm_127:IdentificaciondeAcreditados;

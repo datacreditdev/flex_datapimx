@@ -53,8 +53,6 @@
 		import mx.managers.PopUpManager;
 		import mx.rpc.events.ResultEvent;
 		import mx.rpc.soap.WebService;
-		import mx.validators.Validator;
-		import mx.events.ValidationResultEvent;	
 		
 		[Bindable]
 		private var info:DatosCtaBancaria;
@@ -72,7 +70,6 @@
 		public var wsMS:WebService;	
 		public var tipoAccion:int;
 		public var titulo:String;
-		private var vResult:ValidationResultEvent;
 		
 		private function cargaInfoCB(tipo:int, codIB:String, instBanc:String, codSB:String, sucBanc:String, codCB:String):void{
 			var wsCat:WebService = new WebService;
@@ -112,7 +109,7 @@
 		}
 	
 		public function enviar():void{
-			var invalidArray:Array = Validator.validateAll([cuentaV, numeroV, saldoV, monedaV]);
+			var invalidArray:Array = Validator.validateAll([numeroV, saldoV, monedaV]);
 				
 			if(invalidArray.length == 0){	
 				info.cdgCB = txtCodigo.text;
@@ -249,7 +246,6 @@
 			var i:int;
 			
 			txtCodigo.setFocus();
-			
 			txtCodigo.text = info.cdgCB;
 			txtNumero.text = _xmlCB.Table[0].NUMERO;
 			txtClabe.text = _xmlCB.Table[0].CLABE;
@@ -270,7 +266,7 @@
 			txtAlias.text = _xmlCB.Table[0].NOMBRE;
 			txtTitular.text = _xmlCB.Table[0].TITULAR;
 			txtFavor.text = _xmlCB.Table[0].AFAVORDE;
-			txtSaldo.text = _xmlCB.Table[0].SALDOREFER;
+			txtSaldo.text = global.formatearDecimal(_xmlCB.Table[0].SALDOREFER);
 			
 			for(i = 0; i < monedaObj.length; i++){
 				if(monedaObj[i].id == _xmlCB.Table[0].CDGMO.toString()){
@@ -298,24 +294,7 @@
 			info.cdgIB = codIB;
 			info.cdgSB = codSB;
 			
-			txtCodigo.setFocus();
-			
-			du.initWsCat(wsCat);
-			du.sCursor();
-				
-			du.ejecutaWsMethod(wsCat,function(evt:ResultEvent):void {											
-				var _xmlCod:XML = new XML(evt.result.toString());
-				
-				du.rCursor();
-				du.closeWs(wsCat);
-				wsCat = null;
-					
-				if(_xmlCod.elements().length() > 0){
-					txtCodigo.text = _xmlCod.Table[0].CDGCB;
-				}
-			});
-			//Codigo de Cuenta Bancaria
-			wsCat.getInfoRegistro.send(16);
+			txtNumero.setFocus();
 		}
 		
 		private function setAccionCuentaBancaria(event:ResultEvent):void{
@@ -324,11 +303,19 @@
 			global.desbloquear();
 			wsMS.removeEventListener(ResultEvent.RESULT, setAccionCuentaBancaria);
 			var res:String = event.result.toString();
+			var codigo:String;
 			if (res.substr(0,1) == "1"){
+				if(tipoAccion == 1){
+					var rSplit:Array = res.toString().split('|');
+					codigo = rSplit[1].toString();
+					du.mostrarMensaje("Registro exitoso de cuenta bancaria con el código - " + codigo, titulo, 4, null, null, global.iInfo);
+				}	
+				else
+					du.mostrarMensaje("Proceso finalizado exitosamente.", titulo, 4, null, null, global.iInfo);
 				cerrar();
 			}	
 			else
-				Alert.show(res.substr(2,res.length -1),titulo,4,null,null,global.iAlert);		
+				du.mostrarMensaje(res.substr(2,res.length -1),titulo,4,null,null,global.iAlert);		
 		}
 		
 		public function terminarEfecto(event:EffectEvent):void{
@@ -344,7 +331,7 @@
 			if (info.guarda == true)
 				guardaCtaBancaria();
 			else
-				Alert.show("Debe capturar los datos requeridos", titulo, 4, null, null, global.iAlert);
+				du.mostrarMensaje("Debe capturar los datos requeridos", titulo, 4, null, null, global.iAlert);
 		}
 		
 		]]>
@@ -362,19 +349,19 @@
 		<mx:Label id="lblAlias" x="83" y="133" text="Alias:" textAlign="right"/>
 		<mx:Label id="lblOtor" x="78.5" y="195" text="Titular:" textAlign="right"/>
 		<mx:Label id="lblcodDisp" x="74.5" y="12" text="Código:" textAlign="right"/>
-		<mx:Label id="lblContrato" x="70.5" y="44" text="Número:" textAlign="right"/>
-		<mx:Label id="lblSaldo" x="22.5" y="255" text="Saldo Referencial:" textAlign="right"/>
-		<mx:Label id="lblMoneda" x="69.5" y="287" text="Moneda:" textAlign="right"/>
+		<mx:Label id="lblContrato" x="66.5" y="43" text="Número*:" textAlign="right"/>
+		<mx:Label id="lblSaldo" x="18.5" y="255" text="Saldo Referencial*:" textAlign="right"/>
+		<mx:Label id="lblMoneda" x="65.5" y="287" text="Moneda*:" textAlign="right"/>
 		<mx:Label id="lblTipoCta" x="35" y="165" text="Tipo de Cuenta:" textAlign="right"/>
 		<mx:Label id="lblClabe" x="80.5" y="73" text="Clabe:" textAlign="right"/>
 		<mx:Label id="lblSwift" x="56.5" y="103" text="Swift / BIC:" textAlign="right"/>
 		<mx:TextInput id="txtCodigo" x="123.5" y="10" width="50" maxChars="3" editable="false"/>
-		<mx:TextInput id="txtNumero" x="123.5" y="42" width="109" maxChars="150"/>
+		<mx:TextInput id="txtNumero" x="123.5" y="42" width="109" maxChars="16"/>
 		<mx:TextInput id="txtClabe" x="123.5" y="72" width="150" maxChars="18" restrict="0-9"/>
 		<mx:TextInput id="txtSwift" x="123" y="102" width="280" maxChars="30"/>
-		<mx:TextInput id="txtAlias" x="123" y="132" width="280" maxChars="150"/>
+		<mx:TextInput id="txtAlias" x="123" y="132" width="280" maxChars="50"/>
 		<Data:CustomComboBox id="cboTipoCta" x="123" y="162" width="230" labelField="nombre" change="modificarTipoCta()"/>
-		<mx:TextInput id="txtTitular" x="123.5" y="194" width="279.5" maxChars="150"/>
+		<mx:TextInput id="txtTitular" x="123.5" y="194" width="279.5" maxChars="200"/>
 		<mx:TextInput id="txtFavor" x="123.5" y="224" width="279.5"/>
 		<mx:TextInput id="txtSaldo" x="123.5" y="254" width="90" maxChars="18" restrict="0-9;.;," focusOut="{global.formatearMonto(event)}"/>
 		<Data:CustomComboBox id="cboMoneda" x="123.5" y="284" width="230" labelField="nombre"/>
