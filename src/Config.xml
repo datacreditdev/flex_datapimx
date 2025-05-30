@@ -8,8 +8,9 @@
 	<wsdlRep>http://localhost/ws_reportes_datapimx/service.asmx?wsdl</wsdlRep>
 	<wsdlServ>http://localhost/ws_servicios_datapimx/Service.asmx?wsdl</wsdlServ>
 	<wsdlMail>http://localhost/ws_servicios_datapimx/ServiceMail.asmx?wsdl</wsdlMail>
+	<wsdlExp>http://localhost/ws_servicios_datapimx/Uploader.ashx</wsdlExp>
 	<wsdlExpXls>http://datacredit.webredirect.org/ExpExcelJson/ExcelLib.aspx</wsdlExpXls>
 	<wsdlCC>http://localhost/ws_consCirc_datapimx/service.asmx?wsdl</wsdlCC>
 	
-	<urlDocs>http://localhost/DOCS_PIMX/</urlDocs>
+	<urlDocs>http://localhost/DOCS_PRUEBA/</urlDocs>
 </Configuration>

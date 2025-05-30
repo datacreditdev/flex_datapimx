@@ -4,6 +4,7 @@ package Data
 	{
 		/*variables que hacen referencia a los datos personales*/
 		public var codigo:String;
+		public var nomComp:String;
 		public var nombre:String;
 		public var segNombre:String;
 		public var aPaterno:String;

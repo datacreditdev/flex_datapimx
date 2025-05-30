@@ -19,7 +19,7 @@
 			<mx:SetProperty target="{formDPAcred}" name="y" value="0"/>
 			<mx:SetProperty name="height" value="630"/>
 			<mx:SetProperty target="{btnConsBuro}" name="y" value="555"/>
-			<mx:SetProperty target="{btnDoc}" name="y" value="555"/>
+			<mx:SetProperty target="{btnVerDoc}" name="y" value="555"/>
 			<mx:SetProperty target="{btnAceptar}" name="y" value="555"/>
 			<mx:SetProperty target="{btnCancelar}" name="y" value="555"/>
 			<mx:SetProperty target="{btnAceptar}" name="x" value="508"/>
@@ -28,6 +28,7 @@
 			<mx:SetProperty target="{tabNav}" name="x" value="7.5"/>
 			<mx:SetProperty target="{tabNav}" name="y" value="51"/>
 			<mx:SetProperty target="{btnBloquear}" name="y" value="555"/>
+			<mx:SetProperty target="{btnCargarDoc}" name="y" value="555"/>
 		</mx:State>
 		<mx:State name="fideicomiso" basedOn="moral">
 			<mx:SetProperty target="{cnvDir}" name="label" value="Lugar Constitución"/>
@@ -46,6 +47,7 @@
 	
 	<mx:Script>
 		<![CDATA[
+			import CONTROL.CtrlCargadorDoc;
 			import CONTROL.CtrlVisorDoc;
 			import Data.DatosAcred;
 			import Data.EventAcred;
@@ -112,6 +114,16 @@
 				wsMS.setBloqueaAcred.send(info.codigo, accion, global.obtenerUsuario());
 			}
 			
+			private function cargarDocumentos():void{
+				var obj:DisplayObject = this.parent;
+				
+				var comCargador:CtrlCargadorDoc = new CtrlCargadorDoc();
+						
+				comCargador = CtrlCargadorDoc(PopUpManager.createPopUp(obj, CtrlCargadorDoc, false));
+				comCargador.init(info.codigo, info.nomComp);
+				PopUpManager.centerPopUp(comCargador);
+			}
+			
 			public function cargaInfoAcred(acred:String):void{
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
@@ -121,7 +133,8 @@
 				this.acred = acred;
 				this.title = "Edición";
 				cboTipoPers.enabled = false;
-				btnDoc.visible = true;
+				btnCargarDoc.visible = true;
+				btnVerDoc.visible = true;
 				btnBloquear.visible = true;
 				
 				permisos();
@@ -257,6 +270,7 @@
 				info = new DatosAcred();
 				//Datos personales del Acreditado
 				info.codigo = _xmlAcred.Table[0].CODIGO;
+				info.nomComp = _xmlAcred.Table[0].NOMBREC;
 				info.nombre = _xmlAcred.Table[0].NOMBRE1;
 				info.segNombre = _xmlAcred.Table[0].NOMBRE2;
 				info.aPaterno = _xmlAcred.Table[0].PRIMAPE;
@@ -566,8 +580,9 @@
 	<mx:Button id="btnCancelar" x="556" y="606" icon="@Embed(source='assets/Icon-Delete.png')" click="cerrar()" width="40"/>
 	<mx:Button id="btnAceptar" x="508" y="606" icon="@Embed(source='assets/button_ok.png')" click="enviar()" width="40"/>
 	<mx:Button id="btnConsBuro" x="10" y="605" click="consultaBuro()" label="Consulta Rep. Crédito" visible="false"/>
-	<mx:Button id="btnBloquear" x="152" y="605" click="bloquearAcreditado()" label="Bloquear Acreditado" visible="false"/>
-	<mx:Button id="btnDoc" x="10" y="605" click="mostrarDocumentos()" label="Ver Documentación" visible="false"/>
+	<mx:Button id="btnCargarDoc" x="10" y="605" click="cargarDocumentos()" label="Cargar Documentación" visible="false"/>
+	<mx:Button id="btnVerDoc" x="172" y="605" click="mostrarDocumentos()" label="Ver Documentación" visible="false"/>
+	<mx:Button id="btnBloquear" x="314" y="605" click="bloquearAcreditado()" label="Bloquear Acreditado" visible="false"/>
 	<mx:Label x="144" y="18" text="Tipo Persona:"/>
 	<mx:ComboBox id="cboTipoPers" labelField="nombre" x="235" y="16" change="modificaEstatus()"/>
 </mx:TitleWindow>

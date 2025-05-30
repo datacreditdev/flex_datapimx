@@ -137,6 +137,7 @@ package Data
 		public var frm_155:CargaArchivoCreditos;
 		public var frm_156:AjustesdeDevengodeInteres;
 		public var frm_157:ModificaciondeTasadeInteres;
+		public var frm_158:CtrlCargadorDoc;
 		
 		public function Modulo()
 		{

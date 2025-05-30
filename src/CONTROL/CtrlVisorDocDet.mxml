@@ -129,7 +129,6 @@
 				params[1] = repo;
 				params[2] = ciclo;
 				wsCat.getInfoRegistro.send(33, params);
-				
 			}
 			
 			private function manipulaImagen(event:MouseEvent):void{
@@ -149,7 +148,6 @@
 				var carpeta:String = Image(event.currentTarget).id;
 				var archivo:String = Image(event.currentTarget).name;
 				var urlPdf:String = global.urlDocs + carpeta + "/" + archivo + ".pdf"
-				//du.mostrarMensaje(urlPdf);
 				imagen.visible = false;
 				comFormPdf.visible = true;
 				comFormPdf.muestraPdf(urlPdf);

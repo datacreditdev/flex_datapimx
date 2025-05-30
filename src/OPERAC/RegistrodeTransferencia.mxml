@@ -166,6 +166,6 @@
 			<mx:DateField id="dtfFecha" x="214.75" y="6" width="100"/>
 		</mx:Canvas>
 		<mx:Label id="lblControl" x="12.75" y="279.95" width="368.5" fontSize="12" fontWeight="bold" fontStyle="italic"/>
-		<mx:Button id="btnRegistrar" x="580" y="278.95" icon="@Embed(source='assets/button_ok.png')" enabled="true" toolTip="Registrar" width="40" click="muestraFormTrans()"/>
+		<mx:Button id="btnRegistrar" x="543" y="277.95" label="Registrar" enabled="true" toolTip="Registrar" click="muestraFormTrans()"/>
 	</mx:Canvas>
 </mx:Canvas>

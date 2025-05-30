@@ -56,8 +56,7 @@
 						dgReporte.dataProvider = null;
 						btnExportar.enabled = false;
 													
-						if(_xmlRep.elements().length() - 1 > 0)
-						{
+						if(_xmlRep.elements().length() - 1 > 0){
 							var cantidad:Number = 0;
 							var cont:int = _xmlRep.elements().length() - 1;
 							btnExportar.enabled = true;

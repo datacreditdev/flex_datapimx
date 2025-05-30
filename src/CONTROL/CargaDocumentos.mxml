@@ -2,24 +2,20 @@
 <mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="700" height="434" creationComplete="initApp()">
 	<mx:Script>    
     <![CDATA[
+    	import Data.Globales;
     	import Data.Utils;
-		import mx.collections.XMLListCollection;
   		import flash.net.URLRequest;
-  		import Data.Globales;
-  		import mx.core.Application;
-  		import mx.rpc.Fault;
-  		import mx.rpc.soap.WebService;
-  		import mx.rpc.events.ResultEvent;
-  		import mx.rpc.events.FaultEvent;		
-  		import mx.events.CloseEvent;	
-  		import mx.events.ListEvent;	
-  		import mx.utils.ArrayUtil;
-  		import mx.collections.ArrayCollection;
-  
-  		import mx.managers.PopUpManager;
   		import mx.controls.Alert;
-  		import mx.core.ScrollPolicy;
-      
+  		import mx.core.Application;
+  		import mx.events.CloseEvent;	
+  		import mx.events.ListEvent;
+  		import mx.managers.PopUpManager;
+  		import mx.rpc.Fault;
+  		import mx.rpc.events.FaultEvent;
+  		import mx.rpc.events.ResultEvent;
+  		import mx.rpc.soap.WebService;
+  		import mx.utils.ArrayUtil;
+
 		private var xmlResult:XML ;
          
 		private var archivo:FileReference;
@@ -28,7 +24,6 @@
   	
   		private var global:Globales;
 		private var du:Utils;
-  		public var ws:WebService;	
   
   		[Bindable]
   		public var nombreArchivo:String = "";
@@ -43,60 +38,46 @@
 			archivo.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, __uploadDataHandler   );
 		}
    
-  		private function __onBrowse():void{       
-	        try
-	        {    
-	          		var success:Boolean = archivo.browse([fileTelecom]);         
+		private function __onBrowse():void{       
+	        try{    
+	          	var success:Boolean = archivo.browse([fileTelecom]);         
 	        }  
-	        catch (error:Error) 
-	        {
+	        catch (error:Error){
 	          __status__.text = "Estatus: No es posible abrir el cuadro de selección de archivos";             
 	        }
   		}
   
-  private function __onUpload():void 
-  {
-    // replace with URL to your upload handler - THIS ONE WON'T WORK!!!!
-    var myRequest:URLRequest = new URLRequest(global.url_up);
-    myRequest.method         = URLRequestMethod.POST;
-     
-    try 
-    {       
-      archivo.upload(myRequest);         
-      __status__.text = "Estatus: Cargando " + archivo.name + " ... ";         
-    }  
-    catch (error:Error) 
-    {         
-      __status__.text = "Estatus: Error de carga " + archivo.name;
-    }
-  }
+	  	private function __onUpload():void{
+	    	// replace with URL to your upload handler - THIS ONE WON'T WORK!!!!
+	    	var myRequest:URLRequest = new URLRequest(global.url_up);
+	    	myRequest.method = URLRequestMethod.POST;
+	     
+	    	try{       
+	      		archivo.upload(myRequest);         
+	      		__status__.text = "Estatus: Cargando " + archivo.name + " ... ";         
+	    	}  
+	    	catch (error:Error){         
+	      		__status__.text = "Estatus: Error de carga " + archivo.name;
+	    	}
+	  	}
   
-  private function __fileSelectionHandler(_e:Event):void 
-  {  
-    __upload__.enabled = true;   
+  		private function __fileSelectionHandler(_e:Event):void{  
+    		__upload__.enabled = true;   
               
-    __uploadFile__.text = archivo.name;             
-    __status__.text     = "Estatus:  Haga click en el botón 'Cargar Archivo' para iniciar el proceso";
-  }
+    		__uploadFile__.text = archivo.name;             
+    		__status__.text     = "Estatus:  Haga click en el botón 'Cargar Archivo' para iniciar el proceso";
+  		}
        
-  private function __completeHandler(_e:Event):void 
-  {         
-    // nothing currently done in this handler - experiment and have fun :)            
-  }
+  		private function __completeHandler(_e:Event):void {         
+    		// nothing currently done in this handler - experiment and have fun :)            
+  		}
   
-  private function __uploadDataHandler(_e:DataEvent):void 
-    {
-    var myResult:XML = new XML(_e.data);
-	    __status__.text  = "Estatus: Carga de archivo completa \n" + myResult.toString();
-	    this.nombreArchivo = myResult.toString();
-    }       
-    
-	public function initConexion():void{				
-		ws = new WebService();			
-		ws.wsdl = Application.application.wsStr.wsdlGarantia.toString();
-		ws.loadWSDL();
-	}
-    
+  		private function __uploadDataHandler(_e:DataEvent):void{
+    		var myResult:XML = new XML(_e.data);
+	    	__status__.text  = "Estatus: Carga de archivo completa \n" + myResult.toString();
+	    	this.nombreArchivo = myResult.toString();
+    	}     
+    	  
 	]]>
 	</mx:Script>
   	<mx:Canvas id="cnvEncabezado" x="75.5" y="19" width="549" height="175" cornerRadius="10" borderStyle="solid" borderColor="#7B8B93" visible="true">
