@@ -270,7 +270,7 @@
 				info = new DatosAcred();
 				//Datos personales del Acreditado
 				info.codigo = _xmlAcred.Table[0].CODIGO;
-				info.nomComp = _xmlAcred.Table[0].NOMBREC;
+				info.nomComp = _xmlAcred.Table[0].NOMCOMP;
 				info.nombre = _xmlAcred.Table[0].NOMBRE1;
 				info.segNombre = _xmlAcred.Table[0].NOMBRE2;
 				info.aPaterno = _xmlAcred.Table[0].PRIMAPE;
