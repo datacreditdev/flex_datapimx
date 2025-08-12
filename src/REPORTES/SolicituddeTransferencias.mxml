@@ -35,6 +35,12 @@
 				dgE.loadDGInExcel(dgReporte,null,titulo + " del " + fecha);	
 			}
 			
+			private function formatearMontoGrid(item:Object, column:DataGridColumn):String{
+				var result:String;
+                result = global.formatearMoneda(item[column.dataField]);
+                return result;
+			}
+			
 			private function generar():void{
 				if(valida()){
 					global.bloquear();
@@ -135,14 +141,14 @@
 	<mx:Label x="18" y="34" text="Criterios de Selección" width="124.25"/>
 	<Data:RowColorDataGrid id="dgReporte" x="17.95" y="162" width="763.05" visible="true" height="225" horizontalScrollPolicy="auto">
 		<Data:columns>
-			<mx:DataGridColumn headerText="SUCURSAL" dataField="SUCURSAL" width="150"/>
+			<mx:DataGridColumn headerText="OFICINA" dataField="SUCURSAL" width="150"/>
 			<mx:DataGridColumn headerText="FECHA" dataField="FECHA" width="80"/>
-			<mx:DataGridColumn headerText="ACREDITADO" dataField="CODIGO" width="100"/>
-			<mx:DataGridColumn headerText="NOMBRE ACREDITADO" dataField="NOMBRE" width="230"/>
-			<mx:DataGridColumn headerText="CREDITO" dataField="CREDITO"/>
-			<mx:DataGridColumn headerText="BANCO" dataField="BANCO" width="150"/>
-			<mx:DataGridColumn headerText="CLABE" dataField="CLABE" width="150"/>
-			<mx:DataGridColumn headerText="MONTO" dataField="MONTO"/>
+			<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO" width="60"/>
+			<mx:DataGridColumn headerText="NOMBRE" dataField="NOMBRE" width="200"/>
+			<mx:DataGridColumn headerText="CREDITO" dataField="CREDITO" width="100"/>
+			<mx:DataGridColumn headerText="BANCO" dataField="BANCO" width="110"/>
+			<mx:DataGridColumn headerText="CLABE" dataField="CLABE" width="120"/>
+			<mx:DataGridColumn headerText="MONTO" dataField="MONTO" width="110" labelFunction="formatearMontoGrid"/>
 		</Data:columns>
 	</Data:RowColorDataGrid>
 	<mx:Button id="btnExportar" x="678" y="128" label="Exportar Excel" click="exportar()" enabled="false"/>

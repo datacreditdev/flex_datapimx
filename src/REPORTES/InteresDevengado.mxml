@@ -24,8 +24,8 @@
 						<mx:DataGridColumn headerText="INTERES NO DEVENGADO PAGADO" dataField="INT_NO_DEV_PAG_ANT" width="220" labelFunction="formatearMontoGrid"/>
 						<mx:DataGridColumn headerText="INTERES NO DEVENGADO_SIN_IVA" dataField="INT_NO_DEV_SIN_IVA" width="220" labelFunction="formatearMontoGrid"/>
 						<mx:DataGridColumn headerText="IVA INTERES NO DEVENGADO" dataField="IVA_INT_NO_DEV" width="180" labelFunction="formatearMontoGrid"/>
-						<mx:DataGridColumn headerText="ASESOR" dataField="COD_ASESOR" width="80"/>
-						<mx:DataGridColumn headerText="NOMBRE ASESOR" dataField="NOM_ASESOR" width="180"/>
+						<!--<mx:DataGridColumn headerText="ASESOR" dataField="COD_ASESOR" width="80"/>-->
+						<mx:DataGridColumn headerText="ASESOR" dataField="NOM_ASESOR" width="180"/>
 					</mx:columns>
 				</mx:DataGrid>
 			</mx:AddChild>
@@ -216,7 +216,7 @@
 				<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO" width="70"/>
 				<mx:DataGridColumn headerText="NOMBRE" dataField="NOMBRE" width="150"/>
 				<mx:DataGridColumn headerText="CICLO" dataField="CICLO" width="60"/>
-				<mx:DataGridColumn headerText="ASESOR" dataField="COD_ASESOR" width="80"/>
+				<!--<mx:DataGridColumn headerText="ASESOR" dataField="COD_ASESOR" width="80"/>-->
 				<mx:DataGridColumn headerText="NOMBRE ASESOR" dataField="ASESOR" width="180"/>
 				<mx:DataGridColumn headerText="INICIO" dataField="FINICIO" width="80"/>
 				<mx:DataGridColumn headerText="CANT ENTREGADA" dataField="CANTIDAD_ENTREGADA" width="120" labelFunction="formatearMontoGrid"/>

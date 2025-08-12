@@ -116,14 +116,14 @@
 				<mx:DataGridColumn headerText="ULTIMO PAGO" dataField="FEC_ULT_PAGO"/>
 				<mx:DataGridColumn headerText="CANT ULTIMO PAGO" dataField="ULT_PAGO" labelFunction="formatearMontoGrid"/>
 				<mx:DataGridColumn headerText="SALDO TOTAL" dataField="SDO_TOTAL" labelFunction="formatearMontoGrid"/>
-				<mx:DataGridColumn headerText="COD ASESOR" dataField="COD_ASESOR"/>
-				<mx:DataGridColumn headerText="NOMBRE ASESOR" dataField="ASESOR"/>
-				<mx:DataGridColumn headerText="COD REGION" dataField="COD_REGION"/>
-				<mx:DataGridColumn headerText="NOMBRE REGION" dataField="REGION"/>
-				<mx:DataGridColumn headerText="COD SUCURSAL" dataField="COD_SUCURSAL"/>
-				<mx:DataGridColumn headerText="NOMBRE SUCURSAL" dataField="SUCURSAL"/>
-				<mx:DataGridColumn headerText="COD COORDINADOR" dataField="COD_COORD"/>
-				<mx:DataGridColumn headerText="NOMBRE COORDINADOR" dataField="COORDINADOR"/>
+				<!--<mx:DataGridColumn headerText="COD ASESOR" dataField="COD_ASESOR"/>-->
+				<mx:DataGridColumn headerText="ASESOR" dataField="ASESOR"/>
+				<!--<mx:DataGridColumn headerText="COD REGION" dataField="COD_REGION"/>-->
+				<mx:DataGridColumn headerText="REGION" dataField="REGION"/>
+				<!--<mx:DataGridColumn headerText="COD SUCURSAL" dataField="COD_SUCURSAL"/>-->
+				<mx:DataGridColumn headerText="OFICINA" dataField="SUCURSAL"/>
+				<!--<mx:DataGridColumn headerText="COD COORDINADOR" dataField="COD_COORD"/>-->
+				<mx:DataGridColumn headerText="COORDINADOR" dataField="COORDINADOR"/>
 				<mx:DataGridColumn headerText="MUJERES CON PRESTAMO" dataField="MUJERES"/>
 				<mx:DataGridColumn headerText="HOMBRES CON PRESTAMO" dataField="HOMBRES"/>
 				<mx:DataGridColumn headerText="REFERENCIA" dataField="REFERENCIA"/>

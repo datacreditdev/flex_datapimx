@@ -148,9 +148,11 @@
 				var params:Array = new Array;
 				
 				var codIB:String = dgIB.selectedItem.CODIGO;
+				
 				dgSB.dataProvider = null;
 				du.initWsCat(wsCat);
 				du.sCursor();
+				
 			 	if (tipo == 1)
 					global.bloquear();
 					

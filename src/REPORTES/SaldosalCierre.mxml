@@ -100,29 +100,29 @@
 	<control:FiltroFecha id="comFiltroFecha" x="10"/>
 	<Data:RowColorDataGrid id="dgReporte" sortableColumns="true" x="18.45" y="155" width="763.05" visible="true" height="176" horizontalScrollPolicy="on">
 		<Data:columns>
-			<mx:DataGridColumn headerText="REGION" dataField="REGION" width="120"/>
-			<mx:DataGridColumn headerText="SUCURSAL" dataField="COD_SUCURSAL"/>
-			<mx:DataGridColumn headerText="NOMBRE SUCURSAL" dataField="NOM_SUCURSAL" width="140"/>
-			<mx:DataGridColumn headerText="ASESOR" dataField="COD_ASESOR"/>
-			<mx:DataGridColumn headerText="NOMBRE ASESOR" dataField="NOM_ASESOR" width="200"/>
-			<mx:DataGridColumn headerText="CODIGO" dataField="COD_GPO"/>
+			<mx:DataGridColumn headerText="REGION" dataField="REGION" width="150"/>
+			<!--<mx:DataGridColumn headerText="SUCURSAL" dataField="COD_SUCURSAL"/>-->
+			<mx:DataGridColumn headerText="OFICINA" dataField="NOM_SUCURSAL" width="150"/>
+			<!--<mx:DataGridColumn headerText="ASESOR" dataField="COD_ASESOR"/>-->
+			<mx:DataGridColumn headerText="ASESOR" dataField="NOM_ASESOR" width="200"/>
+			<mx:DataGridColumn headerText="CODIGO" dataField="COD_GPO" width="60"/>
 			<mx:DataGridColumn headerText="NOMBRE" dataField="NOM_GPO" width="200"/>
-			<mx:DataGridColumn headerText="CICLO" dataField="CICLO" width="50"/>
-			<mx:DataGridColumn headerText="INICIO" dataField="FINICIO"/>
-			<mx:DataGridColumn headerText="FIN" dataField="FFIN"/>
-			<mx:DataGridColumn headerText="FECHA LIQUIDA" dataField="FLIQUIDA" width="110"/>
+			<mx:DataGridColumn headerText="CICLO" dataField="CICLO" width="60"/>
+			<mx:DataGridColumn headerText="INICIO" dataField="FINICIO" width="70"/>
+			<mx:DataGridColumn headerText="FIN" dataField="FFIN" width="70"/>
+			<mx:DataGridColumn headerText="FECHA LIQUIDA" dataField="FLIQUIDA" width="130"/>
 			<mx:DataGridColumn headerText="MONTO ENTREGADO" dataField="MONTO_ENTREGADO" width="130" labelFunction="formatearMontoGrid"/>
-			<mx:DataGridColumn headerText="TASA" dataField="TASA"/>
-			<mx:DataGridColumn headerText="PLAZO" dataField="PLAZO"/>
-			<mx:DataGridColumn headerText="PERIODO" dataField="PERIODO"/>
-			<mx:DataGridColumn headerText="SALDO CAPITAL" dataField="SDOCAPITAL" width="120" labelFunction="formatearMontoGrid"/>
-			<mx:DataGridColumn headerText="SALDO INTERES" dataField="SDOINTERES" width="120" labelFunction="formatearMontoGrid"/>
-			<mx:DataGridColumn headerText="SALDO MORATORIOS" dataField="SDORECARGOS" width="120" labelFunction="formatearMontoGrid"/>
-			<mx:DataGridColumn headerText="SALDO TOTAL" dataField="SDOTOTAL" width="130" labelFunction="formatearMontoGrid"/>
-			<mx:DataGridColumn headerText="DIAS MORA" dataField="DIAS_MORA"/>
-			<mx:DataGridColumn headerText="MORA CAPITAL" dataField="MORACAP" width="120" labelFunction="formatearMontoGrid"/>
-			<mx:DataGridColumn headerText="MORA INTERES" dataField="MORAINT" width="120" labelFunction="formatearMontoGrid"/>
-			<mx:DataGridColumn headerText="MORA TOTAL" dataField="MORATOTAL" width="120" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="TASA" dataField="TASA" width="60"/>
+			<mx:DataGridColumn headerText="PLAZO" dataField="PLAZO" width="60"/>
+			<mx:DataGridColumn headerText="PERIODO" dataField="PERIODO" width="70"/>
+			<mx:DataGridColumn headerText="SALDO CAPITAL" dataField="SDOCAPITAL" width="110" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="SALDO INTERES" dataField="SDOINTERES" width="110" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="SALDO RECARGOS" dataField="SDORECARGOS" width="120" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="SALDO TOTAL" dataField="SDOTOTAL" width="110" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="DIAS MORA" dataField="DIAS_MORA" width="80"/>
+			<mx:DataGridColumn headerText="MORA CAPITAL" dataField="MORACAP" width="110" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="MORA INTERES" dataField="MORAINT" width="110" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="MORA TOTAL" dataField="MORATOTAL" width="110" labelFunction="formatearMontoGrid"/>
 		</Data:columns>
 	</Data:RowColorDataGrid>
 	<mx:Button id="btnExportar" x="678.5" y="123" label="Exportar Excel" click="exportar()" enabled="false"/>

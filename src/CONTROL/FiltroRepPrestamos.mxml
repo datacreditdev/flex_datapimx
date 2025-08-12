@@ -280,9 +280,9 @@
 		<mx:ComboBox id="cboRegion" x="10" y="27.5" labelField="nombre" change="cargaSucursal()" width="170"/>
 		<mx:ComboBox id="cboSucursal" x="10" y="80" labelField="nombre" change="cargaAsesor()" width="170"/>
 		<mx:ComboBox id="cboAsesor" x="10" y="129.5" labelField="nombre" width="242.05"/>
-		<mx:Label x="10" y="112" text="Asesor" width="61.75" height="20"/>
-		<mx:Label x="10" y="10" text="Región" width="61.75" height="20"/>
-		<mx:Label x="10" y="59.5" text="Sucursal" width="81" height="23"/>
+		<mx:Label x="10" y="112" text="Asesor" height="20"/>
+		<mx:Label x="10" y="10" text="Región" height="20"/>
+		<mx:Label x="10" y="59.5" text="Oficina" height="23"/>
 	</mx:Canvas>
 	<mx:Label x="18" y="227" text="Tipo de Cartera" id="lblTipoCart"/>
 	<mx:Canvas x="18" y="246" width="264" height="61" styleName="canvasMod" id="cnvTipoCart">

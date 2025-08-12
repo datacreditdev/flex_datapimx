@@ -235,10 +235,10 @@
 </mx:Script>
 	<mx:NumberValidator id="asesorV" source="{cboAsesor}" property="selectedIndex"
 	 minValue="1" triggerEvent="" lowerThanMinError="Asesor Requerido"/>
-	<mx:Label x="4" y="3" text="Región" width="61.75" height="20"/>
+	<mx:Label x="4" y="3" text="Región" height="20"/>
 	<mx:ComboBox id="cboRegion" x="4" y="20.5" labelField="nombre" change="modificaRegion()" width="170"/>
-	<mx:Label x="4" y="52.5" text="Sucursal" width="81" height="23"/>
+	<mx:Label x="4" y="52.5" text="Oficina" height="23"/>
 	<mx:ComboBox id="cboSucursal" x="4" y="73" labelField="nombre" width="170" change="modificaSucursal()"/>
-	<mx:Label x="3.9499998" y="105" text="Asesor" width="61.75" height="20"/>
+	<mx:Label x="3.9499998" y="105" text="Asesor" height="20"/>
 	<Data:CustomComboBox id="cboAsesor" x="3.9499998" y="122.5" labelField="nombre" change="seleccionaAsesor()" width="242.05"/>
 </mx:Canvas>

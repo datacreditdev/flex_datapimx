@@ -17,13 +17,9 @@ package Data
 		public var favor:String;
 		public var saldo:Number;
 		public var moneda:String;
+		public var edoCta:String;
 		public var tipo:String;
 		public var activa:String;
 		public var guarda:Boolean;
-		
-		public function DatosCtaBancaria()
-		{
-		}
-
 	}
 }

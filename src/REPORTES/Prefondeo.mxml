@@ -122,20 +122,20 @@
 	<mx:Label x="18" y="34" text="Criterios de Selección" width="124.25"/>
 	<mx:DataGrid id="dgReporte" x="17.95" y="166" width="763.05" visible="true" height="165" horizontalScrollPolicy="on">
 		<mx:columns>
-			<mx:DataGridColumn headerText="CODIGO" dataField="CDGCLNS" width="170"/>
-			<mx:DataGridColumn headerText="NOMBRE" dataField="NOMCLNS" width="150"/>
-			<mx:DataGridColumn headerText="CICLO" dataField="CICLO" width="50"/>
-			<mx:DataGridColumn headerText="INICIO" dataField="INICIO" width="80"/>
+			<mx:DataGridColumn headerText="CODIGO" dataField="CDGCLNS" width="60"/>
+			<mx:DataGridColumn headerText="ACREDITADO" dataField="NOMCLNS" width="200"/>
+			<mx:DataGridColumn headerText="CICLO" dataField="CICLO" width="60"/>
+			<mx:DataGridColumn headerText="INICIO" dataField="INICIO" width="70"/>
 			<mx:DataGridColumn headerText="TIPO" dataField="CLNS" width="80"/>
-			<mx:DataGridColumn headerText="CUENTA" dataField="CDGCB" width="60"/>
-			<mx:DataGridColumn headerText="NUM. CUENTA" dataField="NUMCUENTA" width="100"/>
-			<mx:DataGridColumn headerText="BANCO" dataField="BANCO" width="100"/>
+			<!--<mx:DataGridColumn headerText="CUENTA" dataField="CDGCB" width="110"/>-->
+			<mx:DataGridColumn headerText="NUM. CUENTA" dataField="NUMCUENTA" width="110"/>
+			<mx:DataGridColumn headerText="BANCO" dataField="BANCO" width="110"/>
 			<mx:DataGridColumn headerText="DESEMBOLSO" dataField="DESEMBOLSO" width="110"/>
-			<mx:DataGridColumn headerText="SITUACION" dataField="SITUA" width="100"/>
-			<mx:DataGridColumn headerText="CANT SOLICITADA" dataField="CANTSOLIC" width="120" labelFunction="formatearMontoGrid"/>
-			<mx:DataGridColumn headerText="CANT AUTORIZADA" dataField="CANTAUTORDESC" width="125" labelFunction="formatearMontoGrid"/>			
+			<mx:DataGridColumn headerText="SITUACION" dataField="SITUA" width="90"/>
+			<mx:DataGridColumn headerText="CANT SOLICITADA" dataField="CANTSOLIC" width="130" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="CANT AUTORIZADA" dataField="CANTAUTORDESC" width="130" labelFunction="formatearMontoGrid"/>			
 			<!--<mx:DataGridColumn headerText="SUCURSAL" dataField="CDGCO" width="100"/>-->
-			<mx:DataGridColumn headerText="NOMBRE SUCURSAL" dataField="COORD" width="150"/>
+			<mx:DataGridColumn headerText="OFICINA" dataField="COORD" width="150"/>
 		</mx:columns>
 	</mx:DataGrid>
 	<mx:Button id="btnExportar" x="678" y="130" label="Exportar Excel" click="exportar()" enabled="false"/>

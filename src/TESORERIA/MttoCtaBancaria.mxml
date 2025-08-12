@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="500" height="595" xmlns:Data="Data.*">
+<mx:TitleWindow xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute" width="500" height="619" xmlns:Data="Data.*">
 	<mx:states>
 		<mx:State name="subcuenta">
 			<mx:SetProperty name="height" value="625"/>
@@ -56,8 +56,8 @@
 		
 		[Bindable]
 		private var info:DatosCtaBancaria;
-		private var _xmlCB:XML =  new XML();
-		private var _xmlMoneda:XML =  new XML();
+		private var _xmlCB:XML = new XML();
+		private var _xmlMoneda:XML = new XML();
 		
 		private var monedaObj:ArrayCollection = new ArrayCollection();
 		private var tipoCtaObj:ArrayCollection = new ArrayCollection();
@@ -128,6 +128,7 @@
 				info.favor = txtFavor.text;
 				info.saldo = Number(global.formatearNumerico(txtSaldo.text));
 				info.moneda = cboMoneda.selectedItem.id;
+				info.edoCta = chkEdoCta.selected ? "S": "N";
 				info.tipo = tipo.selectedValue.toString();
 				info.activa = activa.selectedValue.toString();
 				info.guarda = true;
@@ -191,7 +192,7 @@
 			wsMS.addEventListener(ResultEvent.RESULT, setAccionCuentaBancaria);
 			wsMS.setAccionCuentaBancaria.send(tipoAccion, info.cdgIB, info.cdgSB, info.cdgCB, info.numero, info.tipoCta, 
 											  info.cdgCBAsoc, info.nombre, info.titular, info.favor, info.saldo, info.moneda, 
-											  info.tipo, info.activa, info.clabe, info.swift, global.obtenerUsuario());	
+											  info.tipo, info.activa, info.clabe, info.swift, info.edoCta, global.obtenerUsuario());	
 		}
 	
 		public function init(tipo:int, codIB:String, instBanc:String, codSB:String, sucBanc:String, codCB:String = null):void{
@@ -275,6 +276,11 @@
 				}
 			}
 			
+			if(_xmlCB.Table[0].EDOCTA == "S")
+				chkEdoCta.selected = true;
+			else if(_xmlCB.Table[0].EDOCTA == "N")
+				chkEdoCta.selected = false;
+			
 			tipo.selectedValue = _xmlCB.Table[0].TIPO;
 			activa.selectedValue = _xmlCB.Table[0].ACTIVO;
 		}
@@ -344,7 +350,7 @@
 		<mx:TextInput id="txtCodSB" x="124.5" y="37" width="50" editable="false"/>
 		<mx:TextInput id="txtSB" x="182.5" y="37" width="252" editable="false"/>
 	</mx:Canvas>
-	<mx:Canvas x="20" y="87" width="460" height="320" styleName="canvasMod" id="canvas3">
+	<mx:Canvas x="20" y="87" width="460" height="355" styleName="canvasMod" id="canvas3">
 		<mx:Label id="lblCantidad" x="55.5" y="225" text="A favor de:" textAlign="right"/>
 		<mx:Label id="lblAlias" x="83" y="133" text="Alias:" textAlign="right"/>
 		<mx:Label id="lblOtor" x="78.5" y="195" text="Titular:" textAlign="right"/>
@@ -365,20 +371,21 @@
 		<mx:TextInput id="txtFavor" x="123.5" y="224" width="279.5"/>
 		<mx:TextInput id="txtSaldo" x="123.5" y="254" width="90" maxChars="18" restrict="0-9;.;," focusOut="{global.formatearMonto(event)}"/>
 		<Data:CustomComboBox id="cboMoneda" x="123.5" y="284" width="230" labelField="nombre"/>
+		<mx:CheckBox id="chkEdoCta" label="Estado Cuenta" x="123.5" y="316"/>
 	</mx:Canvas>
-	<mx:Canvas x="98.85" y="439" width="170" height="66" styleName="canvasMod" id="canvas1">
+	<mx:Canvas x="98.85" y="470" width="170" height="66" styleName="canvasMod" id="canvas1">
 		<mx:RadioButtonGroup id="tipo"/>
 		<mx:RadioButton id="rdbDeposito" x="46" y="0" label="Receptora" groupName="tipo" value="D" width="90" selected="true"/>
 		<mx:RadioButton id="rdbPagadora" label="Dispersora" x="46" y="20" groupName="tipo" value="P" width="90"/>
 		<mx:RadioButton id="rdbAmbas" x="46" y="41" label="Ambas" groupName="tipo" value="A" width="76"/>
 	</mx:Canvas>
-	<mx:Label id="lblUsoCta" x="99.35" y="420" text="Uso de la Cuenta"/>
-	<mx:Canvas x="286.85" y="439" width="110.25" height="66" styleName="canvasMod" id="canvas2">
+	<mx:Label id="lblUsoCta" x="99.35" y="451" text="Uso de la Cuenta"/>
+	<mx:Canvas x="286.85" y="470" width="110.25" height="66" styleName="canvasMod" id="canvas2">
 		<mx:RadioButtonGroup id="activa"/>
 		<mx:RadioButton id="rdbSi" x="35.6" y="6" label="Si" groupName="activa" value="S" width="60" selected="true"/>
 		<mx:RadioButton id="rdbNo" x="35.6" y="30" groupName="activa" value="N" width="60" label="No"/>
 	</mx:Canvas>
-	<mx:Label  id="lblEstatusCta" x="287.35" y="420" text="Activa"/>
-	<mx:Button id="btnAceptar" x="201" y="513" width="40" icon="@Embed(source='assets/button_ok.png')" click="enviar()"/>
-	<mx:Button id="btnCancelar" x="255" y="513" width="40" icon="@Embed(source='assets/Icon-Delete.png')" click="cerrar()"/>
+	<mx:Label  id="lblEstatusCta" x="287.35" y="451" text="Activa"/>
+	<mx:Button id="btnAceptar" x="201" y="544" width="40" icon="@Embed(source='assets/button_ok.png')" click="enviar()"/>
+	<mx:Button id="btnCancelar" x="255" y="544" width="40" icon="@Embed(source='assets/Icon-Delete.png')" click="cerrar()"/>
 </mx:TitleWindow>

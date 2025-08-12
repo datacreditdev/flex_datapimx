@@ -141,19 +141,19 @@
 		<mx:Label x="18" y="34" text="Criterios de Selección" width="124.25"/>
 		<mx:DataGrid id="dgReporte" x="18.45" y="218" width="763.05" visible="true" height="165" horizontalScrollPolicy="auto">
 			<mx:columns>
-				<mx:DataGridColumn headerText="FECHA" dataField="FECHA" width="90"/>
-				<mx:DataGridColumn headerText="REFERENCIA" dataField="REFERENCIA"/>
-				<mx:DataGridColumn headerText="CANTIDAD" dataField="CANTIDAD" width="70" labelFunction="formatearMontoGrid"/>
-				<mx:DataGridColumn headerText="BANCO" dataField="BANCO"/>
-				<mx:DataGridColumn headerText="COD CUENTA" dataField="CDGCB" width="90"/>
-				<mx:DataGridColumn headerText="CUENTA" dataField="CUENTA" width="80"/>
+				<mx:DataGridColumn headerText="FECHA" dataField="FECHA" width="80"/>
+				<mx:DataGridColumn headerText="REFERENCIA" dataField="REFERENCIA" width="110"/>
+				<mx:DataGridColumn headerText="CANTIDAD" dataField="CANTIDAD" width="110" labelFunction="formatearMontoGrid"/>
+				<mx:DataGridColumn headerText="BANCO" dataField="BANCO" width="110"/>
+				<!--<mx:DataGridColumn headerText="COD CUENTA" dataField="CDGCB" width="90"/>-->
+				<mx:DataGridColumn headerText="CUENTA" dataField="CUENTA" width="110"/>
 				<mx:DataGridColumn headerText="DESCRIPCION" dataField="DESCRIPCION" width="200"/>
 				<mx:DataGridColumn headerText="SECUENCIA" dataField="SECUENCIA" width="80"/>
-				<mx:DataGridColumn headerText="GRUPO" dataField="CDGCLNS" width="50"/>
-				<mx:DataGridColumn headerText="NOMBRE GRUPO" dataField="NOMCLNS" width="150"/>
-				<mx:DataGridColumn headerText="CICLO" dataField="CICLO" width="50"/>
-				<mx:DataGridColumn headerText="IDENTIFICO" dataField="CDGPE_IDEN" width="75"/>
-				<mx:DataGridColumn headerText="NOMBRE IDENTIFICO" dataField="NOMPE_IDEN" width="220"/>
+				<mx:DataGridColumn headerText="CODIGO" dataField="CDGCLNS" width="60"/>
+				<mx:DataGridColumn headerText="ACREDITADO" dataField="NOMCLNS" width="200"/>
+				<mx:DataGridColumn headerText="CICLO" dataField="CICLO" width="60"/>
+				<!--<mx:DataGridColumn headerText="IDENTIFICO" dataField="CDGPE_IDEN" width="80"/>-->
+				<mx:DataGridColumn headerText="NOMBRE IDENTIFICO" dataField="NOMPE_IDEN" width="200"/>
 				<mx:DataGridColumn headerText="FEC IDENTIFICO" dataField="FECHAIDEN" width="100"/>
 			</mx:columns>
 		</mx:DataGrid>

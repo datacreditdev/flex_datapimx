@@ -5,20 +5,19 @@
 	
 	<mx:Script>
 		<![CDATA[
-			import mx.controls.DataGrid;
 			import Data.ExcelExportXls;
 			import Data.Globales;
 			import Data.Utils;
 			import mx.collections.ArrayCollection;
 			import mx.core.Application;
 			import mx.containers.TitleWindow;		
+			import mx.controls.DataGrid;
 			import mx.managers.PopUpManager;
-			import mx.formatters.NumberFormatter;
 			import mx.controls.Alert;
 			import mx.effects.easing.Elastic;
 			import mx.rpc.soap.WebService;
-			import mx.rpc.events.ResultEvent;
 			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
 			import mx.utils.ObjectUtil;
 			
 			private var _xmlRep:XML = new XML();
@@ -53,7 +52,6 @@
 					du.sCursor();
 					
 					tipo = int(tipoPago.selectedValue);
-					tipoFecha = int(cboFecha.selectedItem.value);
 							
 					du.ejecutaWsMethod(wsRep,function(evt:ResultEvent):void {											
 						_xmlRep = new XML(evt.result.toString());
@@ -65,7 +63,6 @@
 						btnExportar.enabled = false;
 													
 						if(_xmlRep.elements().length() > 0){
-							var i:int;
 							var cantidad:Number = 0;
 							var registro:Number = 0;
 							var cont:int = _xmlRep.elements().length();
@@ -125,7 +122,6 @@
 				fec = global.obtenerFechaSistema();
 				dtfFecha.selectedDate = global.seleccionarDiaHabil(new Date(fec.fullYear,fec.month,fec.date - 1));
 				dtfFechaFinal.selectedDate = global.seleccionarDiaHabil(new Date(fec.fullYear,fec.month,fec.date - 1));
-				cboFecha.selectedIndex = 0;
 				tipoPago.selection = null;
 			}
 				
@@ -152,10 +148,6 @@
 					du.mostrarMensaje("Seleccione el tipo de Depósito Identificado.",titulo,4,null,null,global.iAlert);
 					return false;
 				}
-				if(cboFecha.selectedIndex == 0){
-					du.mostrarMensaje("Seleccione el tipo de Fecha del Reporte.",titulo,4,null,null,global.iAlert);
-					return false;
-				}
 				return true;
 			}
 			
@@ -165,51 +157,42 @@
 			}
 		]]>
 	</mx:Script>
-	<mx:Label id="lblTitulo" x="18" y="10" width="247" fontSize="12" fontWeight="bold" fontStyle="italic"/>
-	<mx:Canvas x="17.95" y="53.5" width="440.05" height="128.5" styleName="canvasMod">
+	<mx:Label id="lblTitulo" x="18" y="10" width="265" fontSize="12" fontWeight="bold" fontStyle="italic"/>
+	<mx:Canvas x="17.95" y="53.5" width="265.05" height="128.5" styleName="canvasMod">
 		<mx:Label x="10" y="10" text="Fecha Inicial" width="81" height="20"/>
 		<mx:Label x="141.05" y="10" text="Fecha Final" width="81" height="20"/>
 		<mx:DateField id="dtfFecha" x="10" y="28.5" width="111" change="validaFecha()"/>
 		<mx:DateField id="dtfFechaFinal" x="141.05" y="28.5" width="111" change="validaFecha()"/>
-		<mx:Label x="10" y="60.5" text="Tipo" width="81" height="20"/>
-		<mx:Canvas x="10" y="80.5" width="403.05" height="30" styleName="canvasMod">
+		<mx:Label x="51.5" y="58.5" text="Tipo" height="20"/>
+		<mx:Canvas x="51.5" y="78.5" width="160.04999" height="30" styleName="canvasMod">
 			<mx:RadioButtonGroup id="tipoPago"/>
 			<mx:RadioButton id="rdbPago" x="22.5" y="2" label="Pago" groupName="tipoPago" value="1"/>
 			<mx:RadioButton id="rdbGarantia" x="76.5" y="2" label="Garantía" groupName="tipoPago" value="2"/>
-			<mx:RadioButton id="rdbPagoGtia" x="150.55" y="2" label="Pago y Garantía" groupName="tipoPago" value="3"/>
-			<mx:RadioButton id="rdbTransGLCart" x="257.55" y="2" label="Trans. GL a Cartera" groupName="tipoPago" value="4"/>
 			<!--<mx:RadioButton id="rdbTransCartGL" x="373.05" y="2" label="Trans. Cartera a GL" groupName="tipoPago" value="5"/>-->
 		</mx:Canvas>
-		<mx:ComboBox id="cboFecha" x="273" y="27.5" width="140.05">
-			<mx:dataProvider>
-				<mx:Object label="--Seleccionar--" value="0"/>
-				<mx:Object label="Fecha Operación" value="1"/>	
-	    		<mx:Object label="Fecha Valor" value="2"/>
-			</mx:dataProvider>
-		</mx:ComboBox>
-		<mx:Label x="273" y="10" text="Fecha de Consulta" width="117.05" height="20"/>
 	</mx:Canvas>
 	<mx:Button x="71.25" y="190" label="Generar" click="generar()"/>
 	<mx:Button x="150.25" y="190" label="Limpiar" width="71" height="24" click="limpiar()"/>
 	<mx:Label x="18" y="34" text="Criterios de Selección" width="124.25"/>
 	<Data:RowColorDataGrid id="dgReporte" sortableColumns="false" x="17.95" y="222" width="763.05" visible="true" height="165" horizontalScrollPolicy="on">
 		<Data:columns>
-			<mx:DataGridColumn headerText="FECHA VALOR" dataField="FECHA"/>
-			<mx:DataGridColumn headerText="FEC OPERACION" dataField="FECHA_OPERA"/>
-			<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO"/>
-			<mx:DataGridColumn headerText="GRUPO" dataField="GRUPO"/>
-			<mx:DataGridColumn headerText="CICLO" dataField="CICLO"/>
-			<mx:DataGridColumn headerText="REFERENCIA" dataField="REFERENCIA"/>
-			<mx:DataGridColumn headerText="CANTIDAD" dataField="CANTIDAD" labelFunction="formatearMontoGrid"/>
-			<mx:DataGridColumn headerText="CAPITAL" dataField="CAPITAL" labelFunction="formatearMontoGrid"/>
-			<mx:DataGridColumn headerText="INTERES" dataField="INTERES" labelFunction="formatearMontoGrid"/>
-			<mx:DataGridColumn headerText="RECARGOS" dataField="RECARGOS" labelFunction="formatearMontoGrid"/>
-			<mx:DataGridColumn headerText="BANCO" dataField="BANCO"/>
+			<mx:DataGridColumn headerText="FECHA" dataField="FECHA" width="80"/>
+			<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO" width="60"/>
+			<mx:DataGridColumn headerText="ACREDITADO" dataField="NOM_ACRED" width="200"/>
+			<mx:DataGridColumn headerText="CICLO" dataField="CICLO" width="60"/>
+			<mx:DataGridColumn headerText="REFERENCIA" dataField="REFERENCIA" width="110"/>
+			<mx:DataGridColumn headerText="CANTIDAD" dataField="CANTIDAD" width="110" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="CAPITAL" dataField="CAPITAL" width="110" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="INTERES" dataField="INTERES" width="110" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="RECARGOS" dataField="RECARGOS" width="110" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="COMISION" dataField="COMISION" width="110" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="SEGURO" dataField="SEGURO" width="110" labelFunction="formatearMontoGrid"/>
+			<mx:DataGridColumn headerText="BANCO" dataField="BANCO" width="110"/>
 			<!--<mx:DataGridColumn headerText="CDGCB" dataField="CDGCB"/>-->
-			<mx:DataGridColumn headerText="CUENTA" dataField="CUENTA"/>
-			<mx:DataGridColumn headerText="USUARIO" dataField="USUARIO"/>
-			<mx:DataGridColumn headerText="ASESOR" dataField="ASESOR"/>
-			<mx:DataGridColumn headerText="NOMBRE ASESOR" dataField="NOMASESOR"/>
+			<mx:DataGridColumn headerText="CUENTA" dataField="CUENTA" width="110"/>
+			<mx:DataGridColumn headerText="USUARIO" dataField="USUARIO" width="200"/>
+			<!--<mx:DataGridColumn headerText="ASESOR" dataField="ASESOR"/>-->
+			<mx:DataGridColumn headerText="ASESOR" dataField="NOMASESOR" width="200"/>
 			<!--<mx:DataGridColumn headerText="SECUENCIA" dataField="SECUENCIA"/>-->
 		</Data:columns>
 	</Data:RowColorDataGrid>
