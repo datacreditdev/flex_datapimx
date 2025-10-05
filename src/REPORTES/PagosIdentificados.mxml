@@ -80,8 +80,8 @@
 								etiqueta = " Depósitos Identificados de Transferencia de GL a Cartera $";
 							else if(tipo == 5)
 								etiqueta = " Depósitos Identificados de Transferencia de Cartera a GL $";					
-							lblTotal.text = registro + etiqueta + global.formatearEntero(cantidad.toString());
-							//delete _xmlRep.dtPagos[cont-1];
+							//lblTotal.text = registro + etiqueta + global.formatearEntero(cantidad.toString());
+							lblTotal.text = etiqueta + global.formatearEntero(cantidad.toString());
 							dgReporte.dataProvider = _xmlRep.dtPagos;
 							fecIni = dtfFecha.text;
 							fecFin = dtfFechaFinal.text;
@@ -176,9 +176,9 @@
 	<mx:Label x="18" y="34" text="Criterios de Selección" width="124.25"/>
 	<Data:RowColorDataGrid id="dgReporte" sortableColumns="false" x="17.95" y="222" width="763.05" visible="true" height="165" horizontalScrollPolicy="on">
 		<Data:columns>
-			<mx:DataGridColumn headerText="FECHA" dataField="FECHA" width="80"/>
+			<mx:DataGridColumn headerText="FECHA" dataField="FECHA" width="70"/>
 			<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO" width="60"/>
-			<mx:DataGridColumn headerText="ACREDITADO" dataField="NOM_ACRED" width="200"/>
+			<mx:DataGridColumn headerText="ACREDITADO" dataField="NOMBRE" width="200"/>
 			<mx:DataGridColumn headerText="CICLO" dataField="CICLO" width="60"/>
 			<mx:DataGridColumn headerText="REFERENCIA" dataField="REFERENCIA" width="110"/>
 			<mx:DataGridColumn headerText="CANTIDAD" dataField="CANTIDAD" width="110" labelFunction="formatearMontoGrid"/>

@@ -23,12 +23,10 @@
 			import mx.rpc.events.ResultEvent;
 			import mx.rpc.Fault;
 			import mx.rpc.soap.WebService;
-			import mx.rpc.xml.SimpleXMLDecoder;
 			import mx.utils.ArrayUtil;  
 			          
 			public var _xmlInfo:XML = new XML();
 			
-			private var wsMS:WebService;	
 			private var titulo:String;
 			private var codigo:String;
 			private var tipoCred:String;
@@ -41,6 +39,7 @@
 			public function buscarInfo():void{
 				var wsCat:WebService = new WebService;
 				var params:Array = new Array;
+				
 				if (txtCodigo.text != "" && txtCiclo.text != ""){
 					codigo = txtCodigo.text;
 					ciclo = txtCiclo.text;
@@ -82,13 +81,14 @@
 			
 			public function enviar():void{
 				if(valida()){
+					var wsMS:WebService = new WebService;
 					var interes:Number;
 					var fecha:String;
 					
 					interes = Number((txtInteres.text == "" ? "0": txtInteres.text));
 					fecha = dtfFecha.text;
 					
-					initConexion();
+					du.initWsMS(wsMS);
 					du.sCursor();
 							
 					du.ejecutaWsMethod(wsMS,function(evt:ResultEvent):void {																				
@@ -121,12 +121,6 @@
 				lblTitulo.text = titulo.toUpperCase();
 				limpiar();
 			}
-			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}			
 			
 			private function limpiar():void{
 				var fec:Date = global.obtenerFechaSistema();

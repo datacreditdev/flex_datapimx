@@ -27,7 +27,6 @@
 			private var _xmlRep:XML =  new XML();
 			private var repObj:ArrayCollection;
 			
-			public var wsRep:WebService;
 			public var titulo:String;
 			public var fecha:String;
 			public var fechaFin:String;
@@ -54,10 +53,11 @@
 			}
 					
 			public function generar(event:Event):void{
+				var wsRep:WebService = new WebService;
 				var obj:FiltroRepPrestamos = event.target as FiltroRepPrestamos;
-				if(obj.valida() == true){				
-			
-					initConexion();
+				
+				if(obj.valida()){		
+					du.initWsRep(wsRep);
 					du.sCursor();
 							
 					du.ejecutaWsMethod(wsRep,function(evt:ResultEvent):void {											
@@ -82,12 +82,6 @@
 										      obj.cboSucursal.selectedItem.codigo, obj.cboAsesor.selectedItem.codigo);	
 				}
 			}
-			
-			public function initConexion():void{				
-				wsRep = new WebService();			
-				wsRep.wsdl = Application.application.wsStr.wsdlRep.toString();
-				wsRep.loadWSDL();
-			}	
 		]]>
 	</mx:Script>
 	<mx:DataGrid id="dgReporte" dataProvider="{_xmlRep.dtPrestamos}" x="18" y="52" width="860.5" visible="false" 
@@ -101,7 +95,7 @@
 				<mx:DataGridColumn headerText="PERIODICIDAD" dataField="PERIODICIDAD"/>
 				<mx:DataGridColumn headerText="FIN CICLO" dataField="FIN"/>
 				<mx:DataGridColumn headerText="TASA" dataField="TASA"/>
-				<mx:DataGridColumn headerText="PARCIALIDAD" dataField="PARCIALIDAD" labelFunction="formatearMontoGrid"/>
+				<!--<mx:DataGridColumn headerText="PARCIALIDAD" dataField="PARCIALIDAD" labelFunction="formatearMontoGrid"/>-->
 				<mx:DataGridColumn headerText="SITUACION" dataField="SITUACION"/>
 				<mx:DataGridColumn headerText="CANT AUTORIZADA" dataField="CANT_AUTOR" labelFunction="formatearMontoGrid"/>
 				<mx:DataGridColumn headerText="CANT ENTREGADA" dataField="CANT_ENTRE" labelFunction="formatearMontoGrid"/>
@@ -123,22 +117,21 @@
 				<!--<mx:DataGridColumn headerText="COD SUCURSAL" dataField="COD_SUCURSAL"/>-->
 				<mx:DataGridColumn headerText="OFICINA" dataField="SUCURSAL"/>
 				<!--<mx:DataGridColumn headerText="COD COORDINADOR" dataField="COD_COORD"/>-->
-				<mx:DataGridColumn headerText="COORDINADOR" dataField="COORDINADOR"/>
+				<!--<mx:DataGridColumn headerText="COORDINADOR" dataField="COORDINADOR"/>
 				<mx:DataGridColumn headerText="MUJERES CON PRESTAMO" dataField="MUJERES"/>
-				<mx:DataGridColumn headerText="HOMBRES CON PRESTAMO" dataField="HOMBRES"/>
+				<mx:DataGridColumn headerText="HOMBRES CON PRESTAMO" dataField="HOMBRES"/>-->
 				<mx:DataGridColumn headerText="REFERENCIA" dataField="REFERENCIA"/>
-				<mx:DataGridColumn headerText="REFERENCIA GL" dataField="REFERENCIAGL"/>
-				<mx:DataGridColumn headerText="SALDO GL" dataField="SDO_GL" labelFunction="formatearMontoGrid"/>
+				<!--<mx:DataGridColumn headerText="REFERENCIA GL" dataField="REFERENCIAGL"/>
+				<mx:DataGridColumn headerText="SALDO GL" dataField="SDO_GL" labelFunction="formatearMontoGrid"/>-->
 				<mx:DataGridColumn headerText="MORA TOTAL" dataField="MORA_TOTAL" labelFunction="formatearMontoGrid"/>
 				<mx:DataGridColumn headerText="MORA CAPITAL" dataField="MORA_CAPITAL" labelFunction="formatearMontoGrid"/>
 				<mx:DataGridColumn headerText="MORA INTERES" dataField="MORA_INTERES" labelFunction="formatearMontoGrid"/>
 				<mx:DataGridColumn headerText="DIAS MORA" dataField="DIAS_MORA"/>
 				<mx:DataGridColumn headerText="RECARGOS" dataField="RECARGOS" labelFunction="formatearMontoGrid"/>	
-				<mx:DataGridColumn headerText="TIPO PRODUCTO" dataField="NOMTPC"/>
-				<mx:DataGridColumn headerText="PRODUCTO CREDITO" dataField="NOMPCR"/>		
+				<!--<mx:DataGridColumn headerText="TIPO PRODUCTO" dataField="NOMTPC"/>
+				<mx:DataGridColumn headerText="PRODUCTO CREDITO" dataField="NOMPCR"/>-->		
 			</mx:columns>
 		</mx:DataGrid>
-	
 	<control:FiltroRepPrestamos id="comFiltroRepPrestamos"/>
 	<mx:Button id="btnExportar" x="775.5" y="20" label="Exportar Excel" enabled="false" click="exportar()"/>
 	<mx:Label id="lblTitulo" x="18" y="10" width="470.5" fontSize="12" fontWeight="bold" fontStyle="italic"/>

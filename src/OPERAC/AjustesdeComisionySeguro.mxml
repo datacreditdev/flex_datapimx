@@ -28,9 +28,8 @@
 			public var _xmlInfo:XML = new XML();
 			public var _xmlJust:XML = new XML();
 			
-			public var wsMS:WebService;
-			private var global:Globales;
 			private var du:Utils;
+			private var global:Globales;
 			private var titulo:String;
 			private var saldoCom:Number;
 			private var saldoSeg:Number;
@@ -91,6 +90,7 @@
 			
 			public function enviar():void{
 				if(valida()){
+					var wsMS:WebService = new WebService;
 					var comision:Number;
 					var seguro:Number;
 					var fecha:String;
@@ -103,7 +103,7 @@
 					justifica = cboJustifica.selectedItem.id;
 					observaciones = txtObs.text;
 					
-					initConexion();
+					du.initWsMS(wsMS);
 					du.sCursor();
 							
 					du.ejecutaWsMethod(wsMS,function(evt:ResultEvent):void {																				
@@ -183,13 +183,7 @@
 				wsCat.getCatalogoGral.send(21, params);
 			}
 			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}			
-			
-			public function limpiar():void{
+			private function limpiar():void{
 				saldoCom = 0;
 				saldoSeg = 0;
 				txtCodigo.text = "";

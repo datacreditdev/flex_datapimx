@@ -31,11 +31,11 @@
 			import mx.utils.ObjectUtil;
 			
 			[Bindable]
-			private var _xmlReg:XML =  new XML();
+			private var _xmlReg:XML = new XML();
 			[Bindable]
 			private var _xmlCoord:XMLList = new XMLList;
 			[Bindable]
-			private var _xmlAsesor:XML =  new XML();
+			private var _xmlAsesor:XML = new XML();
 			
 			public var regObj:ArrayCollection = new ArrayCollection();
 			public var coordObj:ArrayCollection = new ArrayCollection();
@@ -123,7 +123,7 @@
 				for(var i:int = 0; i < cont; i++){
 					oItem = new Object();
 					oItem.codigo = _xmlAsesor.Table[i].CODIGO;
-					oItem.nombre = _xmlAsesor.Table[i].NOMBREC;
+					oItem.nombre = _xmlAsesor.Table[i].NOMBRE;
 					asesorObj.addItem(oItem);
 				}
 			}			
@@ -170,6 +170,9 @@
 			}
 						
 			public function init(rep:String, titulo:String, estado:String):void{
+				global = new Globales();
+				du = new Utils();
+				
 				this.rep = rep;
 				this.titulo = titulo;
 				lblTitulo.text = titulo.toUpperCase();
@@ -178,16 +181,8 @@
 			}		
 						
 			public function initApp():void{
-				global = new Globales();
-				du = new Utils();
 			}		
 			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}	
-		
 			public function limpiar():void{
 				var fec:Date;
 				cboRegion.enabled = true;

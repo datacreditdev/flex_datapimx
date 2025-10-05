@@ -348,6 +348,7 @@
 				info.devolucion = _xmlPrn.Table[0].CANTDEVOL;
 				info.devoluciones = _xmlPrn.Table[0].SUMADEV;
 				info.moneda = _xmlPrn.Table[0].CDGMO;
+				info.contrato = _xmlPrn.Table[0].CONTRATO;
 				info.naturaleza = _xmlPrn.Table[0].NATURALEZA;
 				
 				//Datos del calendario de la solicitud
@@ -365,6 +366,7 @@
 				info.formaDist = _xmlPrn.Table[0].CDGFDI;
 				info.instrumento = _xmlPrn.Table[0].CDGTI;
 				info.interes = _xmlPrn.Table[0].TASA;
+				info.cat = _xmlPrn.Table[0].CAT;
 				
 				//Datos de recargos de la solicitud
 				info.aplican = _xmlPrn.Table[0].MODOAPLIRECA;

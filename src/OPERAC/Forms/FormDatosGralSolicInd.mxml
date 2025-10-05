@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="750" height="180" creationPolicy="all">
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="750" height="200" creationPolicy="all">
 	<mx:Metadata>
 		[Event(name="enviarDatosSolic", type="Data.EventSolic")]
 	</mx:Metadata>
@@ -69,6 +69,7 @@
 					formData.fecEntre = dtfEntrega.text;	
 					formData.situacion = situacion.selectedValue.toString();				
 					formData.moneda = cboMoneda.selectedItem.id;
+					formData.contrato = txtContrato.text;
 					formData.solicitado = Number(global.formatearNumerico(txtSolicitado.text));
 					formData.autorizado = Number(global.formatearNumerico(txtAutorizado.text));
 					formData.naturaleza = naturaleza.selectedValue.toString();
@@ -165,6 +166,7 @@
 									break;	
 								}
 							}
+							txtContrato.text = info.contrato;
 						}	
 						else{
 							fec = global.obtenerFechaSistema();
@@ -224,24 +226,21 @@
 			}
 	]]>
 	</mx:Script>
-	<mx:Canvas id="cnvFecSolic" x="45" y="29" width="267" height="71" styleName="canvasMod">
-		<mx:FormItem id="fechaSolic" label="Fecha de Solicitud" x="21.5" y="7" width="222">
+	<mx:Canvas id="cnvFecSolic" x="45" y="29" width="267" height="88" styleName="canvasMod">
+		<mx:FormItem id="fechaSolic" label="Fecha de Solicitud" x="21.5" y="17" width="222">
 			<mx:DateField id="dtfSolicitud" x="86.5" y="10" width="109" change="validaSolicitud()"/>
 		</mx:FormItem>
-		<mx:FormItem id="fechaEntre" label="Fecha de Entrega" x="24.5" y="38" width="222">
+		<mx:FormItem id="fechaEntre" label="Fecha de Entrega" x="24.5" y="48" width="222">
 			<mx:DateField id="dtfEntrega" x="86.5" y="10" width="109" change="validaEntrega()" disabledDays="{[0,6]}"/>
 		</mx:FormItem>
 	</mx:Canvas>
-	<mx:Canvas id="cnvSituacion" x="320" y="29" width="180" height="71" styleName="canvasMod">
+	<mx:Canvas id="cnvSituacion" x="320" y="29" width="180" height="88" styleName="canvasMod">
 		<mx:RadioButtonGroup id="situacion" itemClick="validaSituacion()"/>
-		<mx:RadioButton id="rdbRechazado" x="49" label="Rechazado" groupName="situacion" value="R" y="21" change="modificaAutorizado(event)"/>
-		<mx:RadioButton id="rdbSolicitado" x="49" y="0" label="Solicitado" groupName="situacion" value="S" width="78" change="modificaAutorizado(event)"/>
-		<mx:RadioButton id="rdbAutorizado" x="49" y="44" label="Autorizado" groupName="situacion" value="A" change="modificaAutorizado(event)"/>	
+		<mx:RadioButton id="rdbRechazado" x="49" label="Rechazado" groupName="situacion" value="R" y="30" change="modificaAutorizado(event)"/>
+		<mx:RadioButton id="rdbSolicitado" x="49" y="8" label="Solicitado" groupName="situacion" value="S" width="78" change="modificaAutorizado(event)"/>
+		<mx:RadioButton id="rdbAutorizado" x="49" y="52" label="Autorizado" groupName="situacion" value="A" change="modificaAutorizado(event)"/>	
 	</mx:Canvas>
-	<mx:Canvas id="cnvMoneda" x="508" y="29" width="200" height="71" styleName="canvasMod">
-		<mx:ComboBox id="cboMoneda" x="19" y="24" labelField="nombre"/>
-	</mx:Canvas>
-	<mx:Canvas id="cnvMonto" x="44" y="125" width="362" height="40" styleName="canvasMod" enabled="true">
+	<mx:Canvas id="cnvMonto" x="44" y="142" width="362" height="40" styleName="canvasMod" enabled="true">
 		<mx:FormItem id="solicitado" label="Solicitado:" x="10" y="8" width="160">
 			<mx:TextInput id="txtSolicitado" width="90" restrict="0-9;.;," maxChars="18" focusOut="{global.formatearMonto(event)}"/>
 		</mx:FormItem>
@@ -250,12 +249,18 @@
 		</mx:FormItem>
 	</mx:Canvas>
 	<mx:Label x="320" y="10" text="Situación"/>
-	<mx:Label x="508" y="10" text="Moneda"/>
-	<mx:Label x="44" y="106" text="Montos"/>
-	<mx:Canvas id="cnvNat" x="414" y="125" width="294" height="40" styleName="canvasMod" enabled="true">
+	<mx:Label x="44" y="123" text="Montos"/>
+	<mx:Canvas id="cnvNat" x="414" y="142" width="294" height="40" styleName="canvasMod" enabled="true">
 		<mx:RadioButtonGroup id="naturaleza"/> 
 		<mx:RadioButton id="rdbActivo" label="Activo" value="A" groupName="naturaleza" x="75" y="7"/>
 		<mx:RadioButton id="rdbPasivo" label="Pasivo" value="P" groupName="naturaleza" x="160" y="7"/>
 	</mx:Canvas>
-	<mx:Label x="414" y="106" text="Naturaleza"/>
+	<mx:Label x="414" y="123" text="Naturaleza"/>
+	<mx:Canvas id="cnvMoneda" x="508" y="29" width="210" height="88" styleName="canvasMod">
+		<mx:ComboBox id="cboMoneda" x="19" y="19" labelField="nombre" width="175"/>
+		<mx:Label x="19" y="0" text="Moneda"/>
+		<mx:FormItem id="contrato" label="Contrato:" x="19" y="54" width="175">
+			<mx:TextInput id="txtContrato" width="105" maxChars="18"/>
+		</mx:FormItem>
+	</mx:Canvas>
 </mx:Canvas>

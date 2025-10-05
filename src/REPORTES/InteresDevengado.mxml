@@ -214,18 +214,18 @@
 		<mx:DataGrid id="dgReporte" x="18.45" y="218" width="763.05" visible="true" height="165" horizontalScrollPolicy="auto">
 			<mx:columns>
 				<mx:DataGridColumn headerText="CODIGO" dataField="CODIGO" width="70"/>
-				<mx:DataGridColumn headerText="NOMBRE" dataField="NOMBRE" width="150"/>
+				<mx:DataGridColumn headerText="NOMBRE" dataField="NOMBRE" width="200"/>
 				<mx:DataGridColumn headerText="CICLO" dataField="CICLO" width="60"/>
 				<!--<mx:DataGridColumn headerText="ASESOR" dataField="COD_ASESOR" width="80"/>-->
-				<mx:DataGridColumn headerText="NOMBRE ASESOR" dataField="ASESOR" width="180"/>
-				<mx:DataGridColumn headerText="INICIO" dataField="FINICIO" width="80"/>
-				<mx:DataGridColumn headerText="CANT ENTREGADA" dataField="CANTIDAD_ENTREGADA" width="120" labelFunction="formatearMontoGrid"/>
-				<mx:DataGridColumn headerText="TOTAL" dataField="TOTAL_A_PAGAR" width="80" labelFunction="formatearMontoGrid"/>
+				<mx:DataGridColumn headerText="ASESOR" dataField="ASESOR" width="200"/>
+				<mx:DataGridColumn headerText="INICIO" dataField="FINICIO" width="70"/>
+				<mx:DataGridColumn headerText="CANT ENTREGADA" dataField="CANTIDAD_ENTREGADA" width="130" labelFunction="formatearMontoGrid"/>
+				<mx:DataGridColumn headerText="TOTAL" dataField="TOTAL_A_PAGAR" width="110" labelFunction="formatearMontoGrid"/>
 				<mx:DataGridColumn headerText="DEVENGO DEL PERIODO" dataField="DEV_DEL_MES" width="150" labelFunction="formatearMontoGrid"/>
 				<mx:DataGridColumn headerText="DEVENGO PERIODO SIN IVA" dataField="DEV_MES_SIN_IVA" width="170" labelFunction="formatearMontoGrid"/>
-				<mx:DataGridColumn headerText="IVA INTERES" dataField="IVA_INT_MES" width="90" labelFunction="formatearMontoGrid"/>
+				<mx:DataGridColumn headerText="IVA INTERES" dataField="IVA_INT_MES" width="110" labelFunction="formatearMontoGrid"/>
 				<mx:DataGridColumn headerText="PORCENTAJE IVA" dataField="IVA" width="110"/>
-				<mx:DataGridColumn headerText="DIAS DEVENGADOS" dataField="DIAS_DEV" width="110"/>
+				<mx:DataGridColumn headerText="DIAS DEVENGADOS" dataField="DIAS_DEV" width="130"/>
 			</mx:columns>
 		</mx:DataGrid>
 		<mx:Button id="btnExportar" x="678.5" y="182" label="Exportar Excel" click="exportar()" enabled="false"/>

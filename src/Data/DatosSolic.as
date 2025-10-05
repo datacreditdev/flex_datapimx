@@ -21,6 +21,7 @@ package Data
 		public var fecEntre:String;
 		public var situacion:String;
 		public var moneda:String;
+		public var contrato:String;
 		public var solicitado:Number;
 		public var autorizado:Number;
 		public var proyecto:String;
@@ -52,6 +53,7 @@ package Data
 		public var formaDist:String;
 		public var instrumento:String;
 		public var interes:Number;
+		public var cat:Number;
 		public var guardaTasas:Boolean;
 		
 		/*Variables que hacen referencia a los Recargos de la Solicitud*/
@@ -137,6 +139,5 @@ package Data
 		public function DatosSolic()
 		{
 		}
-
 	}
 }

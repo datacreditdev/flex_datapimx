@@ -23,13 +23,11 @@
 			import mx.rpc.events.ResultEvent;
 			import mx.rpc.Fault;
 			import mx.rpc.soap.WebService;
-			import mx.rpc.xml.SimpleXMLDecoder;
 			import mx.utils.ArrayUtil;  
 			          
 			public var _xmlInfo:XML = new XML();
 			public var _xmlJust:XML = new XML();
 			
-			private var wsMS:WebService;	
 			private var titulo:String;
 			private var codigo:String;
 			private var tipoCred:String;
@@ -103,6 +101,7 @@
 			
 			public function enviar():void{
 				if(valida()){
+					var wsMS:WebService = new WebService;
 					var capital:Number;
 					var interes:Number;
 					var moratorios:Number;
@@ -117,7 +116,7 @@
 					justifica = cboJustifica.selectedItem.id;
 					observaciones = txtObs.text;
 					
-					initConexion();
+					du.initWsMS(wsMS);
 					du.sCursor();
 							
 					du.ejecutaWsMethod(wsMS,function(evt:ResultEvent):void {																				
@@ -196,12 +195,6 @@
 				//Obtiene Justificaciones de Ajuste
 				wsCat.getCatalogoGral.send(21, params);
 			}
-			
-			public function initConexion():void{				
-				wsMS = new WebService();			
-				wsMS.wsdl = Application.application.wsStr.wsdlServ.toString();
-				wsMS.loadWSDL();
-			}			
 			
 			private function limpiar():void{
 				var fec:Date = global.obtenerFechaSistema();
