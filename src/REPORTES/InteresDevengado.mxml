@@ -220,7 +220,7 @@
 				<mx:DataGridColumn headerText="ASESOR" dataField="ASESOR" width="200"/>
 				<mx:DataGridColumn headerText="INICIO" dataField="FINICIO" width="70"/>
 				<mx:DataGridColumn headerText="CANT ENTREGADA" dataField="CANTIDAD_ENTREGADA" width="130" labelFunction="formatearMontoGrid"/>
-				<mx:DataGridColumn headerText="TOTAL" dataField="TOTAL_A_PAGAR" width="110" labelFunction="formatearMontoGrid"/>
+				<!--<mx:DataGridColumn headerText="TOTAL" dataField="TOTAL_A_PAGAR" width="110" labelFunction="formatearMontoGrid"/>-->
 				<mx:DataGridColumn headerText="DEVENGO DEL PERIODO" dataField="DEV_DEL_MES" width="150" labelFunction="formatearMontoGrid"/>
 				<mx:DataGridColumn headerText="DEVENGO PERIODO SIN IVA" dataField="DEV_MES_SIN_IVA" width="170" labelFunction="formatearMontoGrid"/>
 				<mx:DataGridColumn headerText="IVA INTERES" dataField="IVA_INT_MES" width="110" labelFunction="formatearMontoGrid"/>

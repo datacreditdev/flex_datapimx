@@ -14,21 +14,20 @@
 	
 	<mx:Script>
 		<![CDATA[
-			import mx.messaging.channels.StreamingAMFChannel;
-			import Data.ExcelExportXls;
-			import mx.collections.ArrayCollection;
 			import Data.Globales;
+			import Data.ExcelExportXls;
 			import Data.Utils;
-			import mx.core.Application;
-			import mx.containers.TitleWindow;	
-			import mx.validators.Validator;		
-			import mx.managers.PopUpManager;
+			import mx.collections.ArrayCollection;
+			import mx.containers.TitleWindow;
 			import mx.controls.Alert;
+			import mx.core.Application;
 			import mx.effects.easing.Elastic;
-			import mx.rpc.soap.WebService;
-			import mx.rpc.events.ResultEvent;
+			import mx.managers.PopUpManager;
 			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.rpc.soap.WebService;
 			import mx.utils.ObjectUtil;
+			import mx.validators.Validator;
 			
 			[Bindable]
 			private var _xmlReg:XML = new XML();
@@ -41,7 +40,6 @@
 			public var coordObj:ArrayCollection = new ArrayCollection();
 			public var asesorObj:ArrayCollection = new ArrayCollection();
 			
-			public var wsMS:WebService;
 			public var rep:String;
 			private var titulo:String; 
 			private var du:Utils;
